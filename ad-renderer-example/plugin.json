@@ -1,0 +1,8 @@
+{
+  "group_id": "com.mediarithmics.creative.display",
+  "artifact_id": "quantum-native-script",
+  "version_id": "1.0.0",
+  "environment": {
+    "type": "nodejs_build_src"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "mediarithmics-plugins-typescript-helpers",
+  "version": "1.0.0",
+  "description": "This is a set of Type script classes and interfaces to help plugin devellopers during their development",
+  "main": "./build/index.js",
+  "types": ".build/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

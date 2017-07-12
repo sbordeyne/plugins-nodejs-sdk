@@ -1,0 +1,33 @@
+{
+  "name": "ad-renderer-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mediarithmics-plugins-typescript-helpers": "^1.0.0",
+    "async": "^2.0.1",
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "handlebars": "^4.0.5",
+    "lodash": "^4.8.2",
+    "moment": "^2.13.0",
+    "mustache": "^2.2.1",
+    "numeral": "^2.0.4",
+    "request": "^2.69.0",
+    "request-promise": "^2.0.1",
+    "typings": "^2.1.1",
+    "winston": "^2.2.0",
+    "@types/bluebird": "^3.5.8",
+    "@types/body-parser": "^1.16.3",
+    "@types/lodash": "^4.14.66",
+    "@types/request-promise": "^4.1.35",
+    "@types/winston": "^2.3.3",
+    "eslint": "^4.1.1"
+    }
+  }
