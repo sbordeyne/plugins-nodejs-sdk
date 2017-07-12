@@ -6,7 +6,7 @@ import * as logger from 'winston';
 import * as _ from 'lodash';
 import * as rp from 'request-promise';
 import * as Promise from 'bluebird';
-import {CreativeResponse} from 'mediarithmics-plugins-typescript-helpers';
+import { BasePlugin } from 'mediarithmics-plugins-typescript-helpers';
 
 const gatewayHost = process.env.GATEWAY_HOST || "plugin-gateway.platform";
 const gatewayPort = process.env.GATEWAY_PORT || 8080;
@@ -196,6 +196,8 @@ document.write('<div style="display:none;"><img src="${adRenderRequest.display_t
     });
   }
 });
+
+const pluginHelper = BasePlugin();
 
 // Start the plugin and listen on port pluginPort
 app.listen(pluginPort, () => logger.info('Renderer started, listening at ' + pluginPort));

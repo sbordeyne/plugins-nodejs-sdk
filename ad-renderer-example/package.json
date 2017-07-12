@@ -29,5 +29,8 @@
     "@types/request-promise": "^4.1.35",
     "@types/winston": "^2.3.3",
     "eslint": "^4.1.1"
-    }
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.81"
   }
+}

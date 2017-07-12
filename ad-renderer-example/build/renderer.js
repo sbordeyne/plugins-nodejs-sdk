@@ -6,7 +6,7 @@ const logger = require("winston");
 const _ = require("lodash");
 const rp = require("request-promise");
 const Promise = require("bluebird");
-require("mediarithmics-plugins-typescript-helpers");
+const mediarithmics_plugins_typescript_helpers_1 = require("mediarithmics-plugins-typescript-helpers");
 const gatewayHost = process.env.GATEWAY_HOST || "plugin-gateway.platform";
 const gatewayPort = process.env.GATEWAY_PORT || 8080;
 const pluginPort = process.env.PLUGIN_PORT || 8080;
@@ -161,5 +161,6 @@ document.write('<div style="display:none;"><img src="${adRenderRequest.display_t
         });
     }
 });
+const pluginHelper = mediarithmics_plugins_typescript_helpers_1.BasePlugin();
 // Start the plugin and listen on port pluginPort
 app.listen(pluginPort, () => logger.info('Renderer started, listening at ' + pluginPort));

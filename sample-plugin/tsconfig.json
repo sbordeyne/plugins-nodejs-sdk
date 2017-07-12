@@ -6,11 +6,9 @@
         "outDir": "./build",
         "target": "es6",
         "rootDir": "./src",
-        "typeRoots": [
-            "./node_modules/"
-        ],
-        "types": [ "node", "mediarithmics-plugins-typescript-helpers" ]
-        },
+        "typeRoots": ["node_modules/@types"],
+        "declaration": true
+    },
     "include": [
         "./src/**/*"
     ],
