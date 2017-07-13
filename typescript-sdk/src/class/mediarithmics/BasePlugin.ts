@@ -8,6 +8,11 @@ export class BasePlugin {
 
     pluginPort: number = process.env.PLUGIN_PORT || 8080;
 
+    gatewayHost = process.env.GATEWAY_HOST || "plugin-gateway.platform";
+    gatewayPort = process.env.GATEWAY_PORT || 8080;
+
+    outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
+
     app: express.Application;
     logger: winston.LoggerInstance;
     worker_id: string;
@@ -78,7 +83,7 @@ export class BasePlugin {
     }
 
     // Helper request function
-    request = function (method: string, uri: string, body ? : string) {
+    requestGatewayHelper = function (method: string, uri: string, body ? : string) {
 
         const options = {
             method: method,

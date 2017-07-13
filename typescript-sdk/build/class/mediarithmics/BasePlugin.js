@@ -7,6 +7,9 @@ const bodyParser = require("body-parser");
 class BasePlugin {
     constructor() {
         this.pluginPort = process.env.PLUGIN_PORT || 8080;
+        this.gatewayHost = process.env.GATEWAY_HOST || "plugin-gateway.platform";
+        this.gatewayPort = process.env.GATEWAY_PORT || 8080;
+        this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
         // Log level update implementation
         // This method can be overriden by any subclass
         this.onLogLevelUpdate = function (req, res) {
@@ -65,7 +68,7 @@ class BasePlugin {
             });
         };
         // Helper request function
-        this.request = function (method, uri, body) {
+        this.requestGatewayHelper = function (method, uri, body) {
             const options = {
                 method: method,
                 uri: uri,

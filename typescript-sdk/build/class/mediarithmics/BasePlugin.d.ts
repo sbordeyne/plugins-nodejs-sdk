@@ -6,6 +6,9 @@ import * as winston from 'winston';
 import * as Promise from 'Bluebird';
 export declare class BasePlugin {
     pluginPort: number;
+    gatewayHost: any;
+    gatewayPort: any;
+    outboundPlatformUrl: string;
     app: express.Application;
     logger: winston.LoggerInstance;
     worker_id: string;
@@ -17,6 +20,6 @@ export declare class BasePlugin {
     private initStatusRoute;
     onInitRequest: (req: express.Request, res: express.Response) => void;
     initInitRoute: () => void;
-    request: (method: string, uri: string, body?: string) => Promise<any>;
+    requestGatewayHelper: (method: string, uri: string, body?: string) => Promise<any>;
     constructor();
 }

@@ -1,5 +1,10 @@
 import * as express from 'express';
 import * as _ from 'lodash';
+import * as Promise from 'Bluebird';
+
+import * as AdRendererRequest from '../../interfaces/mediarithmics/AdRendererRequestInterface';
+import * as Creative from '../../interfaces/mediarithmics/CreativeInterface';
+import * as CreativeProperty from '../../interfaces/mediarithmics/CreativePropertyInterface';
 
 import {
     BasePlugin
@@ -7,7 +12,17 @@ import {
 
 export class AdRendererBasePlugin extends BasePlugin {
 
-    fetchCreative = function () {}
+    fetchCreative = function (creativeId: string): Promise < Creative.CreativeResponse > {
+        return this.super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`);
+    }
+
+    fetchCreativeProperties = function (creativeId: string): Promise < CreativeProperty.CreativePropertyResponse > {
+        return this.super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`);
+    }
+
+    onAdContents = function (request: AdRendererRequest.AdRendererRequest) {
+
+    }
 
     initAdContentsRoute = function () {
 
@@ -20,7 +35,9 @@ export class AdRendererBasePlugin extends BasePlugin {
                 res.status(500).json(msg);
             } else {
                 this.logger.info(`POST /v1/ad_contents ${req.body}`);
-                res.send('Yolo');
+
+                this.onAdContents();
+
             }
 
         });

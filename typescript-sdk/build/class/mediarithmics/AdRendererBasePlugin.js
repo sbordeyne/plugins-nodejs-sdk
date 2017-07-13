@@ -5,7 +5,12 @@ const BasePlugin_1 = require("./BasePlugin");
 class AdRendererBasePlugin extends BasePlugin_1.BasePlugin {
     constructor() {
         super();
-        this.fetchCreative = function () { };
+        this.fetchCreative = function (creativeId) {
+            return this.super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`);
+        };
+        this.fetchCreativeProperties = function (creativeId) {
+            return this.super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`);
+        };
         this.initAdContentsRoute = function () {
             this.app.post('/v1/ad_contents', (req, res) => {
                 if (!req.body || _.isEmpty(req.body)) {
