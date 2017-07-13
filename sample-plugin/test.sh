@@ -4,6 +4,8 @@ export GATEWAY_PORT="8123"
 export PLUGIN_HOST="localhost"
 export PLUGIN_PORT="8080"
 
+node gatewayMockup.js &
+
 sleep 1
 
 node build/index.js &
@@ -12,10 +14,10 @@ sleep 1
 
 curl -X POST -H "Content-Type: application/json" -d '{"authentication_token":"123", "worker_id":"123"}' http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/init
 curl -X PUT -H "Content-Type: application/json" -d '{"level":"debug"}' http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/log_level
-curl -X POST http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/ad_contents  -d '
+curl -v -X POST http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/ad_contents  -d '
     {
         "call_id":"auc:apx:58346725000689de0a16ac4f120ecc41-0",
-        "context":"LIVE",
+        "context":"PREVIEW",
         "creative_id":"2757",
         "campaign_id":"1537",
         "ad_group_id":"1622",
@@ -31,5 +33,5 @@ curl -X POST http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/ad_contents  -d '
         "longitude":null,
         "restrictions":{"animation_max_duration":25}
     }
-' -H "Content-Type: application/json"
+' -H "Content-Type: application/json" > preview.html
 killall -SIGTERM node

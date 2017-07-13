@@ -1,11 +1,19 @@
 /// <reference types="bluebird" />
-import * as Promise from 'Bluebird';
+/// <reference types="express" />
+import * as express from 'express';
+import * as Promise from 'bluebird';
+import * as AdRendererRequest from '../../interfaces/mediarithmics/AdRendererRequestInterface';
 import * as Creative from '../../interfaces/mediarithmics/CreativeInterface';
 import * as CreativeProperty from '../../interfaces/mediarithmics/CreativePropertyInterface';
 import { BasePlugin } from './BasePlugin';
 export declare class AdRendererBasePlugin extends BasePlugin {
-    fetchCreative: (creativeId: string) => Promise<Creative.CreativeResponse>;
-    fetchCreativeProperties: (creativeId: string) => Promise<CreativeProperty.CreativePropertyResponse>;
-    initAdContentsRoute: () => void;
+    creativeCache: Map<string, Promise<Creative.CreativeResponse>>;
+    creativePropertiesCache: Map<string, Promise<CreativeProperty.CreativePropertyResponse>>;
+    fetchCreative(creativeId: string): Promise<Creative.Creative>;
+    fetchCreativeProperties(creativeId: string): Promise<CreativeProperty.CreativeProperty[]>;
+    getEncodedClickUrl(redirectUrls: string[]): string;
+    addOnAdContentsListener(listener: (request: AdRendererRequest.AdRendererRequest, response: express.Response) => void): void;
+    private onAdContents;
+    private initAdContentsRoute();
     constructor();
 }

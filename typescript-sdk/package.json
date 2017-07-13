@@ -15,6 +15,7 @@
     "@types/lodash": "^4.14.68",
     "@types/request-promise": "^4.1.36",
     "@types/winston": "^2.3.3",
+    "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "lodash": "^4.17.4",
