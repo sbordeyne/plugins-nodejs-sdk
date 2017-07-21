@@ -1,8 +1,7 @@
 import * as express from 'express';
-import * as rp from 'request-promise';
+import * as rp from 'request-promise-native';
 import * as winston from 'winston';
 import * as bodyParser from 'body-parser';
-import * as Promise from 'bluebird';
 
 export class BasePlugin {
 
@@ -107,6 +106,7 @@ export class BasePlugin {
         });
     }
 
+    
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json({

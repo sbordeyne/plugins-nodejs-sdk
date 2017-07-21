@@ -1,9 +1,7 @@
 /// <reference types="express" />
 /// <reference types="winston" />
-/// <reference types="bluebird" />
 import * as express from 'express';
 import * as winston from 'winston';
-import * as Promise from 'bluebird';
 export declare class BasePlugin {
     pluginPort: number;
     gatewayHost: string;

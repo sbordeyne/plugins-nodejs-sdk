@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const rp = require("request-promise");
+const rp = require("request-promise-native");
 const winston = require("winston");
 const bodyParser = require("body-parser");
 class BasePlugin {
