@@ -123,7 +123,7 @@ export class BasePlugin {
         this.initLogLevelUpdateRoute();
         this.initLogLevelGetRoute();
 
-        this.app.listen(this.pluginPort, () => this.logger.info('Renderer started, listening at ' + this.pluginPort));
+        this.app.listen(this.pluginPort, () => this.logger.info('Plugin started, listening at ' + this.pluginPort));
 
     }
 
