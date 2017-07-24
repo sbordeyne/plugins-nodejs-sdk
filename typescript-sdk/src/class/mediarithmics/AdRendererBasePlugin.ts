@@ -1,119 +1,160 @@
-import * as express from 'express';
-import * as _ from 'lodash';
-import * as cache from 'memory-cache';
+import * as express from "express";
+import * as _ from "lodash";
+import * as cache from "memory-cache";
 
+import { AdRendererRequest } from "../../interfaces/mediarithmics/api/AdRendererRequestInterface";
 import {
-    AdRendererRequest
-} from '../../interfaces/mediarithmics/api/AdRendererRequestInterface';
+  Creative,
+  CreativeResponse
+} from "../../interfaces/mediarithmics/api/CreativeInterface";
 import {
-    Creative,
-    CreativeResponse
-} from '../../interfaces/mediarithmics/api/CreativeInterface';
-import {
-    CreativeProperty,
-    CreativePropertyResponse
-} from '../../interfaces/mediarithmics/api/CreativePropertyInterface';
-import {
-    AdRendererBaseInstanceContext
-} from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
+  CreativeProperty,
+  CreativePropertyResponse
+} from "../../interfaces/mediarithmics/api/CreativePropertyInterface";
+import { AdRendererBaseInstanceContext } from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
 
-import {
-    BasePlugin
-} from './BasePlugin';
+import { BasePlugin } from "./BasePlugin";
 
 export class AdRendererBasePlugin extends BasePlugin {
+  instanceContext: Promise<AdRendererBaseInstanceContext>;
 
-    instanceContext: Promise < AdRendererBaseInstanceContext > ;
+  // Helper to fetch the creative resource with caching
+  fetchCreative(creativeId: string): Promise<Creative> {
+    return super
+      .requestGatewayHelper(
+        "GET",
+        `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
+      )
+      .then(result => {
+        this.logger.debug(
+          `Fetched Creative: ${creativeId} - ${JSON.stringify(result.data)}`
+        );
+        return result.data;
+      });
+  }
 
-    // Helper to fetch the creative resource with caching
-    fetchCreative(creativeId: string): Promise < Creative > {
-        return super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`).then((result) => {
-            this.logger.debug(`Fetched Creative: ${creativeId} - ${JSON.stringify(result.data)}`);
-            return result.data;
-        });
-    }
+  // Helper to fetch the creative properties resource with caching
+  fetchCreativeProperties(creativeId: string): Promise<CreativeProperty[]> {
+    return super
+      .requestGatewayHelper(
+        "GET",
+        `${this
+          .outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`
+      )
+      .then(result => {
+        this.logger.debug(
+          `Fetched Creative Properties: ${creativeId} - ${JSON.stringify(
+            result.data
+          )}`
+        );
+        return result.data;
+      });
+  }
 
-    // Helper to fetch the creative resource with caching
-    fetchCreativeProperties(creativeId: string): Promise < CreativeProperty[] > {
-        return super.requestGatewayHelper('GET', `${this.outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`).then((result) => {
-            this.logger.debug(`Fetched Creative Properties: ${creativeId} - ${JSON.stringify(result.data)}`);
-            return result.data;
-        });
-    }
+  getEncodedClickUrl(redirectUrls: string[]): string {
+    let urls = redirectUrls.slice(0);
+    return urls.reduceRight(
+      (acc, current) => current + encodeURIComponent(acc),
+      ""
+    );
+  }
 
-    getEncodedClickUrl(redirectUrls: string[]): string {
-        let urls = redirectUrls.slice(0);
-        return urls.reduceRight((acc, current) => current + encodeURIComponent(acc), '');
-    }
+  // How to bind the main function of the plugin
+  setInstanceContextBuilder(
+    instanceContextBuilder: (
+      creativeId: string
+    ) => Promise<AdRendererBaseInstanceContext>
+  ): void {
+    this.buildInstanceContext = instanceContextBuilder;
+  }
 
-    // How to bind the main function of the plugin
-    setInstanceContextBuilder(instanceContextBuilder: (creativeId: string) => Promise < AdRendererBaseInstanceContext > ): void {
-        this.buildInstanceContext = instanceContextBuilder;
-    }
+  // Method to build an instance context
+  private buildInstanceContext: (
+    creativeId: string
+  ) => Promise<AdRendererBaseInstanceContext>;
 
-    // Method to build an instance context
-    private buildInstanceContext: (creativeId: string) => Promise < AdRendererBaseInstanceContext > ;
+  private onAdContents: (
+    request: AdRendererRequest,
+    instanceContext: AdRendererBaseInstanceContext
+  ) => string;
 
-    private onAdContents: (request: AdRendererRequest, instanceContext: AdRendererBaseInstanceContext) => string;
+  private initAdContentsRoute(): void {
+    this.app.post(
+      "/v1/ad_contents",
+      (req: express.Request, res: express.Response) => {
+        if (!req.body || _.isEmpty(req.body)) {
+          const msg = {
+            error: "Missing request body"
+          };
+          this.logger.error("POST /v1/ad_contents : %s", msg);
+          res.status(500).json(msg);
+        } else {
+          this.logger.debug(`POST /v1/ad_contents ${JSON.stringify(req.body)}`);
 
-    private initAdContentsRoute(): void {
+          const adRendererRequest = req.body as AdRendererRequest;
 
-        this.app.post('/v1/ad_contents', (req: express.Request, res: express.Response) => {
-            if (!req.body || _.isEmpty(req.body)) {
-                const msg = {
-                    error: "Missing request body"
-                };
-                this.logger.error('POST /v1/ad_contents : %s', msg);
-                res.status(500).json(msg);
-            } else {
-                this.logger.debug(`POST /v1/ad_contents ${JSON.stringify(req.body)}`);
+          if (!this.onAdContents) {
+            throw new Error("No AdContents listener registered!");
+          }
 
-                const adRendererRequest = req.body as AdRendererRequest;
+          if (
+            !cache.get(adRendererRequest.creative_id) ||
+            adRendererRequest.context == "PREVIEW" ||
+            adRendererRequest.context == "STAGE"
+          ) {
+            cache.put(
+              adRendererRequest.creative_id,
+              this.buildInstanceContext(adRendererRequest.creative_id)
+            );
+          }
 
-                if (!this.onAdContents) {
-                    throw new Error('No AdContents listener registered!');
-                }
+          cache
+            .get(adRendererRequest.creative_id)
+            .then((instanceContext: AdRendererBaseInstanceContext) => {
+              const adRendererResponse = this.onAdContents(
+                adRendererRequest,
+                instanceContext as AdRendererBaseInstanceContext
+              );
+              res.status(200).send(adRendererResponse);
+            })
+            .catch((error: Error) => {
+              this.logger.error(
+                `Something bad happened : ${error.message} - ${error.stack}`
+              );
+              return res.status(500).send(error.message + "\n" + error.stack);
+            });
+        }
+      }
+    );
+  }
 
-                if (!cache.get(adRendererRequest.creative_id) || adRendererRequest.context == 'PREVIEW' || adRendererRequest.context == 'STAGE') {
-                    cache.put(adRendererRequest.creative_id, this.buildInstanceContext(adRendererRequest.creative_id));
-                }
+  constructor(
+    adContentsHandler: (
+      request: AdRendererRequest,
+      instanceContext: AdRendererBaseInstanceContext
+    ) => string
+  ) {
+    super();
 
-                cache.get(adRendererRequest.creative_id).then((instanceContext: AdRendererBaseInstanceContext) => {
-                    const adRendererResponse = this.onAdContents(adRendererRequest, instanceContext as AdRendererBaseInstanceContext);
-                    res.status(200).send(adRendererResponse);
-                }).catch((error: Error) => {
-                    this.logger.error(`Something bad happened : ${error.message} - ${error.stack}`);
-                    return res.status(500).send(error.message + "\n" + error.stack);
-                });
-            }
-        });
-    }
+    this.initAdContentsRoute();
+    this.onAdContents = adContentsHandler;
 
-    constructor(adContentsHandler: (request: AdRendererRequest, instanceContext: AdRendererBaseInstanceContext) => string) {
-        super();
+    // Default Instance context builder
+    this.setInstanceContextBuilder(async (creativeId: string) => {
+      const creativeP = this.fetchCreative(creativeId);
+      const creativePropsP = this.fetchCreativeProperties(creativeId);
 
-        this.initAdContentsRoute();
-        this.onAdContents = adContentsHandler;
+      const results = await Promise.all([creativeP, creativePropsP]);
 
-        // Default Instance context builder
-        this.setInstanceContextBuilder(async(creativeId: string) => {
+      const creative = results[0];
+      const creativeProps = results[1];
 
-            const creativeP = this.fetchCreative(creativeId);
-            const creativePropsP = this.fetchCreativeProperties(creativeId);
+      const context = {
+        creative: creative,
+        creativeProperties: creativeProps
+      } as AdRendererBaseInstanceContext;
 
-            const results = await Promise.all([creativeP, creativePropsP])
-
-            const creative = results[0];
-            const creativeProps = results[1];
-
-            const context = {
-                creative: creative,
-                creativeProperties: creativeProps
-            } as AdRendererBaseInstanceContext;
-
-            return context;
-        });
-
-    }
-
+      return context;
+    });
+  }
 }
