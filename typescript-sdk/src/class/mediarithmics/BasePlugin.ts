@@ -19,7 +19,7 @@ export class BasePlugin {
 
     // Log level update implementation
     // This method can be overriden by any subclass
-    onLogLevelUpdate (req: express.Request, res: express.Response) {
+    onLogLevelUpdate(req: express.Request, res: express.Response) {
         if (req.body && req.body.level) {
             this.logger.info('Setting log level to ' + req.body.level);
             this.logger.level = req.body.level;
@@ -30,15 +30,15 @@ export class BasePlugin {
         }
     }
 
-    private initLogLevelUpdateRoute () {
+    private initLogLevelUpdateRoute() {
         //Route used by the plugin manager to check if the plugin is UP and running
         this.app.put('/v1/log_level', (req: express.Request, res: express.Response) => {
             this.onLogLevelUpdate(req, res);
         });
     }
 
-    private initLogLevelGetRoute () {
-        this.app.get('/v1/log_level', function (req: express.Request, res: express.Response) {
+    private initLogLevelGetRoute() {
+        this.app.get('/v1/log_level', function(req: express.Request, res: express.Response) {
             res.send({
                 level: this.logger.level
             });
@@ -48,7 +48,7 @@ export class BasePlugin {
     // Health Status implementation
     // This method can be overriden by any subclass
 
-    onStatusRequest (req: express.Request, res: express.Response) {
+    onStatusRequest(req: express.Request, res: express.Response) {
         //Route used by the plugin manager to check if the plugin is UP and running
         this.logger.silly('GET /v1/status');
         if (this.worker_id && this.authentication_token) {
@@ -58,7 +58,7 @@ export class BasePlugin {
         }
     }
 
-    private initStatusRoute () {
+    private initStatusRoute() {
         this.app.get('/v1/status', (req: express.Request, res: express.Response) => {
             this.onStatusRequest(req, res);
         });
@@ -67,7 +67,7 @@ export class BasePlugin {
     // Plugin Init implementation
     // This method can be overriden by any subclass
 
-    onInitRequest (req: express.Request, res: express.Response) {
+    onInitRequest(req: express.Request, res: express.Response) {
         this.logger.debug('POST /v1/init ', req.body);
         this.authentication_token = req.body.authentication_token;
         this.worker_id = req.body.worker_id;
@@ -75,14 +75,14 @@ export class BasePlugin {
         res.end();
     }
 
-    initInitRoute () {
+    initInitRoute() {
         this.app.post('/v1/init', (req: express.Request, res: express.Response) => {
             this.onInitRequest(req, res);
         });
     }
 
     // Helper request function
-    requestGatewayHelper (method: string, uri: string, body ? : string) {
+    requestGatewayHelper(method: string, uri: string, body ? : string) {
 
         const options = {
             method: method,
@@ -97,7 +97,7 @@ export class BasePlugin {
 
         return rp(body ? Object.assign({
             body: body
-        }, options) : options).catch(function (e) {
+        }, options) : options).catch(function(e) {
             if (e.name === "StatusCodeError") {
                 throw new Error(`Error while calling ${method} '${uri}' with the request body '${body || ""}': got a ${e.response.statusCode} ${e.response.statusMessage} with the response body ${JSON.stringify(e.response.body)}`);
             } else {
@@ -106,7 +106,7 @@ export class BasePlugin {
         });
     }
 
-    
+
     constructor() {
         this.app = express();
         this.app.use(bodyParser.json({

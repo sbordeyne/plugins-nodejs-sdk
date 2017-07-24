@@ -23,7 +23,7 @@ import {
 
 export class AdRendererBasePlugin extends BasePlugin {
 
-    instanceContext: Promise < AdRendererBaseInstanceContext >;
+    instanceContext: Promise < AdRendererBaseInstanceContext > ;
 
     // Helper to fetch the creative resource with caching
     fetchCreative(creativeId: string): Promise < Creative > {
