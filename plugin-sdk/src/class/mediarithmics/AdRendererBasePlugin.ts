@@ -99,8 +99,8 @@ export class AdRendererBasePlugin extends BasePlugin {
 
           if (
             !cache.get(adRendererRequest.creative_id) ||
-            adRendererRequest.context == "PREVIEW" ||
-            adRendererRequest.context == "STAGE"
+            adRendererRequest.context === "PREVIEW" ||
+            adRendererRequest.context === "STAGE"
           ) {
             cache.put(
               adRendererRequest.creative_id,
@@ -136,7 +136,6 @@ export class AdRendererBasePlugin extends BasePlugin {
   ) {
     super();
 
-    this.initAdContentsRoute();
     this.onAdContents = adContentsHandler;
 
     // Default Instance context builder
@@ -156,5 +155,8 @@ export class AdRendererBasePlugin extends BasePlugin {
 
       return context;
     });
+
+    this.initAdContentsRoute();
+    
   }
 }

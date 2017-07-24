@@ -1,7 +1,7 @@
 {
-  "name": "mediarithmics-plugins-typescript-helpers",
+  "name": "plugin-sdk",
   "version": "0.1.0",
-  "description": "This is a set of Type script classes and interfaces to help plugin devellopers during their development",
+  "description": "This is a set of Typescript classes and interfaces to help plugin developers during their development",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "scripts": {
@@ -9,7 +9,7 @@
     "prepublishOnly": "tsc -p ./ --outDir build/"
   },
   "author": "",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "dependencies": {
     "@types/body-parser": "^1.16.4",
     "@types/express": "^4.0.36",
