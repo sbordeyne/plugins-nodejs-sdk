@@ -1,4 +1,4 @@
-import { Value } from "./common/ValueInterface"
+import { Value } from "./ValueInterface"
 
 export interface CreativePropertyResponse {
     status: string;
