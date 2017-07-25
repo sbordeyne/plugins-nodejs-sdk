@@ -9,8 +9,7 @@ export class BasePlugin {
   gatewayHost: string = process.env.GATEWAY_HOST || "plugin-gateway.platform";
   gatewayPort: number = parseInt(process.env.GATEWAY_PORT) || 8080;
 
-  outboundPlatformUrl: string = `http://${this.gatewayHost}:${this
-    .gatewayPort}`;
+  outboundPlatformUrl: string = `http://${this.gatewayHost}:${this.gatewayPort}`;
 
   app: express.Application;
   logger: winston.LoggerInstance;

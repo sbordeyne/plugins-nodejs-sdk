@@ -1,17 +1,28 @@
 import {
-    ActivityAnalyzerPlugin,
-    ActivityAnalyzerRequest,
-    ActivityAnalyzerBaseInstanceContext,
-    ActivityAnalyzerPluginResponse
-} from '@mediarithmics/plugins-sdk';
+  ActivityAnalyzerPlugin,
+  ActivityAnalyzerRequest,
+  ActivityAnalyzerBaseInstanceContext,
+  ActivityAnalyzerPluginResponse
+} from "@mediarithmics/plugins-sdk";
 
 // All the magic is here
-const plugin = new ActivityAnalyzerPlugin((request: ActivityAnalyzerRequest, instanceContext: ActivityAnalyzerBaseInstanceContext) => {
-
+const plugin = new ActivityAnalyzerPlugin(
+  (
+    request: ActivityAnalyzerRequest,
+    instanceContext: ActivityAnalyzerBaseInstanceContext
+  ) => {
+    const updatedActivity = request.activity;
     const response = {} as ActivityAnalyzerPluginResponse;
 
     response.status = "ok";
-    response.data = request.activity;
+
+    // We add a field on the processed activity
+    updatedActivity.processed_by = `${instanceContext.activityAnalyzer
+      .group_id}:${instanceContext.activityAnalyzer
+      .artifact_id} v.${instanceContext.activityAnalyzer
+      .visit_analyzer_plugin_id}`;
+    response.data = updatedActivity;
 
     return response;
-});
+  }
+);

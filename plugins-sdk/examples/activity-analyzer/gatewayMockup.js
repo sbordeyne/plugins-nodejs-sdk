@@ -10,12 +10,21 @@ var app = express();
 app.use(bodyParser.json({type: '*/*'}));
 
 app.get('/v1/activity_analyzers/:id', function (req, res) {
-    res.json(`{"status":"ok","data":{"id":"1000","name":"my analyzer","organisation_id":"1000","visit_analyzer_plugin_id":"1001","group_id":"com.mediarithmics.visit-analyzer","artifact_id":"default"}`);
+    res.send(`{
+        "status":"ok",
+        "data":{
+            "id":"1000",
+            "name":"my analyzer",
+            "organisation_id":"1000",
+            "visit_analyzer_plugin_id":"1001",
+            "group_id":"com.mediarithmics.visit-analyzer",
+            "artifact_id":"default"}
+        }`);
 });
 
 app.get('/v1/activity_analyzers/:id/properties', function (req, res) {
 
-	res.json(`{
+	res.send(`{
 	"count":1,
 	"data":
 	[

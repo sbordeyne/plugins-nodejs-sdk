@@ -24,15 +24,15 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   instanceContext: Promise<ActivityAnalyzerBaseInstanceContext>;
 
   // Helper to fetch the activity analyzer resource with caching
-  fetchActivityAnalyzer(creativeId: string): Promise<ActivityAnalyzer> {
+  fetchActivityAnalyzer(activityAnalyzerId: string): Promise<ActivityAnalyzer> {
     return super
       .requestGatewayHelper(
         "GET",
-        `${this.outboundPlatformUrl}/v1/activity_analyzers/${creativeId}`
+        `${this.outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}`
       )
       .then((result: ActivityAnalyzerResponse) => {
         this.logger.debug(
-          `Fetched Activity Analyzer: ${creativeId} - ${JSON.stringify(
+          `Fetched Activity Analyzer: ${activityAnalyzerId} - ${JSON.stringify(
             result.data
           )}`
         );
@@ -42,17 +42,17 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
 
   // Helper to fetch the activity analyzer resource with caching
   fetchActivityAnalyzerProperties(
-    creativeId: string
+    activityAnalyzerId: string
   ): Promise<ActivityAnalyzerProperty[]> {
     return super
       .requestGatewayHelper(
         "GET",
         `${this
-          .outboundPlatformUrl}/v1/activity_analyzers/${creativeId}/properties`
+          .outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}/properties`
       )
       .then((result: ActivityAnalyzerPropertyResponse) => {
         this.logger.debug(
-          `Fetched Creative Properties: ${creativeId} - ${JSON.stringify(
+          `Fetched Creative Properties: ${activityAnalyzerId} - ${JSON.stringify(
             result.data
           )}`
         );
