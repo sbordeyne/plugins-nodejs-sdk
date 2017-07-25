@@ -16,6 +16,8 @@ import { AdRendererBaseInstanceContext } from "../../interfaces/mediarithmics/pl
 import { BasePlugin } from "./BasePlugin";
 
 export class AdRendererBasePlugin extends BasePlugin {
+    INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
+
   instanceContext: Promise<AdRendererBaseInstanceContext>;
 
   // Helper to fetch the creative resource with caching
@@ -25,7 +27,7 @@ export class AdRendererBasePlugin extends BasePlugin {
         "GET",
         `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
       )
-      .then(result => {
+      .then((result: CreativeResponse) => {
         this.logger.debug(
           `Fetched Creative: ${creativeId} - ${JSON.stringify(result.data)}`
         );
@@ -41,7 +43,7 @@ export class AdRendererBasePlugin extends BasePlugin {
         `${this
           .outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`
       )
-      .then(result => {
+      .then((result: CreativePropertyResponse) => {
         this.logger.debug(
           `Fetched Creative Properties: ${creativeId} - ${JSON.stringify(
             result.data
@@ -104,7 +106,8 @@ export class AdRendererBasePlugin extends BasePlugin {
           ) {
             cache.put(
               adRendererRequest.creative_id,
-              this.buildInstanceContext(adRendererRequest.creative_id)
+              this.buildInstanceContext(adRendererRequest.creative_id),
+                            this.INSTANCE_CONTEXT_CACHE_EXPIRATION
             );
           }
 

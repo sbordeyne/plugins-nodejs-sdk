@@ -8,5 +8,4 @@ export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 
 export * from "./class/mediarithmics/BasePlugin";
 export * from "./class/mediarithmics/AdRendererBasePlugin";
-
-
+export * from "./class/mediarithmics/ActivityAnalyzerPlugin";
