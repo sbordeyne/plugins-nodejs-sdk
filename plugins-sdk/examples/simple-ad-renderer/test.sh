@@ -5,10 +5,12 @@ export PLUGIN_HOST="localhost"
 export PLUGIN_PORT="8080"
 
 node gatewayMockup.js &
+gateway_pid=$!
 
 sleep 1
 
 node build/index.js &
+plugin_pid=$!
 
 sleep 1
 
@@ -34,4 +36,5 @@ curl -v -X POST http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/ad_contents  -d '
         "restrictions":{"animation_max_duration":25}
     }
 ' -H "Content-Type: application/json"
-killall -SIGTERM node
+
+kill $plugin_pid $gateway_pid

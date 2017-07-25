@@ -1,11 +1,13 @@
-export * from "./interfaces/mediarithmics/api/AdLayoutVersionInterface";
-export * from "./interfaces/mediarithmics/api/AdRendererRequestInterface";
-export * from "./interfaces/mediarithmics/api/CreativeInterface";
-export * from "./interfaces/mediarithmics/api/CreativePropertyInterface";
-export * from "./interfaces/mediarithmics/api/UserCampaignInterface";
+// Common plugin
+export * from "./class/mediarithmics/BasePlugin";
 export * from "./interfaces/mediarithmics/api/ValueInterface";
 export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 
-export * from "./class/mediarithmics/BasePlugin";
+// Ad Renderer
+export * from "./interfaces/mediarithmics/api/AdRendererRequestInterface";
 export * from "./class/mediarithmics/AdRendererBasePlugin";
+
+// Activity Analyzer
+export * from "./interfaces/mediarithmics/api/ActivityAnalyzerRequestInterface";
+export * from "./interfaces/mediarithmics/api/ActivityAnalyzerPluginResponseInterface";
 export * from "./class/mediarithmics/ActivityAnalyzerPlugin";

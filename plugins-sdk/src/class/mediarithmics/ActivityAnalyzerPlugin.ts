@@ -7,9 +7,16 @@ import { AdRendererRequest } from "../../interfaces/mediarithmics/api/AdRenderer
 import { ActivityAnalyzerBaseInstanceContext } from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
 
 import { BasePlugin } from "./BasePlugin";
-import { ActivityAnalyzerRequest } from "../../interfaces/mediarithmics/api/ActivityAnalyzerRequest";
-import { ActivityAnalyzer, ActivityAnalyzerResponse } from "../../interfaces/mediarithmics/api/ActivityAnalyzerInterface";
-import { ActivityAnalyzerProperty, ActivityAnalyzerPropertyResponse } from "../../interfaces/mediarithmics/api/ActivityAnalyzerPropertyInterface";
+import { ActivityAnalyzerRequest } from "../../interfaces/mediarithmics/api/ActivityAnalyzerRequestInterface";
+import {
+  ActivityAnalyzer,
+  ActivityAnalyzerResponse
+} from "../../interfaces/mediarithmics/api/ActivityAnalyzerInterface";
+import {
+  ActivityAnalyzerProperty,
+  ActivityAnalyzerPropertyResponse
+} from "../../interfaces/mediarithmics/api/ActivityAnalyzerPropertyInterface";
+import { ActivityAnalyzerPluginResponse } from "../../interfaces/mediarithmics/api/ActivityAnalyzerPluginResponseInterface";
 
 export class ActivityAnalyzerPlugin extends BasePlugin {
   INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
@@ -20,24 +27,28 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   fetchActivityAnalyzer(creativeId: string): Promise<ActivityAnalyzer> {
     return super
       .requestGatewayHelper(
-      "GET",
-      `${this.outboundPlatformUrl}/v1/activity_analyzers/${creativeId}`
+        "GET",
+        `${this.outboundPlatformUrl}/v1/activity_analyzers/${creativeId}`
       )
       .then((result: ActivityAnalyzerResponse) => {
         this.logger.debug(
-          `Fetched Activity Analyzer: ${creativeId} - ${JSON.stringify(result.data)}`
+          `Fetched Activity Analyzer: ${creativeId} - ${JSON.stringify(
+            result.data
+          )}`
         );
         return result.data;
       });
   }
 
   // Helper to fetch the activity analyzer resource with caching
-  fetchActivityAnalyzerProperties(creativeId: string): Promise<ActivityAnalyzerProperty[]> {
+  fetchActivityAnalyzerProperties(
+    creativeId: string
+  ): Promise<ActivityAnalyzerProperty[]> {
     return super
       .requestGatewayHelper(
-      "GET",
-      `${this
-        .outboundPlatformUrl}/v1/activity_analyzers/${creativeId}/properties`
+        "GET",
+        `${this
+          .outboundPlatformUrl}/v1/activity_analyzers/${creativeId}/properties`
       )
       .then((result: ActivityAnalyzerPropertyResponse) => {
         this.logger.debug(
@@ -66,7 +77,7 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   private onActivityAnalysis: (
     request: ActivityAnalyzerRequest,
     instanceContext: ActivityAnalyzerBaseInstanceContext
-  ) => string;
+  ) => ActivityAnalyzerPluginResponse;
 
   private initActivityAnalysis(): void {
     this.app.post(
@@ -79,7 +90,9 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
           this.logger.error("POST /v1/activity_analysis : %s", msg);
           res.status(500).json(msg);
         } else {
-          this.logger.debug(`POST /v1/activity_analysis ${JSON.stringify(req.body)}`);
+          this.logger.debug(
+            `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
+          );
 
           const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
 
@@ -87,12 +100,12 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
             throw new Error("No AdContents listener registered!");
           }
 
-          if (
-            !cache.get(activityAnalyzerRequest.activity_analyzer_id)
-          ) {
+          if (!cache.get(activityAnalyzerRequest.activity_analyzer_id)) {
             cache.put(
               activityAnalyzerRequest.activity_analyzer_id,
-              this.buildInstanceContext(activityAnalyzerRequest.activity_analyzer_id),
+              this.buildInstanceContext(
+                activityAnalyzerRequest.activity_analyzer_id
+              ),
               this.INSTANCE_CONTEXT_CACHE_EXPIRATION
             );
           }
@@ -100,11 +113,11 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
           cache
             .get(activityAnalyzerRequest.activity_analyzer_id)
             .then((instanceContext: ActivityAnalyzerBaseInstanceContext) => {
-              const adRendererResponse = this.onActivityAnalysis(
+              const activityAnalyzerResponse = this.onActivityAnalysis(
                 activityAnalyzerRequest,
                 instanceContext as ActivityAnalyzerBaseInstanceContext
               );
-              res.status(200).send(adRendererResponse);
+              res.status(200).send(JSON.stringify(activityAnalyzerResponse));
             })
             .catch((error: Error) => {
               this.logger.error(
@@ -121,7 +134,7 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     activityAnalysisHandler: (
       request: ActivityAnalyzerRequest,
       instanceContext: ActivityAnalyzerBaseInstanceContext
-    ) => string
+    ) => ActivityAnalyzerPluginResponse
   ) {
     super();
 
@@ -130,9 +143,14 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     // Default Instance context builder
     this.setInstanceContextBuilder(async (activityAnalyzerId: string) => {
       const activityAnalyzerP = this.fetchActivityAnalyzer(activityAnalyzerId);
-      const activityAnalyzerPropsP = this.fetchActivityAnalyzerProperties(activityAnalyzerId);
+      const activityAnalyzerPropsP = this.fetchActivityAnalyzerProperties(
+        activityAnalyzerId
+      );
 
-      const results = await Promise.all([activityAnalyzerP, activityAnalyzerPropsP]);
+      const results = await Promise.all([
+        activityAnalyzerP,
+        activityAnalyzerPropsP
+      ]);
 
       const activityAnalyzer = results[0];
       const activityAnalyzerProps = results[1];
@@ -146,6 +164,5 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     });
 
     this.initActivityAnalysis();
-
   }
 }
