@@ -7,15 +7,13 @@
         "target": "es6",
         "rootDir": "./src",
         "typeRoots": ["node_modules/@types"],
-        "declaration": true,
-        "alwaysStrict": true
+        "declaration": true
     },
     "include": [
         "./src/**/*"
     ],
     "exclude": [
         "./build",
-        "./node_modules",
-        "./examples"
+        "./node_modules"
     ]
 }
