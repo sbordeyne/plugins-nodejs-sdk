@@ -16,7 +16,7 @@ import { AdRendererBaseInstanceContext } from "../../interfaces/mediarithmics/pl
 import { BasePlugin } from "./BasePlugin";
 
 export class AdRendererBasePlugin extends BasePlugin {
-    INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
+  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
 
   instanceContext: Promise<AdRendererBaseInstanceContext>;
 
@@ -24,8 +24,8 @@ export class AdRendererBasePlugin extends BasePlugin {
   fetchCreative(creativeId: string): Promise<Creative> {
     return super
       .requestGatewayHelper(
-        "GET",
-        `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
+      "GET",
+      `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
       )
       .then((result: CreativeResponse) => {
         this.logger.debug(
@@ -39,9 +39,9 @@ export class AdRendererBasePlugin extends BasePlugin {
   fetchCreativeProperties(creativeId: string): Promise<CreativeProperty[]> {
     return super
       .requestGatewayHelper(
-        "GET",
-        `${this
-          .outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`
+      "GET",
+      `${this
+        .outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`
       )
       .then((result: CreativePropertyResponse) => {
         this.logger.debug(
@@ -107,7 +107,7 @@ export class AdRendererBasePlugin extends BasePlugin {
             cache.put(
               adRendererRequest.creative_id,
               this.buildInstanceContext(adRendererRequest.creative_id),
-                            this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
             );
           }
 
@@ -160,6 +160,6 @@ export class AdRendererBasePlugin extends BasePlugin {
     });
 
     this.initAdContentsRoute();
-    
+
   }
 }

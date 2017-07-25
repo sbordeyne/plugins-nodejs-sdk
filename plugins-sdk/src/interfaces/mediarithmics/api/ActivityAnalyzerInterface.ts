@@ -9,6 +9,6 @@ export interface ActivityAnalyzer {
     organisation_id: string;
     name: string;
     group_id: string;
-  artifact_id: string;
-  visit_analyzer_plugin_id: number;
+    artifact_id: string;
+    visit_analyzer_plugin_id: number;
 }

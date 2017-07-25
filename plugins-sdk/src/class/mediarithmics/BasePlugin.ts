@@ -43,7 +43,7 @@ export class BasePlugin {
   }
 
   private initLogLevelGetRoute() {
-    this.app.get("/v1/log_level", function(
+    this.app.get("/v1/log_level", function (
       req: express.Request,
       res: express.Response
     ) {
@@ -111,20 +111,20 @@ export class BasePlugin {
     return rp(
       body
         ? Object.assign(
-            {
-              body: body
-            },
-            options
-          )
+          {
+            body: body
+          },
+          options
+        )
         : options
-    ).catch(function(e) {
+    ).catch(function (e) {
       if (e.name === "StatusCodeError") {
         throw new Error(
           `Error while calling ${method} '${uri}' with the request body '${body ||
-            ""}': got a ${e.response.statusCode} ${e.response
+          ""}': got a ${e.response.statusCode} ${e.response
             .statusMessage} with the response body ${JSON.stringify(
-            e.response.body
-          )}`
+              e.response.body
+            )}`
         );
       } else {
         throw e;

@@ -20,8 +20,8 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   fetchActivityAnalyzer(creativeId: string): Promise<ActivityAnalyzer> {
     return super
       .requestGatewayHelper(
-        "GET",
-        `${this.outboundPlatformUrl}/v1/activity_analyzers/${creativeId}`
+      "GET",
+      `${this.outboundPlatformUrl}/v1/activity_analyzers/${creativeId}`
       )
       .then((result: ActivityAnalyzerResponse) => {
         this.logger.debug(
@@ -35,9 +35,9 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   fetchActivityAnalyzerProperties(creativeId: string): Promise<ActivityAnalyzerProperty[]> {
     return super
       .requestGatewayHelper(
-        "GET",
-        `${this
-          .outboundPlatformUrl}/v1/activity_analyzers/${creativeId}/properties`
+      "GET",
+      `${this
+        .outboundPlatformUrl}/v1/activity_analyzers/${creativeId}/properties`
       )
       .then((result: ActivityAnalyzerPropertyResponse) => {
         this.logger.debug(
@@ -146,6 +146,6 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     });
 
     this.initActivityAnalysis();
-    
+
   }
 }

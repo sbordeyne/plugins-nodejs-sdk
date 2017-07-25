@@ -1,5 +1,5 @@
 {
-  "name": "plugin-sdk",
+  "name": "@mediarithmics/plugins-sdk",
   "version": "0.1.0",
   "description": "This is a set of Typescript classes and interfaces to help plugin developers during their development",
   "main": "./build/index.js",

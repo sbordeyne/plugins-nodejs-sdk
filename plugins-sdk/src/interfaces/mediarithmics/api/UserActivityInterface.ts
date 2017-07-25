@@ -26,25 +26,25 @@ export interface UserVisitActivity extends UserActivity {
 }
 
 export interface UserActivityOrigin {
-$campaign_id?: number;
-$campaign_name?: string;
-$campaign_technical_name?: string;
-$channel?: string;
-$creative_id?: number;
-$creative_name?: string;
-$creative_technical_name?: string;
-$engagement_content_id?: string;
-$gclid?: string;
-$keywords?: string;
-$log_id?: string;
-$message_id?: number;
-$message_technical_name?: string;
-$referral_path?: string;
-$social_network?: string;
-$source?: string;
-$sub_campaign_id?: number;
-$sub_campaign_technical_name?: string;
-$ts?: number
+    $campaign_id?: number;
+    $campaign_name?: string;
+    $campaign_technical_name?: string;
+    $channel?: string;
+    $creative_id?: number;
+    $creative_name?: string;
+    $creative_technical_name?: string;
+    $engagement_content_id?: string;
+    $gclid?: string;
+    $keywords?: string;
+    $log_id?: string;
+    $message_id?: number;
+    $message_technical_name?: string;
+    $referral_path?: string;
+    $social_network?: string;
+    $source?: string;
+    $sub_campaign_id?: number;
+    $sub_campaign_technical_name?: string;
+    $ts?: number
 }
 
 export interface UserActivityLocation {
