@@ -111,3 +111,7 @@ const plugin = new ActivityAnalyzerPlugin(
   }
 );
 ```
+
+### Plugin start
+
+You just have to call the '.start()' method on your plugin to launch it!

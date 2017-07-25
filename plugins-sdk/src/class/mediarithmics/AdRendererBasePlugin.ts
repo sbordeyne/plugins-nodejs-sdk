@@ -131,6 +131,10 @@ export class AdRendererBasePlugin extends BasePlugin {
     );
   }
 
+  start() {
+        this.initAdContentsRoute();
+  }
+
   constructor(
     adContentsHandler: (
       request: AdRendererRequest,
@@ -158,8 +162,6 @@ export class AdRendererBasePlugin extends BasePlugin {
 
       return context;
     });
-
-    this.initAdContentsRoute();
 
   }
 }

@@ -28,3 +28,5 @@ const plugin = new AdRendererBasePlugin(
     return html;
   }
 );
+
+plugin.start();

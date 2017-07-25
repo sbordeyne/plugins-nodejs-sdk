@@ -130,6 +130,10 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     );
   }
 
+  start() {
+    this.initActivityAnalysis();
+  }
+  
   constructor(
     activityAnalysisHandler: (
       request: ActivityAnalyzerRequest,
@@ -163,6 +167,5 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
       return context;
     });
 
-    this.initActivityAnalysis();
   }
 }

@@ -26,3 +26,5 @@ const plugin = new ActivityAnalyzerPlugin(
     return response;
   }
 );
+
+plugin.start();
