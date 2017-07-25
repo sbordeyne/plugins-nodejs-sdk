@@ -58,8 +58,9 @@ Firstly, you'll need to import the proper base class for your plugin. Each plugi
 1. The Plugin class itself that will be instantiated
 2. The Plugin request interface that will be sent by the mediarithmics platform to the Plugin
 3. The Plugin Instance Context interface that is representing the Plugin properties that will be available to the plugin.
+4. The Plugin response that your plugin must return to the SDK
 
-### AdRenderer imports
+#### AdRenderer imports
 ``` js
 import {
     AdRendererBasePlugin,
@@ -68,3 +69,45 @@ import {
 } from '@mediarithmics/plugins-sdk';
 ```
 
+#### Activity Analyzer imports
+``` js
+import {
+  ActivityAnalyzerPlugin,
+  ActivityAnalyzerRequest,
+  ActivityAnalyzerBaseInstanceContext,
+  ActivityAnalyzerPluginResponse
+} from "@mediarithmics/plugins-sdk";
+```
+
+### Plugin initialization
+
+When instanciating a plugin, you need to give him the main 'processing' function that he will process everytime a Request is being received.
+
+#### AdRenderer initialization
+``` js
+const plugin = new AdRendererBasePlugin(
+  (
+    request: AdRendererRequest,
+    instanceContext: AdRendererBaseInstanceContext
+  ) => {
+    (...) // Processing
+
+    return html;
+  }
+);
+```
+
+#### Activity Analyzer initialization
+
+``` js
+const plugin = new ActivityAnalyzerPlugin(
+  (
+    request: ActivityAnalyzerRequest,
+    instanceContext: ActivityAnalyzerBaseInstanceContext
+  ) => {
+    (...) // Processing
+
+    return response;
+  }
+);
+```

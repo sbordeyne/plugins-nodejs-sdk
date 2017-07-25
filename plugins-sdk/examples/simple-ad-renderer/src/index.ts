@@ -1,18 +1,24 @@
 import {
-    AdRendererBasePlugin,
-    AdRendererRequest,
-    AdRendererBaseInstanceContext
-} from '@mediarithmics/plugins-sdk';
+  AdRendererBasePlugin,
+  AdRendererRequest,
+  AdRendererBaseInstanceContext
+} from "@mediarithmics/plugins-sdk";
 
 // All the magic is here
-const plugin = new AdRendererBasePlugin((request: AdRendererRequest, instanceContext: AdRendererBaseInstanceContext) => {
-     
+const plugin = new AdRendererBasePlugin(
+  (
+    request: AdRendererRequest,
+    instanceContext: AdRendererBaseInstanceContext
+  ) => {
     let html = `<html>
     <body>
     <h1>Creative: ${instanceContext.creative.name}</h1>
     <br/>
     <p>
-    Powered by the Ad Renderer: ${instanceContext.creative.renderer_group_id}:${instanceContext.creative.renderer_artifact_id} v.${instanceContext.creative.renderer_version_value}
+    Powered by the Ad Renderer: ${instanceContext.creative
+      .renderer_group_id}:${instanceContext.creative
+      .renderer_artifact_id} v.${instanceContext.creative
+      .renderer_version_value}
     </p>
     <!-- We always need to include the mediarithmics impression tracking pixel -->
     <img src="${request.display_tracking_url}" />
@@ -20,4 +26,5 @@ const plugin = new AdRendererBasePlugin((request: AdRendererRequest, instanceCon
     </html>`;
 
     return html;
-});
+  }
+);
