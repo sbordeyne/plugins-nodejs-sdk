@@ -18,7 +18,7 @@ Coming soon:
 This module is installed via npm:
 
 ```
-npm install --save @mediarithmics/plugins-sdk
+npm install --save @mediarithmics/plugins-nodejs-sdk
 ```
 ## Concepts
 
@@ -66,7 +66,7 @@ import {
     AdRendererBasePlugin,
     AdRendererRequest,
     AdRendererBaseInstanceContext
-} from '@mediarithmics/plugins-sdk';
+} from '@mediarithmics/plugins-nodejs-sdk';
 ```
 
 #### Activity Analyzer imports
@@ -76,7 +76,7 @@ import {
   ActivityAnalyzerRequest,
   ActivityAnalyzerBaseInstanceContext,
   ActivityAnalyzerPluginResponse
-} from "@mediarithmics/plugins-sdk";
+} from '@mediarithmics/plugins-nodejs-sdk';
 ```
 
 ### Plugin initialization
