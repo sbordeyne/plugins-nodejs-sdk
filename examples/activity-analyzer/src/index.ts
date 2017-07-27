@@ -3,7 +3,7 @@ import {
   ActivityAnalyzerRequest,
   ActivityAnalyzerBaseInstanceContext,
   ActivityAnalyzerPluginResponse
-} from "@mediarithmics/plugins-sdk";
+} from "@mediarithmics/plugins-nodejs-sdk";
 
 // All the magic is here
 const plugin = new ActivityAnalyzerPlugin(
