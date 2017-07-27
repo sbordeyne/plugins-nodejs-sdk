@@ -1,7 +1,7 @@
 {
-  "name": "@mediarithmics/plugins-sdk",
+  "name": "@mediarithmics/plugins-nodejs-sdk",
   "version": "0.1.0",
-  "description": "This is a set of Typescript classes and interfaces to help plugin developers during their development",
+  "description": "This is the mediarithmics nodejs to help plugin developers bootstrapping their plugin without having to deal with most of the plugin boilerplate",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "scripts": {
