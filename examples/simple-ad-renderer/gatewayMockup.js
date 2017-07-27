@@ -28,8 +28,8 @@ app.get('/v1/creatives/:creativeId', function (req, res) {
     "editor_plugin_id": "5",
     "renderer_version_id": "1054",
     "renderer_version_value": "1.0.0",
-    "renderer_group_id": "com.missena.creative.display",
-    "renderer_artifact_id": "multi-advertisers-display-ad-renderer",
+    "renderer_group_id": "com.mediarithmics.creative.display",
+    "renderer_artifact_id": "ad-renderer",
     "renderer_plugin_id": "1041",
     "creation_date": 1492785056278,
     "subtype": "BANNER",
@@ -38,7 +38,7 @@ app.get('/v1/creatives/:creativeId', function (req, res) {
     "creative_kit": null,
     "ad_layout": null,
     "locale": null,
-    "destination_domain": "splendia.com",
+    "destination_domain": "estcequecestbientotlapero.com",
     "audit_status": "NOT_AUDITED",
     "available_user_audit_actions": [
       "START_AUDIT"
@@ -50,15 +50,15 @@ app.get('/v1/creatives/:creativeId', function (req, res) {
 
 app.get('/v1/creatives/:creativeId/renderer_properties', function (req, res) {
 
-  const quantum_tag = `var eanADNXData = { type: "native", ah: "ntjlofic", adnxsId: "{{TAG_ID}}", sid: "{{MEDIA_ID}}", clickTAG: "{{CLICK_URL}}", cache: "{{CACHE_BUSTER}}", dsp: "a", dspData:"", isInPreview: "{{IS_PREVIEW}}" }; var isInIframe = function() { if (window.parent != window) { try { var u = window.parent.location; var frm = window.frameElement; var doc = window.parent.document; if (doc == undefined) return false; return true; } catch (er) {} } return false; }; if (String(eanADNXData.isInPreview) == "1" || String(eanADNXData.isInPreview) == "true" || String(eanADNXData.isInPreview).indexOf("IS_PREVIEW") > 0) { window.eanPlatformEnvironment = "nativedemo"; document.write("<scr"+"ipt type=\'text/javascript\' src=\'//cdn.elasticad.net/native/serve/js/helper/aPlatformPreview.gz.js\'></scr"+"ipt>"); } else { var w = window; if (isInIframe()) { w = window.parent } if (w.ean) { w.ean.initNativeAd(eanADNXData); } }`;
+  const js_tag = `console.log("PWNED");`;
 
   var json = `
 {
   "status":"ok",
   "data":[
     {
-      "technical_name":"quantum_tag",
-      "value":{"value":"${quantum_tag.replace(/"/g, '\\"')}"},
+      "technical_name":"js_tag",
+      "value":{"value":"${js_tag.replace(/"/g, '\\"')}"},
       "property_type":"STRING",
       "origin":"PLUGIN",
       "writable":true,

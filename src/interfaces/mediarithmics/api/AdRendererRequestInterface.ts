@@ -3,7 +3,7 @@ export type ProtocolEnum = 'http' | 'https';
 
 export interface SspExtension {
     source: string;
-    tag_id: string;
+    tag_id?: string;
 }
 
 export interface AdRendererRequest {
@@ -24,5 +24,5 @@ export interface AdRendererRequest {
     display_tracking_url: string;
     latitude: number;
     longitude: number;
-    ssp_extension: SspExtension;
+    ssp_extension?: SspExtension;
 }

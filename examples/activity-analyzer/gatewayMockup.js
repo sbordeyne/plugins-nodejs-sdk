@@ -32,7 +32,7 @@ app.get('/v1/activity_analyzers/:id/properties', function (req, res) {
 		"id":"2345",
 		"technical_name":"analyzer_rules",
 		"value":{
-			"uri":"mics://data_file/tenants/1060/plugins_conf/activity_analyzer.conf"
+			"uri":"mics://data_file/tenants/10001/plugins_conf/activity_analyzer.conf"
 				},
 		"property_type":"DATA_FILE"
 		}
