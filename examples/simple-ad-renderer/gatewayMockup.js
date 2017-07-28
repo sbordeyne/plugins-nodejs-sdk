@@ -38,7 +38,7 @@ app.get('/v1/creatives/:creativeId', function (req, res) {
     "creative_kit": null,
     "ad_layout": null,
     "locale": null,
-    "destination_domain": "estcequecestbientotlapero.com",
+    "destination_domain": "estcequecestbientotlapero.fr",
     "audit_status": "NOT_AUDITED",
     "available_user_audit_actions": [
       "START_AUDIT"
