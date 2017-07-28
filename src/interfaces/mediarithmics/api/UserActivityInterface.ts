@@ -12,7 +12,7 @@ export interface UserActivity {
     $origin: UserActivityOrigin;
     $location: UserActivityLocation;
     $events: UserActivityEvent[];
-    // An Activity can contains custom fields
+    // An Activity can contain custom fields
     [propsName: string]: any;
 }
 

@@ -2,8 +2,6 @@ import * as express from "express";
 import * as _ from "lodash";
 import * as cache from "memory-cache";
 
-import { AdRendererRequest } from "../../interfaces/mediarithmics/api/AdRendererRequestInterface";
-
 import { ActivityAnalyzerBaseInstanceContext } from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
 
 import { BasePlugin } from "./BasePlugin";

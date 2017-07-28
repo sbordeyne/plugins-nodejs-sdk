@@ -10,7 +10,7 @@ Coming soon:
 - Email Renderer
 - AdRenderer with recommendations and Handlebars support
 - Recommender
-- Email Routeur
+- Email Router
 - Bid Optimizer
 
 ## Installation
@@ -24,7 +24,7 @@ npm install --save @mediarithmics/plugins-nodejs-sdk
 
 ### Request
 
-A mediarithmics plugin is called by the mediarithmics platform wih a 'Request' that contains all the Data to process / evaluate. Each type of plugin, depending on its functionnal behavior, is receiving a different request payload.
+A mediarithmics plugin is called by the mediarithmics platform wih a 'Request' that contains all the Data to process / evaluate. Each type of plugin, depending on its functional behavior, is receiving a different request payload.
 
 The plugin SDK contains a typescript interface describing the format of the request for each supported plugin.
 
@@ -38,7 +38,7 @@ Please see the complete documentation [here.](https://developer.mediarithmics.co
 
 ### Instance Context
 
-A plugin instance can have a configuration that will change the way it will process Requests. As a plugin will be called numerous time to process Requestsbut its configuration is retrieved only once every 30 seconds for performance reasons.
+A plugin instance can have a configuration that will change the way it will process Requests. As a plugin will be called numerous time to process Requests but its configuration is retrieved only once every 30 seconds for performance reasons.
 
 Note: The plugin instance configuration can be done through mediarithmics console or by API.
 
@@ -81,7 +81,7 @@ import {
 
 ### Plugin initialization
 
-When instanciating a plugin, you need to give him the main 'processing' function that he will process everytime a Request is being received.
+When instantiating a plugin, you need to give him the main 'processing' function that he will process every time a Request is being received.
 
 #### AdRenderer initialization
 ``` js

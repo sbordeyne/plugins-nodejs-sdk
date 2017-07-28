@@ -53,7 +53,7 @@ export class BasePlugin {
   }
 
   // Health Status implementation
-  // This method can be overriden by any subclass
+  // This method can be overridden by any subclass
 
   onStatusRequest(req: express.Request, res: express.Response) {
     //Route used by the plugin manager to check if the plugin is UP and running
@@ -75,7 +75,7 @@ export class BasePlugin {
   }
 
   // Plugin Init implementation
-  // This method can be overriden by any subclass
+  // This method can be overridden by any subclass
 
   onInitRequest(req: express.Request, res: express.Response) {
     this.logger.debug("POST /v1/init ", req.body);
