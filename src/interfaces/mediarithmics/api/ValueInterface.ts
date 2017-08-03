@@ -3,4 +3,5 @@ export interface Value {
     id: string;
     version: string;
     url: string;
+    uri: string;
 }
