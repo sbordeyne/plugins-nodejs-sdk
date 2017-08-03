@@ -21,12 +21,15 @@ export class BasePlugin {
   // This method can be overridden by any subclass
   onLogLevelUpdate(req: express.Request, res: express.Response) {
     if (req.body && req.body.level) {
-      this.logger.info("Setting log level to " + req.body.level);
-      this.logger.level = req.body.level;
+
+      // Lowering case
+      const logLevel = req.body.level.toLowerCase();
+      this.logger.info("Setting log level to " + logLevel);
+      this.logger.level = logLevel;
       res.end();
     } else {
       this.logger.error(
-        "Incorrect body : Cannot change log level, actual: " + this.logger.level
+        "Incorrect body : Cannot change log level, current level: " + this.logger.level
       );
       res.status(500).end();
     }
@@ -43,12 +46,12 @@ export class BasePlugin {
   }
 
   private initLogLevelGetRoute() {
-    this.app.get("/v1/log_level", function(
+    this.app.get("/v1/log_level", (
       req: express.Request,
       res: express.Response
-    ) {
+    ) => {
       res.send({
-        level: this.logger.level
+        level: this.logger.level.toUpperCase()
       });
     });
   }
