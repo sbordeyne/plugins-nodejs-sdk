@@ -12,4 +12,5 @@ export * from "./interfaces/mediarithmics/api/ActivityAnalyzerRequestInterface";
 export * from "./interfaces/mediarithmics/api/ActivityAnalyzerPluginResponseInterface";
 export * from "./interfaces/mediarithmics/api/ActivityAnalyzerInterface";
 export * from "./interfaces/mediarithmics/api/ActivityAnalyzerPropertyInterface";
+export * from "./interfaces/mediarithmics/api/UserActivityInterface";
 export * from "./class/mediarithmics/ActivityAnalyzerPlugin";
