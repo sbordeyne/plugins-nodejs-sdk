@@ -21,7 +21,6 @@ export class BasePlugin {
   // This method can be overridden by any subclass
   onLogLevelUpdate(req: express.Request, res: express.Response) {
     if (req.body && req.body.level) {
-
       // Lowering case
       const logLevel = req.body.level.toLowerCase();
       this.logger.info("Setting log level to " + logLevel);
@@ -29,7 +28,8 @@ export class BasePlugin {
       res.end();
     } else {
       this.logger.error(
-        "Incorrect body : Cannot change log level, current level: " + this.logger.level
+        "Incorrect body : Cannot change log level, current level: " +
+          this.logger.level
       );
       res.status(500).end();
     }
@@ -46,14 +46,14 @@ export class BasePlugin {
   }
 
   private initLogLevelGetRoute() {
-    this.app.get("/v1/log_level", (
-      req: express.Request,
-      res: express.Response
-    ) => {
-      res.send({
-        level: this.logger.level.toUpperCase()
-      });
-    });
+    this.app.get(
+      "/v1/log_level",
+      (req: express.Request, res: express.Response) => {
+        res.send({
+          level: this.logger.level.toUpperCase()
+        });
+      }
+    );
   }
 
   // Health Status implementation
@@ -104,7 +104,8 @@ export class BasePlugin {
     uri: string,
     body?: string,
     qs?: any,
-    json?: boolean
+    isJson?: boolean,
+    isBinary?: boolean
   ) {
     let options = {
       method: method,
@@ -127,7 +128,7 @@ export class BasePlugin {
         )
       : options;
 
-      // Set the querystring if provided
+    // Set the querystring if provided
     options = qs
       ? Object.assign(
           {
@@ -137,11 +138,22 @@ export class BasePlugin {
         )
       : options;
 
-      // Set the json flag if provided
-    options = (json !== undefined)
+    // Set the json flag if provided
+    options =
+      isJson !== undefined
+        ? Object.assign(
+            {
+              json: isJson
+            },
+            options
+          )
+        : options;
+
+    // Set the encoding to null if it is binary
+    options = isBinary
       ? Object.assign(
           {
-            json: json
+            encoding: null
           },
           options
         )
@@ -162,13 +174,14 @@ export class BasePlugin {
     });
   }
 
-  fetchDataFile(uri: string): Promise<string> {
+  fetchDataFile(uri: string): Promise<Buffer> {
     return this.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/data_file/data`,
       undefined,
       { uri: uri },
-      false
+      false,
+      true
     );
   }
 

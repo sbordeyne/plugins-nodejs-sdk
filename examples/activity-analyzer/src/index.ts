@@ -43,7 +43,8 @@ plugin.setInstanceContextBuilder(async activityAnalyzerId => {
   const fileUri = activityAnalyzerProps.find(prop => {
     return prop.technical_name === "analyzer_rules";
   }).value.uri;
-  const fileContent = await plugin.fetchDataFile(fileUri);
+  const fileContentBinary = await plugin.fetchDataFile(fileUri);
+  const fileContent = fileContentBinary.toString();
 
   const context = {
     activityAnalyzer: activityAnalyzer,
