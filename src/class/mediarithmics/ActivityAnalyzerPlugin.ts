@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as _ from "lodash";
 import * as cache from "memory-cache";
+import * as winston from "winston";
 
 import { ActivityAnalyzerBaseInstanceContext } from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
 
@@ -75,7 +76,8 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
 
   private onActivityAnalysis: (
     request: ActivityAnalyzerRequest,
-    instanceContext: ActivityAnalyzerBaseInstanceContext
+    instanceContext: ActivityAnalyzerBaseInstanceContext,
+    logger: winston.LoggerInstance
   ) => ActivityAnalyzerPluginResponse;
 
   private initActivityAnalysis(): void {
@@ -116,7 +118,8 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
 
             const activityAnalyzerResponse = this.onActivityAnalysis(
               activityAnalyzerRequest,
-              instanceContext as ActivityAnalyzerBaseInstanceContext
+              instanceContext as ActivityAnalyzerBaseInstanceContext,
+              this.logger
             );
             res.status(200).send(JSON.stringify(activityAnalyzerResponse));
           } catch (error) {
@@ -137,7 +140,8 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   constructor(
     activityAnalysisHandler: (
       request: ActivityAnalyzerRequest,
-      instanceContext: ActivityAnalyzerBaseInstanceContext
+      instanceContext: ActivityAnalyzerBaseInstanceContext,
+      logger: winston.LoggerInstance
     ) => ActivityAnalyzerPluginResponse
   ) {
     super();

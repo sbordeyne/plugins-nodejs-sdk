@@ -3,12 +3,14 @@ import {
   AdRendererRequest,
   AdRendererBaseInstanceContext
 } from "@mediarithmics/plugins-nodejs-sdk";
+import * as winston from "winston";
 
 // All the magic is here
 const plugin = new AdRendererBasePlugin(
   (
     request: AdRendererRequest,
-    instanceContext: AdRendererBaseInstanceContext
+    instanceContext: AdRendererBaseInstanceContext,
+    logger: winston.LoggerInstance
   ) => {
     let html = `<html>
     <body>

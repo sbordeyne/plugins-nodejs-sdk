@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as _ from "lodash";
 import * as cache from "memory-cache";
+import * as winston from "winston";
 
 import { AdRendererRequest } from "../../interfaces/mediarithmics/api/AdRendererRequestInterface";
 import {
@@ -77,7 +78,8 @@ export class AdRendererBasePlugin extends BasePlugin {
 
   private onAdContents: (
     request: AdRendererRequest,
-    instanceContext: AdRendererBaseInstanceContext
+    instanceContext: AdRendererBaseInstanceContext,
+    logger: winston.LoggerInstance
   ) => string;
 
   private initAdContentsRoute(): void {
@@ -119,7 +121,8 @@ export class AdRendererBasePlugin extends BasePlugin {
             );
             const adRendererResponse = this.onAdContents(
               adRendererRequest,
-              instanceContext as AdRendererBaseInstanceContext
+              instanceContext as AdRendererBaseInstanceContext,
+              this.logger
             );
             return res.status(200).send(adRendererResponse);
           } catch (error) {
@@ -140,7 +143,8 @@ export class AdRendererBasePlugin extends BasePlugin {
   constructor(
     adContentsHandler: (
       request: AdRendererRequest,
-      instanceContext: AdRendererBaseInstanceContext
+      instanceContext: AdRendererBaseInstanceContext,
+      logger: winston.LoggerInstance
     ) => string
   ) {
     super();

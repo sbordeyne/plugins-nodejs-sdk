@@ -5,10 +5,11 @@ import {
   ActivityAnalyzerPluginResponse
 } from "@mediarithmics/plugins-nodejs-sdk";
 import { MyInstanceContext } from "./interfaces/MyInstanceContextInterface";
+import * as winston from "winston";
 
 // All the magic is here
 const plugin = new ActivityAnalyzerPlugin(
-  (request: ActivityAnalyzerRequest, instanceContext: MyInstanceContext) => {
+  (request: ActivityAnalyzerRequest, instanceContext: MyInstanceContext, logger: winston.LoggerInstance) => {
     const updatedActivity = request.activity;
     const response = {} as ActivityAnalyzerPluginResponse;
 
@@ -22,6 +23,8 @@ const plugin = new ActivityAnalyzerPlugin(
     updatedActivity.file_content = JSON.stringify(instanceContext.conf);
 
     response.data = updatedActivity;
+
+    logger.debug("Hello from plugin!");
 
     return response;
   }
