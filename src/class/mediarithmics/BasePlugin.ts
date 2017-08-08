@@ -9,7 +9,8 @@ export class BasePlugin {
   gatewayHost: string = process.env.GATEWAY_HOST || "plugin-gateway.platform";
   gatewayPort: number = parseInt(process.env.GATEWAY_PORT) || 8080;
 
-  outboundPlatformUrl: string = `http://${this.gatewayHost}:${this.gatewayPort}`;
+  outboundPlatformUrl: string = `http://${this.gatewayHost}:${this
+    .gatewayPort}`;
 
   app: express.Application;
   logger: winston.LoggerInstance;
@@ -20,12 +21,15 @@ export class BasePlugin {
   // This method can be overridden by any subclass
   onLogLevelUpdate(req: express.Request, res: express.Response) {
     if (req.body && req.body.level) {
-      this.logger.info("Setting log level to " + req.body.level);
-      this.logger.level = req.body.level;
+      // Lowering case
+      const logLevel = req.body.level.toLowerCase();
+      this.logger.info("Setting log level to " + logLevel);
+      this.logger.level = logLevel;
       res.end();
     } else {
       this.logger.error(
-        "Incorrect body : Cannot change log level, actual: " + this.logger.level
+        "Incorrect body : Cannot change log level, current level: " +
+          this.logger.level
       );
       res.status(500).end();
     }
@@ -42,14 +46,14 @@ export class BasePlugin {
   }
 
   private initLogLevelGetRoute() {
-    this.app.get("/v1/log_level", function (
-      req: express.Request,
-      res: express.Response
-    ) {
-      res.send({
-        level: this.logger.level
-      });
-    });
+    this.app.get(
+      "/v1/log_level",
+      (req: express.Request, res: express.Response) => {
+        res.send({
+          level: this.logger.level.toUpperCase()
+        });
+      }
+    );
   }
 
   // Health Status implementation
@@ -95,8 +99,15 @@ export class BasePlugin {
   }
 
   // Helper request function
-  requestGatewayHelper(method: string, uri: string, body?: string) {
-    const options = {
+  requestGatewayHelper(
+    method: string,
+    uri: string,
+    body?: string,
+    qs?: any,
+    isJson?: boolean,
+    isBinary?: boolean
+  ) {
+    let options = {
       method: method,
       uri: uri,
       json: true,
@@ -107,28 +118,71 @@ export class BasePlugin {
       }
     };
 
-    return rp(
-      body
-        ? Object.assign(
+    // Set the body if provided
+    options = body
+      ? Object.assign(
           {
             body: body
           },
           options
         )
-        : options
-    ).catch(function (e) {
+      : options;
+
+    // Set the querystring if provided
+    options = qs
+      ? Object.assign(
+          {
+            qs: qs
+          },
+          options
+        )
+      : options;
+
+    // Set the json flag if provided
+    options =
+      isJson !== undefined
+        ? Object.assign(
+            {
+              json: isJson
+            },
+            options
+          )
+        : options;
+
+    // Set the encoding to null if it is binary
+    options = isBinary
+      ? Object.assign(
+          {
+            encoding: null
+          },
+          options
+        )
+      : options;
+
+    return rp(options).catch(function(e) {
       if (e.name === "StatusCodeError") {
         throw new Error(
           `Error while calling ${method} '${uri}' with the request body '${body ||
-          ""}': got a ${e.response.statusCode} ${e.response
+            ""}': got a ${e.response.statusCode} ${e.response
             .statusMessage} with the response body ${JSON.stringify(
-              e.response.body
-            )}`
+            e.response.body
+          )}`
         );
       } else {
         throw e;
       }
     });
+  }
+
+  fetchDataFile(uri: string): Promise<Buffer> {
+    return this.requestGatewayHelper(
+      "GET",
+      `${this.outboundPlatformUrl}/v1/data_file/data`,
+      undefined,
+      { uri: uri },
+      false,
+      true
+    );
   }
 
   constructor() {

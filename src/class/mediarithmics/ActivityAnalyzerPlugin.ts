@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as _ from "lodash";
 import * as cache from "memory-cache";
+import * as winston from "winston";
 
 import { ActivityAnalyzerBaseInstanceContext } from "../../interfaces/mediarithmics/plugin/InstanceContextInterface";
 
@@ -26,7 +27,8 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
     return super
       .requestGatewayHelper(
         "GET",
-        `${this.outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}`
+        `${this
+          .outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}`
       )
       .then((result: ActivityAnalyzerResponse) => {
         this.logger.debug(
@@ -74,13 +76,14 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
 
   private onActivityAnalysis: (
     request: ActivityAnalyzerRequest,
-    instanceContext: ActivityAnalyzerBaseInstanceContext
+    instanceContext: ActivityAnalyzerBaseInstanceContext,
+    logger: winston.LoggerInstance
   ) => ActivityAnalyzerPluginResponse;
 
   private initActivityAnalysis(): void {
     this.app.post(
       "/v1/activity_analysis",
-      (req: express.Request, res: express.Response) => {
+      async (req: express.Request, res: express.Response) => {
         if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: "Missing request body"
@@ -88,41 +91,43 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
           this.logger.error("POST /v1/activity_analysis : %s", msg);
           res.status(500).json(msg);
         } else {
-          this.logger.debug(
-            `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
-          );
-
-          const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
-
-          if (!this.onActivityAnalysis) {
-            throw new Error("No AdContents listener registered!");
-          }
-
-          if (!cache.get(activityAnalyzerRequest.activity_analyzer_id)) {
-            cache.put(
-              activityAnalyzerRequest.activity_analyzer_id,
-              this.buildInstanceContext(
-                activityAnalyzerRequest.activity_analyzer_id
-              ),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+          try {
+            this.logger.debug(
+              `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
             );
-          }
 
-          cache
-            .get(activityAnalyzerRequest.activity_analyzer_id)
-            .then((instanceContext: ActivityAnalyzerBaseInstanceContext) => {
-              const activityAnalyzerResponse = this.onActivityAnalysis(
-                activityAnalyzerRequest,
-                instanceContext as ActivityAnalyzerBaseInstanceContext
+            const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
+
+            if (!this.onActivityAnalysis) {
+              throw new Error("No AdContents listener registered!");
+            }
+
+            if (!cache.get(activityAnalyzerRequest.activity_analyzer_id)) {
+              cache.put(
+                activityAnalyzerRequest.activity_analyzer_id,
+                this.buildInstanceContext(
+                  activityAnalyzerRequest.activity_analyzer_id
+                ),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
-              res.status(200).send(JSON.stringify(activityAnalyzerResponse));
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
-              );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+            }
+
+            const instanceContext: ActivityAnalyzerBaseInstanceContext = await cache.get(
+              activityAnalyzerRequest.activity_analyzer_id
+            );
+
+            const activityAnalyzerResponse = this.onActivityAnalysis(
+              activityAnalyzerRequest,
+              instanceContext as ActivityAnalyzerBaseInstanceContext,
+              this.logger
+            );
+            res.status(200).send(JSON.stringify(activityAnalyzerResponse));
+          } catch (error) {
+            this.logger.error(
+              `Something bad happened : ${error.message} - ${error.stack}`
+            );
+            return res.status(500).send(error.message + "\n" + error.stack);
+          }
         }
       }
     );
@@ -131,11 +136,12 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
   start() {
     this.initActivityAnalysis();
   }
-  
+
   constructor(
     activityAnalysisHandler: (
       request: ActivityAnalyzerRequest,
-      instanceContext: ActivityAnalyzerBaseInstanceContext
+      instanceContext: ActivityAnalyzerBaseInstanceContext,
+      logger: winston.LoggerInstance
     ) => ActivityAnalyzerPluginResponse
   ) {
     super();
@@ -164,6 +170,5 @@ export class ActivityAnalyzerPlugin extends BasePlugin {
 
       return context;
     });
-
   }
 }
