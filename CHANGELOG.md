@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 - 2017-09-11
+
+- Breaking changes in the SDK public API > Now relying on Javascript ES6 Class APIs. Not compatible with the 0.1.x versions of the SDK
+- New interfaces for UserActivity / Recommendations objects
+- New Plugin type to implement Ad Renderer using Recommendations and Templating features
+- Handlebars.js template engine integration
+- Testing capbility of plugin built with this SDK. See the examples to see how it works.
+- SDK Tests: The SDK itself is now tested, you can run the tests by typing `npm test`
+- Doc generation: Use `npm doc` to generate the documentation (using typedoc)
+
 ## 0.1.2 - 2017-08-08
 
 - Fix missing value in ValueInterface (=> url)
