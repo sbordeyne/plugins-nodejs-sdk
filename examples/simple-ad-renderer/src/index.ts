@@ -1,34 +1,8 @@
-import {
-  AdRendererBasePlugin,
-  AdRendererRequest,
-  AdRendererBaseInstanceContext
-} from "@mediarithmics/plugins-nodejs-sdk";
-import * as winston from "winston";
+import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import { MySimpleAdRenderer } from './MyPluginImpl'
 
-// All the magic is here
-const plugin = new AdRendererBasePlugin(
-  (
-    request: AdRendererRequest,
-    instanceContext: AdRendererBaseInstanceContext,
-    logger: winston.LoggerInstance
-  ) => {
-    let html = `<html>
-    <body>
-    <h1>Creative: ${instanceContext.creative.name}</h1>
-    <br/>
-    <p>
-    Powered by the Ad Renderer: ${instanceContext.creative
-      .renderer_group_id}:${instanceContext.creative
-      .renderer_artifact_id} v.${instanceContext.creative
-      .renderer_version_value}
-    </p>
-    <!-- We always need to include the mediarithmics impression tracking pixel -->
-    <img src="${request.display_tracking_url}" />
-    </body>
-    </html>`;
+//All the magic is here
+const plugin = new MySimpleAdRenderer();
+const runner = new core.ProductionPluginRunner(plugin);
 
-    return html;
-  }
-);
-
-plugin.start();
+runner.start();

@@ -1,5 +1,5 @@
-import { ActivityAnalyzerBaseInstanceContext } from "@mediarithmics/plugins-nodejs-sdk";
+import { core } from "@mediarithmics/plugins-nodejs-sdk";
 
-export interface MyInstanceContext extends ActivityAnalyzerBaseInstanceContext {
+export interface MyInstanceContext extends core.ActivityAnalyzerBaseInstanceContext {
   conf: any;
 }

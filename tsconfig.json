@@ -16,6 +16,7 @@
     "exclude": [
         "./build",
         "./node_modules",
-        "./examples"
+        "./examples",
+        "./src/tests"
     ]
 }
