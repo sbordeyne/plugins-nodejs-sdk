@@ -115,7 +115,6 @@ describe("Activity Analysis API test", function() {
           count: 45,
           data: [
             {
-              id: "42",
               technical_name: "hello_world",
               value: {
                 value: "Yay"

@@ -41,7 +41,6 @@ const creative: core.CreativeResponse = {
   count: 1
 };
 
-// Activity Analyzer properties stub
 const creativePropertiesResponse: core.PluginPropertyResponse = {
   status: "ok",
   data: [
@@ -653,4 +652,133 @@ describe("Test Example Handlebar Ad Renderer", function() {
           });
       });
   });
+
+  it("Check that the plugin doesn't fail without any recommenderId provided", function(done) {
+    // All the magic is here
+
+    // Template File stub
+    const templateContent: string = `Hello World!`;
+
+    const rpMockup = buildRpMockup(templateContent);
+
+    // properties without recommederId
+
+    const creativePropertiesResponse: core.PluginPropertyResponse = {
+      status: "ok",
+      data: [
+        {
+          technical_name: "click_url",
+          value: {
+            url:
+              "http://www.april.fr/mon-assurance-de-pret-formulaire?cmpid=disp_datacomp_formadp_bann_300x250"
+          },
+          property_type: "URL",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "ad_layout",
+          value: { id: "144", version: "145" },
+          property_type: "AD_LAYOUT",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "backup_image",
+          value: { original_file_name: null, asset_id: null, file_path: null },
+          property_type: "ASSET",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "datamart_id",
+          value: { value: null },
+          property_type: "STRING",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "default_items",
+          value: { value: null },
+          property_type: "STRING",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "style_sheet",
+          value: { id: null, version: null },
+          property_type: "STYLE_SHEET",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "recommender_id",
+          value: { value: null },
+          property_type: "STRING",
+          origin: "PLUGIN",
+          writable: true,
+          deletable: false
+        },
+        {
+          technical_name: "tag_type",
+          value: { value: null },
+          property_type: "STRING",
+          origin: "PLUGIN_STATIC",
+          writable: false,
+          deletable: false
+        }
+      ],
+      count: 8
+    };
+
+    rpMockup
+    .withArgs(
+      sinon.match.has(
+        "uri",
+        sinon.match(function(value: string) {
+          return (
+            value.match(/\/v1\/creatives\/(.){1,10}\/renderer_properties/) !==
+            null
+          );
+        })
+      )
+    )
+    .returns(creativePropertiesResponse);
+
+    const plugin = new MyHandlebarsAdRenderer();
+    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+
+    // Plugin init
+    request(runner.plugin.app)
+      .post("/v1/init")
+      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+
+        // Plugin log level to debug
+        request(runner.plugin.app)
+          .put("/v1/log_level")
+          .send({ level: "silly" })
+          .end((err, res) => {
+            expect(res.status).to.equal(200);
+
+            // Activity to process
+            request(runner.plugin.app)
+              .post("/v1/ad_contents")
+              .send(adRequest)
+              .end((err, res) => {
+                expect(res.status).to.eq(200);
+
+                done();
+              });
+          });
+      });
+  });
+
 });

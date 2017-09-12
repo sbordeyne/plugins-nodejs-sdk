@@ -220,7 +220,7 @@ export abstract class BasePlugin {
     this.app.use(bodyParser.json({ type: "*/*" }));
     this.logger = new winston.Logger({
       transports: [new winston.transports.Console()],
-      level: "silly"
+      level: "info"
     });
 
     this.pluginCache = cache;

@@ -1,11 +1,11 @@
 {
-  "name": "ad-renderer-example",
+  "name": "bid-optimizer-example",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
   "scripts": {
     "test": "mocha -r ts-node/register src/tests/*.ts",
-    "build": "tsc -p ./ --outDir build/"
+    "prepublishOnly": "tsc -p ./ --outDir build/"
   },
   "author": "",
   "license": "Apache-2.0",

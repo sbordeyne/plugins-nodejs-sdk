@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 - 2017-09-XX
+
+- Added support of the BidOptimizer plugins
+- Fix PluginProperty interface
+- Added a BidOptimizer example
+- Removed package-lock.json from examples for SDK release testing purposes
+- Added some Geolocation helpers
+
 ## 0.2.0 - 2017-09-11
 
 - Breaking changes in the SDK public API > Now relying on Javascript ES6 Class APIs. Not compatible with the 0.1.x versions of the SDK

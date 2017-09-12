@@ -29,6 +29,16 @@ export * from "./interfaces/mediarithmics/api/activity-analyzer/ActivityAnalyzer
 export * from "./interfaces/mediarithmics/api/activity-analyzer/ActivityAnalyzerInterface";
 export * from "./class/mediarithmics/activity-analyzer/ActivityAnalyzerBasePlugin";
 
+// Bid Optimizer
+export * from "./interfaces/mediarithmics/api/bid-optimizer/BidOptimizerRequestInterface";
+export * from "./interfaces/mediarithmics/api/bid-optimizer/BidOptimizerPluginResponseInterface";
+
+export * from "./interfaces/mediarithmics/api/bid-optimizer/BidOptimizerInterface";
+export * from "./class/mediarithmics/bid-optimizer/BidOptimizerBasePlugin";
+
 // Plugin Runner
 export * from "./class/mediarithmics/common/ProductionPluginRunner";
 export * from "./class/mediarithmics/common/TestingPluginRunner";
+
+// Helpers
+export * from "./class/mediarithmics/common/GeolocHelpers"
