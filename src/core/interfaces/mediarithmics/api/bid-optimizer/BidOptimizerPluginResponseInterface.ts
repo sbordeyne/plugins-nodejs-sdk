@@ -6,10 +6,9 @@ export interface BidOptimizerPluginResponse {
 
 export interface Bid{
   index: number;
-  bidPrice: number;
-  saleConditionId: string;
+  bid_price: number;
+  sale_condition_id: string;
   debug?: string;
-  modelId?: string;
-  modelParameter?: string;
-  creativeVariant?: string;
+  model_id?: string;
+  model_parameter?: string;
 }

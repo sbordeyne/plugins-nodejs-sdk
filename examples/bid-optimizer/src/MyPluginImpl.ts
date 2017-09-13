@@ -17,8 +17,8 @@ export class MyBidOptimizerPlugin extends core.BidOptimizerPlugin {
       (placementInfo, index) => {
         return {
           index: index,
-          bidPrice: request.campaign_info.max_bid_price,
-          saleConditionId: this.findBestSalesConditions(
+          bid_price: request.campaign_info.max_bid_price,
+          sale_condition_id: this.findBestSalesConditions(
             request.campaign_info.max_bid_price,
             placementInfo.sales_conditions
           ).id

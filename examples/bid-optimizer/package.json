@@ -4,8 +4,9 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register src/tests/*.ts",
-    "prepublishOnly": "tsc -p ./ --outDir build/"
+    "pretest": "npm run build",
+    "test": "mocha build/tests/*.js",
+    "build": "tsc -p ./ --outDir build/"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -21,10 +22,13 @@
     "@types/chai": "^4.0.3",
     "@types/escape-html": "0.0.20",
     "@types/mocha": "^2.2.41",
+    "@types/sinon": "^2.3.3",
+    "@types/supertest": "^2.0.3",
     "chai": "^4.1.1",
     "escape-html": "^1.0.3",
     "mocha": "^3.5.0",
-    "ts-node": "^3.3.0",
+    "sinon": "^3.2.1",
+    "supertest": "^3.0.0",
     "typescript": "^2.4.2"
   }
 }

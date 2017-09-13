@@ -182,7 +182,7 @@ describe("Test Example BidOptimizer", function() {
                 .end((err, res) => {
                   expect(res.status).to.eq(200);
   
-                  expect((JSON.parse(res.text) as core.BidOptimizerPluginResponse).bids[0].bidPrice).to.be.eq(bidDecisionRequest.campaign_info.max_bid_price);
+                  expect((JSON.parse(res.text) as core.BidOptimizerPluginResponse).bids[0].bid_price).to.be.eq(bidDecisionRequest.campaign_info.max_bid_price);
                   done();
                 });
             });

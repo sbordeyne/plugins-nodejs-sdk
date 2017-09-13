@@ -4,7 +4,8 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register src/tests/*.ts",
+    "pretest": "npm run build",
+    "test": "mocha build/tests/*.js",
     "build": "tsc -p ./ --outDir build/"
   },
   "author": "",
@@ -29,7 +30,6 @@
     "proxyquire": "^1.8.0",
     "sinon": "^3.2.1",
     "supertest": "^3.0.0",
-    "ts-node": "^3.3.0",
     "typescript": "^2.4.2"
   }
 }

@@ -4,7 +4,8 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register src/tests/*.ts",
+    "pretest": "npm run build",
+    "test": "mocha build/tests/*.js",
     "build": "tsc -p ./ --outDir build/"
   },
   "author": "",
@@ -21,10 +22,14 @@
   "devDependencies": {
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.42",
+    "@types/sinon": "^2.3.4",
+    "@types/supertest": "^2.0.3",
     "@types/request-promise-native": "^1.0.6",
     "chai": "^4.1.2",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
+    "sinon": "^3.2.1",
+    "supertest": "^3.0.0",
     "typescript": "^2.4.2"
   }
 }
