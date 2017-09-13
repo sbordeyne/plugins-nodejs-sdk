@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.1 - 2017-09-XX
+## 0.2.1 - 2017-09-13
 
 - Added support of the BidOptimizer plugins
 - Fix PluginProperty interface
