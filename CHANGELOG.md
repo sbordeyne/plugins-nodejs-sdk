@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 - 2017-09-14
+
+- Fix user_agent_id interface
+- Add testing of User Agent id (case: null & check if correctly passed to recommender)
+
 ## 0.2.1 - 2017-09-13
 
 - Added support of the BidOptimizer plugins
