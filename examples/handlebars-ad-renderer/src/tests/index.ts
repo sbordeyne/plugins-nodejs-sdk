@@ -273,7 +273,7 @@ const adRequest: core.AdRendererRequest = {
   campaign_id: "1537",
   ad_group_id: "1622",
   protocol: "https",
-  user_agent_id: { value: "vec:42000" },
+  user_agent_id: "vec:42000",
   user_agent:
     "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; MALCJS; rv:11.0) like Gecko",
   user_agent_info: {
@@ -329,6 +329,19 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
+
+                expect(rpMockup
+                  .withArgs(
+                    sinon.match.has(
+                      "uri",
+                      sinon.match(function(value: string) {
+                        return (
+                          value.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/) !==
+                          null
+                        );
+                      })
+                    )
+                  ).args[0][0].body.input_data.user_agent_id).to.be.eq(adRequest.user_agent_id);
 
                 done();
               });
@@ -774,6 +787,60 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
+
+                done();
+              });
+          });
+      });
+  });
+
+  it("Check if plugin doesn't fail without any user_agent_id", function(done) {
+    // All the magic is here
+
+    // Template File stub
+    const templateContent: string = `Hello World!`;
+
+    const rpMockup = buildRpMockup(templateContent);
+
+    const plugin = new MyHandlebarsAdRenderer();
+    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+
+    const adRequest2 = Object.assign({}, adRequest); 
+    adRequest2.user_agent_id = null;
+
+    // Plugin init
+    request(runner.plugin.app)
+      .post("/v1/init")
+      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+
+        // Plugin log level to debug
+        request(runner.plugin.app)
+          .put("/v1/log_level")
+          .send({ level: "silly" })
+          .end((err, res) => {
+            expect(res.status).to.equal(200);
+
+            // Activity to process
+            request(runner.plugin.app)
+              .post("/v1/ad_contents")
+              .send(adRequest2)
+              .end((err, res) => {
+                expect(res.status).to.eq(200);
+
+                expect(rpMockup
+                  .withArgs(
+                    sinon.match.has(
+                      "uri",
+                      sinon.match(function(value: string) {
+                        return (
+                          value.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/) !==
+                          null
+                        );
+                      })
+                    )
+                  ).args[0][0].body.input_data.user_agent_id).to.be.eq(adRequest2.user_agent_id);
 
                 done();
               });

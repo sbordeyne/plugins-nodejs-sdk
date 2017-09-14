@@ -166,7 +166,7 @@ const adRequest: core.AdRendererRequest = {
   campaign_id: "1537",
   ad_group_id: "1622",
   protocol: "https",
-  user_agent_id: { value: "vec:42000" },
+  user_agent_id: "vec:42000",
   user_agent:
     "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; MALCJS; rv:11.0) like Gecko",
   user_agent_info: {

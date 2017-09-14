@@ -91,12 +91,9 @@ Error: ${e.message} - ${e.stack}`);
     instanceContext: AdRendererRecoTemplateInstanceContext,
     userAgentId: string
   ): Promise<Array<ItemProposal>> {
-    const recommenderId = instanceContext.recommender_id
-      ? instanceContext.recommender_id
-      : null;
 
     // Without any recommender, we return an empty array
-    if (!recommenderId) {
+    if (!instanceContext.recommender_id) {
       return Promise.resolve([]);
     }
 
@@ -119,7 +116,7 @@ Error: ${e.message} - ${e.stack}`);
     );
 
     this.logger.debug(
-      `Recommender ${recommenderId} response : ${JSON.stringify(response)}`
+      `Recommender ${instanceContext.recommender_id} response : ${JSON.stringify(response)}`
     );
 
     return response.data.proposals;

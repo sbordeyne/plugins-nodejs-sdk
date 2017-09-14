@@ -9,7 +9,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
         core.ItemProposal
       > = await this.fetchRecommendations(
         instanceContext,
-        adRenderRequest.user_agent_id.value
+        adRenderRequest.user_agent_id
       );
   
       const engine = this.engineBuilder;
