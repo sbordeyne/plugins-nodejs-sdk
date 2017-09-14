@@ -66,7 +66,7 @@ describe("Test Example Activity Analyzer", function() {
         })
       )
     )
-    .returns(activityAnalyzer);
+    .returns(activityAnalyzerProperties);
 
   // Fake Activity
 
