@@ -65,5 +65,5 @@ export interface UserActivityEvent {
 }
 
 export interface UserActivityEventProperty {
-    [propsName: string]: number | string;
+    [propsName: string]: any;
 }
