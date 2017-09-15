@@ -66,7 +66,7 @@ describe("Test Example Activity Analyzer", function() {
         })
       )
     )
-    .returns(activityAnalyzer);
+    .returns(activityAnalyzerProperties);
 
   // Fake Activity
 
@@ -151,7 +151,7 @@ describe("Test Example Activity Analyzer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "debug" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
