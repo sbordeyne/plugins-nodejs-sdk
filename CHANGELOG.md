@@ -1,4 +1,10 @@
 # Changelog
+## 0.2.3 - 2017-09-15
+
+- Updated the UserActivityEventProperty Interface
+- Fix some Activity Analyzer tests
+
+
 
 ## 0.2.2 - 2017-09-14
 
