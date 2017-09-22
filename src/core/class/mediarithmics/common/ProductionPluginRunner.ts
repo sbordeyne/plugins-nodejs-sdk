@@ -28,6 +28,7 @@ export class ProductionPluginRunner {
 
       cluster.on("exit", (worker, code, signal) => {
         this.plugin.logger.info(`worker ${worker.process.pid} died`);
+        cluster.fork();
       });
 
     } else {
@@ -38,7 +39,7 @@ export class ProductionPluginRunner {
       );
 
       this.plugin.logger.info(`Worker ${process.pid} started`);
-      
+
     }
   }
 }
