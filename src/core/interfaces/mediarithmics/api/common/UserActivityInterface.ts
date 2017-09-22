@@ -20,7 +20,6 @@ export interface UserVisitActivity extends UserActivity {
     $session_duration?: number;
     $score?: number;
     $topics?: Map<string, Map<string, number>>;
-    $channel_id: number;
     $site_id?: number;
     $app_id?: number;
 }
