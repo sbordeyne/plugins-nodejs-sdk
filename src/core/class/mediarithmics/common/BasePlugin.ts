@@ -10,7 +10,7 @@ import { Credentials, SocketMsg, MsgCmd } from "../../../index";
 export abstract class BasePlugin {
   multiThread: boolean = false;
 
-  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
+  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 120000;
 
   pluginCache: any;
   gatewayHost: string = process.env.GATEWAY_HOST || "plugin-gateway.platform";
