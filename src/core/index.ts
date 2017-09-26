@@ -2,8 +2,8 @@
 export * from "./class/mediarithmics/common/BasePlugin";
 export * from "./interfaces/mediarithmics/api/common/ValueInterface";
 export * from "./interfaces/mediarithmics/api/common/PluginPropertyInterface";
+export * from "./interfaces/mediarithmics/api/common/CredentialsInterface";
 
-export * from "./interfaces/mediarithmics/api/common/PluginPropertyInterface";
 export * from "./interfaces/mediarithmics/api/common/UserActivityInterface";
 export * from "./interfaces/mediarithmics/api/common/UserIdentifierInterface";
 
