@@ -149,6 +149,12 @@ export class ProductionPluginRunner {
       };
       process.send(tokenRefreshRequest);
 
+      // We ask for a logLevel refresh from Master (in case we are a new Worker just created and that Master already have a logLevel)
+      const logLevelRefreshRequest: SocketMsg = {
+        cmd: MsgCmd.GET_LOG_LEVEL_REQUEST
+      };
+      process.send(logLevelRefreshRequest);
+
       const serverPort = port ? port : this.pluginPort;
 
       this.server = this.plugin.app.listen(serverPort, () =>
