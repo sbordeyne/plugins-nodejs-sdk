@@ -36,11 +36,9 @@ const creative: core.CreativeResponse = {
     destination_domain: "splendia.com",
     audit_status: "NOT_AUDITED",
     available_user_audit_actions: ["START_AUDIT"]
-  },
-  count: 1
+  }
 };
 
-// Activity Analyzer properties stub
 const creativePropertiesResponse: core.PluginPropertyResponse = {
   status: "ok",
   data: [
