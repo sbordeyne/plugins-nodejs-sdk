@@ -32,7 +32,7 @@ export class ProductionPluginRunner {
    * 4 - If a worker is asking for a log level update (ex: the worker was just created because one of his friends died), the master should send a message to each workers
    * @param recMsg 
    */
-  masterListener = (recMsg: SocketMsg) => {
+  masterListener = (worker: cluster.Worker, recMsg: SocketMsg) => {
     this.plugin.logger.debug(
       `Master is being called with ${JSON.stringify(recMsg)}`
     );
@@ -122,11 +122,8 @@ export class ProductionPluginRunner {
         cluster.fork();
       }
 
-      // We add a socket Listener to each workers so that Master can listen to them
-      for (const id in cluster.workers) {
-        this.plugin.logger.info(`Updated listener of Woker: ${id}`);
-        cluster.workers[id].on("message", this.masterListener);
-      }
+      // Listener for when the Cluster is being called by a worker
+      cluster.on('message', this.masterListener);
 
       // Sometimes, workers dies
       cluster.on("exit", (worker, code, signal) => {
@@ -134,7 +131,6 @@ export class ProductionPluginRunner {
 
         // We add a new worker, with the proper socket listener
         const newWorker = cluster.fork();
-        newWorker.on("message", this.masterListener);
       });
     } else {
       // We pass the Plugin into MT mode
