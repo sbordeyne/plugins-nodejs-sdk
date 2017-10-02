@@ -93,7 +93,7 @@ describe("Activity Analysis API test", function() {
 
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.ActivityAnalyzerResponse = {
+        const pluginInfo: core.ResponseData<core.ActivityAnalyzer> = {
           status: "ok",
           count: 2,
           data: {

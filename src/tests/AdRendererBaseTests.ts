@@ -83,7 +83,7 @@ describe("Ad Contents API test", function() {
     const rpMockup = sinon.stub();
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.CreativeResponse = {
+        const pluginInfo: core.ResponseData<core.Creative> = {
           status: "ok",
           count: 1,
           data: {
