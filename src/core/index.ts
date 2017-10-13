@@ -8,6 +8,10 @@ export * from "./interfaces/mediarithmics/api/common/UserActivityInterface";
 export * from "./interfaces/mediarithmics/api/common/UserIdentifierInterface";
 
 export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
+export * from "./interfaces/mediarithmics/plugin/InitResponse";
+export * from "./interfaces/mediarithmics/plugin/LogLevelResponse";
+export * from "./interfaces/mediarithmics/plugin/ResponseStatusCode";
+
 
 // Ad Renderer
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererRequestInterface";

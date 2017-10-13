@@ -1,11 +1,11 @@
 import { BasePlugin } from "./BasePlugin";
 import { Server } from "http";
 import * as cluster from "cluster";
+import { Credentials } from "../../../index";
 
 export enum MsgCmd {
   CREDENTIAL_UPDATE_FROM_WORKER,
   CREDENTIAL_UPDATE_FROM_MASTER,
-  GET_CREDENTIAL_REQUEST,
   LOG_LEVEL_UPDATE_FROM_WORKER,
   LOG_LEVEL_UPDATE_FROM_MASTER,
   GET_LOG_LEVEL_REQUEST
@@ -34,7 +34,9 @@ export class ProductionPluginRunner {
    */
   masterListener = (worker: cluster.Worker, recMsg: SocketMsg) => {
     this.plugin.logger.debug(
-      `Master is being called with ${JSON.stringify(recMsg)}`
+      `Master ${process.pid} is being called with cmd: ${MsgCmd[
+        recMsg.cmd
+      ]}, value: ${recMsg.value}`
     );
 
     // If we receive a Token Update, we update the token
@@ -43,17 +45,20 @@ export class ProductionPluginRunner {
     }
 
     // We send the token to each of the workers
-    if (
-      recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER ||
-      recMsg.cmd === MsgCmd.GET_CREDENTIAL_REQUEST
-    ) {
-      const msg = {
-        cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER,
-        value: JSON.stringify(this.plugin.credentials)
-      };
-      for (const id in cluster.workers) {
-        cluster.workers[id].send(msg);
-        }  
+    if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER) {
+      if (
+        this.plugin.credentials &&
+        this.plugin.credentials.authentication_token &&
+        this.plugin.credentials.worker_id
+      ) {
+        const msg = {
+          cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER,
+          value: JSON.stringify(this.plugin.credentials)
+        };
+        for (const id in cluster.workers) {
+          cluster.workers[id].send(msg);
+        }
+      }
     }
 
     // If we receive a Log Level, we update the token
@@ -62,46 +67,60 @@ export class ProductionPluginRunner {
     }
 
     // We send the log level to each of the workers
-    if (
-      recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_WORKER ||
-      recMsg.cmd === MsgCmd.GET_LOG_LEVEL_REQUEST
-    ) {
+    if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_WORKER) {
       const msg = {
         cmd: MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER,
         value: this.plugin.logger.level
       };
 
       for (const id in cluster.workers) {
-      cluster.workers[id].send(msg);
-      }        
-
+        cluster.workers[id].send(msg);
+      }
     }
-
   };
 
   /**
-   * Socker Listener of the worker. It should listen for Token update from master and for Log Level changes
+   * Socker Listener of the workers. It should listen for Token update from master and for Log Level changes
    * @param recMsg 
    */
   workerListener = (recMsg: SocketMsg) => {
-
     this.plugin.logger.debug(
-      `Worker is being called with ${JSON.stringify(recMsg)}`
+      `Worker ${process.pid} is being called with cmd: ${MsgCmd[
+        recMsg.cmd
+      ]}, value: ${recMsg.value}`
     );
 
     // If we receive a Token Update, we propagate it to all workers
     if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER) {
-      this.plugin.credentials = JSON.parse(recMsg.value);
+      const creds: Credentials = JSON.parse(recMsg.value);
 
-      this.plugin.logger.debug(
-        `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
-      );
+      const initUpdateResult = this.plugin.onInitRequest(creds);
+
+      if (initUpdateResult.status === "error") {
+        this.plugin.logger.error(
+          `${process.pid}: Error while Init: ${initUpdateResult.msg}`
+        );
+      } else {
+        this.plugin.logger.debug(
+          `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
+        );
+      }
     } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
-      this.plugin.logger.level = recMsg.value.toLocaleLowerCase();
+      const level = recMsg.value.toLocaleLowerCase();
 
-      this.plugin.logger.debug(
-        `Updated log level with: ${JSON.stringify(this.plugin.logger.level)}`
-      );
+      const logLevelUpdateResult = this.plugin.onLogLevelUpdate(level);
+
+      if (logLevelUpdateResult.status === "error") {
+        this.plugin.logger.error(
+          `${process.pid}: Error while updateting LogLevel: ${logLevelUpdateResult.msg}`
+        );
+      } else {
+        this.plugin.logger.debug(
+          `${process.pid}: Updated log level with: ${JSON.stringify(
+            this.plugin.logger.level
+          )}`
+        );
+      }
     }
   };
 
@@ -123,7 +142,7 @@ export class ProductionPluginRunner {
       }
 
       // Listener for when the Cluster is being called by a worker
-      cluster.on('message', this.masterListener);
+      cluster.on("message", this.masterListener);
 
       // Sometimes, workers dies
       cluster.on("exit", (worker, code, signal) => {
@@ -139,22 +158,12 @@ export class ProductionPluginRunner {
       // We attach a socket listener to get messages from master
       process.on("message", this.workerListener);
 
-      // We ask for a token refresh from Master (in case we are a new Worker just created and that Master already have a token)
-      const tokenRefreshRequest: SocketMsg = {
-        cmd: MsgCmd.GET_CREDENTIAL_REQUEST
-      };
-      process.send(tokenRefreshRequest);
-
-      // We ask for a logLevel refresh from Master (in case we are a new Worker just created and that Master already have a logLevel)
-      const logLevelRefreshRequest: SocketMsg = {
-        cmd: MsgCmd.GET_LOG_LEVEL_REQUEST
-      };
-      process.send(logLevelRefreshRequest);
-
       const serverPort = port ? port : this.pluginPort;
 
       this.server = this.plugin.app.listen(serverPort, () =>
-        this.plugin.logger.info("Plugin started, listening at " + serverPort)
+        this.plugin.logger.info(
+          `${process.pid} Plugin started, listening at ${serverPort}`
+        )
       );
 
       this.plugin.logger.info(`Worker ${process.pid} started`);
