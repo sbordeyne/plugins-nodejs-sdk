@@ -2,12 +2,12 @@ import { UserIdentifierInfo } from "../../../../index";
 
 export type UpdateType = 'UPSERT' | 'DELETE';
 
-export interface FeedUpdateRequest {
+export interface UserSegmentUpdateRequest {
   identifiers: UserIdentifierInfo[];
   ts: number;
-  feedId: string;
-  sessionId: string;
-  datamartId: string;
-  segmentId: string;
+  feed_id: string;
+  session_id: string;
+  datamart_id: string;
+  segment_id: string;
   type: UpdateType;
 }
