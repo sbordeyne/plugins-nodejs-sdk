@@ -6,7 +6,7 @@ import * as sinon from "sinon";
 import * as mockery from "mockery";
 import * as rp from "request-promise-native";
 
-class MyFakeEmailRouteurPlugin extends core.EmailRouterPlugin {
+class MyFakeEmailRouterPlugin extends core.EmailRouterPlugin {
   protected onEmailRouting(
     request: core.EmailRoutingRequest,
     instanceContext: core.EmailRouteurBaseInstanceContext
@@ -36,10 +36,10 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
   })
 );
 
-describe("Fetch Email Routeur API", () => {
+describe("Fetch Email Router API", () => {
 
   // All the magic is here
-  const plugin = new MyFakeEmailRouteurPlugin();
+  const plugin = new MyFakeEmailRouterPlugin();
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that email_router_id is passed correctly in fetchEmailRouteurProperties", function(
@@ -48,7 +48,7 @@ describe("Fetch Email Routeur API", () => {
     const fakeId = "42000000";
 
     // We try a call to the Gateway
-    (runner.plugin as MyFakeEmailRouteurPlugin)
+    (runner.plugin as MyFakeEmailRouterPlugin)
       .fetchEmailRouteurProperties(fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
@@ -61,10 +61,10 @@ describe("Fetch Email Routeur API", () => {
 
 });
 
-describe("Email Routeur API test", function() {
+describe("Email Router API test", function() {
 
   // All the magic is here
-  const plugin = new MyFakeEmailRouteurPlugin();
+  const plugin = new MyFakeEmailRouterPlugin();
 
   it("Check that the plugin is giving good results with a simple onEmailRouting handler", function(
     done
