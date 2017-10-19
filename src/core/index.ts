@@ -1,6 +1,11 @@
 // Common plugin
 export * from "./class/mediarithmics/common/BasePlugin";
 export * from "./interfaces/mediarithmics/api/common/ValueInterface";
+
+export * from "./interfaces/mediarithmics/api/common/Response";
+export * from "./interfaces/mediarithmics/api/common/EmailInterface";
+export * from "./interfaces/mediarithmics/api/common/CreativeInterface";
+
 export * from "./interfaces/mediarithmics/api/common/PluginPropertyInterface";
 
 export * from "./interfaces/mediarithmics/api/common/PluginPropertyInterface";
@@ -9,11 +14,21 @@ export * from "./interfaces/mediarithmics/api/common/UserIdentifierInterface";
 
 export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 
+// Email Router
+export * from "./interfaces/mediarithmics/api/email-router/EmailRouterInterface"
+export * from "./interfaces/mediarithmics/api/email-router/EmailRouterPluginResponseInterface"
+export * from "./interfaces/mediarithmics/api/email-router/EmailRouterRequestInterface"
+export * from "./class/mediarithmics/email-router/EmailRouterBasePlugin";
+
+// Email Renderer
+export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererRequestInterface"
+export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererPluginResponseInterface"
+export * from "./class/mediarithmics/email-renderer/EmailRendererBasePlugin";
+
 // Ad Renderer
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererRequestInterface";
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererPluginResponseInterface";
 
-export * from "./interfaces/mediarithmics/api/ad-renderer/CreativeInterface";
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdLayoutVersionInterface";
 export * from "./interfaces/mediarithmics/api/ad-renderer/RecommenderInterface";
 

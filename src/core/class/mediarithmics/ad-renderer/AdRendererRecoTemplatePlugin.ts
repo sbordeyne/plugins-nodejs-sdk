@@ -26,7 +26,7 @@ export abstract class AdRendererRecoTemplatePlugin extends AdRendererBasePlugin<
     return templateContent;
   }
 
-  /**
+/**
  * Helper to fetch the properties of a template
  */
   async fetchTemplateProperties(

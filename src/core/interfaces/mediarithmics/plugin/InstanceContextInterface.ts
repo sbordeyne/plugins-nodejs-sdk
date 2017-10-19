@@ -1,9 +1,23 @@
-import { BidOptimizer, Creative, ActivityAnalyzer, PluginProperty } from "../../../index";
+import {
+  BidOptimizer,
+  Creative,
+  ActivityAnalyzer,
+  PluginProperty,
+  EmailRouter
+} from "../../../index";
 
-// AdRenderer Instance Contexts
 export interface AdRendererBaseInstanceContext {
   creative: Creative;
   creativeProperties: PluginProperty[];
+}
+
+export interface EmailRendererBaseInstanceContext {
+  creative: Creative;
+  creativeProperties: PluginProperty[];
+}
+
+export interface EmailRouterBaseInstanceContext {
+  routerProperties: PluginProperty[];
 }
 
 export interface ActivityAnalyzerBaseInstanceContext {

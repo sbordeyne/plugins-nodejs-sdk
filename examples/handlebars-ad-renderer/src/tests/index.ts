@@ -11,7 +11,7 @@ import { badChars, escapeChar } from "./utils";
 const creative: core.CreativeResponse = {
   status: "ok",
   data: {
-    type: "DISPLAY_AD",
+    type: "DISPLAY_AD",    
     id: "7168",
     organisation_id: "1126",
     name: "Toto",
@@ -28,15 +28,7 @@ const creative: core.CreativeResponse = {
     renderer_artifact_id: "multi-advertisers-display-ad-renderer",
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
-    subtype: "BANNER",
-    format: "300x250",
-    published_version: 1,
-    creative_kit: null,
-    ad_layout: null,
-    locale: null,
-    destination_domain: "splendia.com",
-    audit_status: "NOT_AUDITED",
-    available_user_audit_actions: ["START_AUDIT"]
+    subtype: "BANNER"
   },
   count: 1
 };

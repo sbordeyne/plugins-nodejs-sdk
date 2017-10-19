@@ -83,9 +83,8 @@ describe("Ad Contents API test", function() {
     const rpMockup = sinon.stub();
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.CreativeResponse = {
+        const pluginInfo: core.ResponseData<core.Creative> = {
           status: "ok",
-          count: 1,
           data: {
             type: "DISPLAY_AD",
             id: "7168",
@@ -104,15 +103,7 @@ describe("Ad Contents API test", function() {
             renderer_artifact_id: "multi-advertisers-display-ad-renderer",
             renderer_plugin_id: "1041",
             creation_date: 1492785056278,
-            subtype: "BANNER",
-            format: "300x250",
-            published_version: 1,
-            creative_kit: null,
-            ad_layout: null,
-            locale: null,
-            destination_domain: "estcequecestbientotlapero.fr",
-            audit_status: "NOT_AUDITED",
-            available_user_audit_actions: ["START_AUDIT"]
+            subtype: "BANNER"
           }
         };
         resolve(pluginInfo);
