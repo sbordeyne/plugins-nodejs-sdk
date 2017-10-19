@@ -8,7 +8,7 @@ export interface EmailRenderRequest {
   campaign_id: string;
   campaign_technical_name?: string;
   user_identifiers: UserIdentifierInfo[];
-  user_data_bag: string;
+  user_data_bag: any;
   click_urls: string[];
   email_tracking_url: string;
 }

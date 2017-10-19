@@ -6,12 +6,12 @@ import * as sinon from "sinon";
 import * as mockery from "mockery";
 import * as rp from "request-promise-native";
 
-class MyFakeEmailRouteurPlugin extends core.EmailRouteurPlugin {
+class MyFakeEmailRouteurPlugin extends core.EmailRouterPlugin {
   protected onEmailRouting(
     request: core.EmailRoutingRequest,
     instanceContext: core.EmailRouteurBaseInstanceContext
   ) {
-    const response: core.EmailRouteurPluginResponse = {
+    const response: core.EmailRoutingPluginResponse = {
       result: true
     };
 
@@ -21,8 +21,8 @@ class MyFakeEmailRouteurPlugin extends core.EmailRouteurPlugin {
   protected onEmailCheck(
     request: core.CheckEmailsRequest,
     instanceContext: core.EmailRouteurBaseInstanceContext
-  ): Promise<core.EmailRouteurPluginResponse> {
-    const response: core.EmailRouteurPluginResponse = {
+  ): Promise<core.CheckEmailsPluginResponse> {
+    const response: core.CheckEmailsPluginResponse = {
       result: true
     };
 

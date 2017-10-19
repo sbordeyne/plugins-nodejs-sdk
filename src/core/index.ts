@@ -15,10 +15,10 @@ export * from "./interfaces/mediarithmics/api/common/UserIdentifierInterface";
 export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 
 // Email Routeur
-export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurInterface"
-export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurPluginResponseInterface"
-export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurRequestInterface"
-export * from "./class/mediarithmics/email-routeur/EmailRouteurBasePlugin";
+export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouterInterface"
+export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouterPluginResponseInterface"
+export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouterRequestInterface"
+export * from "./class/mediarithmics/email-routeur/EmailRouterBasePlugin";
 
 // Email Renderer
 export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererRequestInterface"

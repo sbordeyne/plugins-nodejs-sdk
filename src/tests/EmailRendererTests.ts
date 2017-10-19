@@ -71,6 +71,7 @@ describe("Email Renderer API test", function() {
         const creative: core.ResponseData<core.Creative> = {
           status: "ok",
           data: {
+            type: "EMAIL_TEMPLATE",            
             id: "8592",
             organisation_id: "1135",
             name: "Market Box",

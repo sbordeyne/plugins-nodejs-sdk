@@ -67,7 +67,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
     instanceContext: EmailRendererBaseInstanceContext
   ): Promise<EmailRendererPluginResponse>;
 
-  private initActivityAnalysis(): void {
+  private initEmailContents(): void {
     this.app.post(
       "/v1/email_contents",
       (req: express.Request, res: express.Response) => {
@@ -124,7 +124,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   constructor() {
     super();
 
-    // We init the specific route to listen for activity analysis requests
-    this.initActivityAnalysis();
+    // We init the specific route to listen for email contents requests
+    this.initEmailContents();
   }
 }

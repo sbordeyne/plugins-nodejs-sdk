@@ -2,9 +2,9 @@ import {
   BidOptimizer,
   Creative,
   ActivityAnalyzer,
-  PluginProperty
+  PluginProperty,
+  EmailRouter
 } from "../../../index";
-import { EmailRouteur } from "../api/email-routeur/EmailRouteurInterface";
 
 export interface AdRendererBaseInstanceContext {
   creative: Creative;

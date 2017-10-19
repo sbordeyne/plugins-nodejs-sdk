@@ -1,4 +1,4 @@
-export interface EmailRouteur {
+export interface EmailRouter {
     id: string;
     organisation_id: string;
     name: string;

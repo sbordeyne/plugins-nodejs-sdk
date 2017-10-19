@@ -1,10 +1,10 @@
 export interface PluginEmailMeta {
-  fromEmail: string;
-  fromName: string;
-  toEmail: string;
-  toName: string;
-  replyTo: string;
-  subjectLine: string;
+  from_email: string;
+  from_name: string;
+  to_email: string;
+  to_name: string;
+  reply_to: string;
+  subject_line: string;
 }
 
 export type EmailRenderingContext = "LIVE" | "STAGE" | "PREVIEW";

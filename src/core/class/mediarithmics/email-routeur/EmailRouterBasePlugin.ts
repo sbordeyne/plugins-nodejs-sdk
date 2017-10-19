@@ -9,11 +9,12 @@ import {
   Creative,
   EmailRouteurBaseInstanceContext,
   EmailRoutingRequest,
-  EmailRouteurPluginResponse,
-  CheckEmailsRequest
+  EmailRoutingPluginResponse,
+  CheckEmailsRequest,
+  CheckEmailsPluginResponse
 } from "../../../index";
 
-export abstract class EmailRouteurPlugin extends BasePlugin {
+export abstract class EmailRouterPlugin extends BasePlugin {
   instanceContext: Promise<EmailRouteurBaseInstanceContext>;
 
   async fetchEmailRouteurProperties(id: string): Promise<PluginProperty[]> {
@@ -48,7 +49,7 @@ export abstract class EmailRouteurPlugin extends BasePlugin {
   protected abstract onEmailRouting(
     request: EmailRoutingRequest,
     instanceContext: EmailRouteurBaseInstanceContext
-  ): Promise<EmailRouteurPluginResponse>;
+  ): Promise<EmailRoutingPluginResponse>;
 
   private initEmailRouting(): void {
     this.app.post(
@@ -105,7 +106,7 @@ export abstract class EmailRouteurPlugin extends BasePlugin {
    protected abstract onEmailCheck(
     request: CheckEmailsRequest,
     instanceContext: EmailRouteurBaseInstanceContext
-  ): Promise<EmailRouteurPluginResponse>;
+  ): Promise<CheckEmailsPluginResponse>;
 
   private initEmailCheck(): void {
     this.app.post(

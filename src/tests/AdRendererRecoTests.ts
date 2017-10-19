@@ -168,15 +168,7 @@ describe("Fetch recommendation API", () => {
     renderer_artifact_id: "multi-advertisers-display-ad-renderer",
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
-    subtype: "BANNER",
-    format: "300x250",
-    published_version: 1,
-    creative_kit: null,
-    ad_layout: null,
-    locale: null,
-    destination_domain: "estcequecestbientotlapero.fr",
-    audit_status: "NOT_AUDITED",
-    available_user_audit_actions: ["START_AUDIT"]
+    subtype: "BANNER"
   };
 
   const fakeCreativeProperties = [

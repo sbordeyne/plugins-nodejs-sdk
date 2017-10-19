@@ -10,6 +10,7 @@ import { MySimpleAdRenderer } from '../MyPluginImpl'
 const creative: core.CreativeResponse = {
   status: "ok",
   data: {
+    type: "DISPLAY_AD",    
     id: "7168",
     organisation_id: "1126",
     name: "Toto",

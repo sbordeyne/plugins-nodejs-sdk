@@ -4,7 +4,10 @@ export interface CreativeResponse {
     count: number;
 }
 
+export type CreativeType = 'DISPLAY_AD' | 'VIDEO_AD' | 'EMAIL_TEMPLATE';
+
 export interface Creative {
+    type: CreativeType;
     id: string;
     organisation_id: string;
     name: string;
