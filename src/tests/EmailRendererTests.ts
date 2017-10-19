@@ -12,7 +12,17 @@ class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
     instanceContext: core.EmailRendererBaseInstanceContext
   ): Promise<core.EmailRendererPluginResponse> {
     const response: core.EmailRendererPluginResponse = {
-      content: { html: request.call_id }
+      content: {
+        html: request.call_id
+      },
+      meta: {
+        from_email: "hello@hello.com",
+        from_name: "Hello",
+        to_email: "hello@destination.com",
+        to_name: "Destination",
+        reply_to: "hello@hello.com",
+        subject_line: "Hello You!"
+      }
     };
 
     return Promise.resolve(response);
@@ -71,7 +81,7 @@ describe("Email Renderer API test", function() {
         const creative: core.ResponseData<core.Creative> = {
           status: "ok",
           data: {
-            type: "EMAIL_TEMPLATE",            
+            type: "EMAIL_TEMPLATE",
             id: "8592",
             organisation_id: "1135",
             name: "Market Box",

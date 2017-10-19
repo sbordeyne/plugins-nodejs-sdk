@@ -17,7 +17,7 @@ export interface EmailRendererBaseInstanceContext {
 }
 
 export interface EmailRouterBaseInstanceContext {
-  routeurProperties: PluginProperty[];
+  routerProperties: PluginProperty[];
 }
 
 export interface ActivityAnalyzerBaseInstanceContext {
