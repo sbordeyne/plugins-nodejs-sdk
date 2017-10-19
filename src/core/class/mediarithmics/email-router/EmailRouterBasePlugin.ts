@@ -7,7 +7,7 @@ import {
   BasePlugin,
   PluginProperty,
   Creative,
-  EmailRouteurBaseInstanceContext,
+  EmailRouterBaseInstanceContext,
   EmailRoutingRequest,
   EmailRoutingPluginResponse,
   CheckEmailsRequest,
@@ -15,15 +15,15 @@ import {
 } from "../../../index";
 
 export abstract class EmailRouterPlugin extends BasePlugin {
-  instanceContext: Promise<EmailRouteurBaseInstanceContext>;
+  instanceContext: Promise<EmailRouterBaseInstanceContext>;
 
-  async fetchEmailRouteurProperties(id: string): Promise<PluginProperty[]> {
+  async fetchEmailRouterProperties(id: string): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/email_routers/${id}/properties`
     );
     this.logger.debug(
-      `Fetched Email Routeur Properties: ${id} - ${JSON.stringify(
+      `Fetched Email Router Properties: ${id} - ${JSON.stringify(
         response.data
       )}`
     );
@@ -34,12 +34,12 @@ export abstract class EmailRouterPlugin extends BasePlugin {
   // To be overriden to get a cutom behavior
   // This is a default provided implementation
   protected async instanceContextBuilder(
-    routeurId: string
-  ): Promise<EmailRouteurBaseInstanceContext> {
-    const emailRouteurProps = await this.fetchEmailRouteurProperties(routeurId);
+    routerId: string
+  ): Promise<EmailRouterBaseInstanceContext> {
+    const emailRouterProps = await this.fetchEmailRouterProperties(routerId);
 
-    const context: EmailRouteurBaseInstanceContext = {
-      routeurProperties: emailRouteurProps
+    const context: EmailRouterBaseInstanceContext = {
+      routerProperties: emailRouterProps
     };
 
     return context;
@@ -48,7 +48,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailRouting(
     request: EmailRoutingRequest,
-    instanceContext: EmailRouteurBaseInstanceContext
+    instanceContext: EmailRouterBaseInstanceContext
   ): Promise<EmailRoutingPluginResponse>;
 
   private initEmailRouting(): void {
@@ -82,7 +82,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
 
           this.pluginCache
             .get(emailRoutingRequest.email_router_id)
-            .then((instanceContext: EmailRouteurBaseInstanceContext) => {
+            .then((instanceContext: EmailRouterBaseInstanceContext) => {
               return this.onEmailRouting(
                 emailRoutingRequest,
                 instanceContext
@@ -105,7 +105,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
    // To be overriden by the Plugin to get a custom behavior
    protected abstract onEmailCheck(
     request: CheckEmailsRequest,
-    instanceContext: EmailRouteurBaseInstanceContext
+    instanceContext: EmailRouterBaseInstanceContext
   ): Promise<CheckEmailsPluginResponse>;
 
   private initEmailCheck(): void {
@@ -139,7 +139,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
 
           this.pluginCache
             .get(emailCheckRequest.email_router_id)
-            .then((instanceContext: EmailRouteurBaseInstanceContext) => {
+            .then((instanceContext: EmailRouterBaseInstanceContext) => {
               return this.onEmailCheck(
                 emailCheckRequest,
                 instanceContext

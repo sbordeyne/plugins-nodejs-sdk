@@ -14,7 +14,7 @@ export * from "./interfaces/mediarithmics/api/common/UserIdentifierInterface";
 
 export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 
-// Email Routeur
+// Email Router
 export * from "./interfaces/mediarithmics/api/email-router/EmailRouterInterface"
 export * from "./interfaces/mediarithmics/api/email-router/EmailRouterPluginResponseInterface"
 export * from "./interfaces/mediarithmics/api/email-router/EmailRouterRequestInterface"

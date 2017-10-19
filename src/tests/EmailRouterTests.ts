@@ -9,7 +9,7 @@ import * as rp from "request-promise-native";
 class MyFakeEmailRouterPlugin extends core.EmailRouterPlugin {
   protected onEmailRouting(
     request: core.EmailRoutingRequest,
-    instanceContext: core.EmailRouteurBaseInstanceContext
+    instanceContext: core.EmailRouterBaseInstanceContext
   ) {
     const response: core.EmailRoutingPluginResponse = {
       result: true
@@ -20,7 +20,7 @@ class MyFakeEmailRouterPlugin extends core.EmailRouterPlugin {
 
   protected onEmailCheck(
     request: core.CheckEmailsRequest,
-    instanceContext: core.EmailRouteurBaseInstanceContext
+    instanceContext: core.EmailRouterBaseInstanceContext
   ): Promise<core.CheckEmailsPluginResponse> {
     const response: core.CheckEmailsPluginResponse = {
       result: true
@@ -42,14 +42,14 @@ describe("Fetch Email Router API", () => {
   const plugin = new MyFakeEmailRouterPlugin();
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that email_router_id is passed correctly in fetchEmailRouteurProperties", function(
+  it("Check that email_router_id is passed correctly in fetchEmailRouterProperties", function(
     done
   ) {
     const fakeId = "42000000";
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeEmailRouterPlugin)
-      .fetchEmailRouteurProperties(fakeId)
+      .fetchEmailRouterProperties(fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${runner.plugin

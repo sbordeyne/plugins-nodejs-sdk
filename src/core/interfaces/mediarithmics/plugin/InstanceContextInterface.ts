@@ -16,7 +16,7 @@ export interface EmailRendererBaseInstanceContext {
   creativeProperties: PluginProperty[];
 }
 
-export interface EmailRouteurBaseInstanceContext {
+export interface EmailRouterBaseInstanceContext {
   routeurProperties: PluginProperty[];
 }
 
