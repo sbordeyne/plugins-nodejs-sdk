@@ -5,7 +5,6 @@ export interface CreativeResponse {
 }
 
 export interface Creative {
-    type: string;
     id: string;
     organisation_id: string;
     name: string;
@@ -23,12 +22,4 @@ export interface Creative {
     renderer_plugin_id: string;
     creation_date: number;
     subtype: string;
-    format: string;
-    published_version: number;
-    creative_kit: string;
-    ad_layout: string;
-    locale: string;
-    destination_domain: string;
-    audit_status: string;
-    available_user_audit_actions: string[];
 }

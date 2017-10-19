@@ -1,7 +1,7 @@
 import { PluginEmailContent, PluginEmailMeta } from "../common/EmailInterface";
 
 export interface EmailRendererPluginResponse {
-  meta: PluginEmailMeta;
+  meta?: PluginEmailMeta;
   content: PluginEmailContent;
-  data: any;
+  data?: any;
 }

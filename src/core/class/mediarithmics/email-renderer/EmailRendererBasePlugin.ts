@@ -16,33 +16,24 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   instanceContext: Promise<EmailRendererBaseInstanceContext>;
 
   // Helper to fetch the creative resource with caching
-  async fetchCreative(
-    id: string
-  ): Promise<Creative> {
+  async fetchCreative(id: string): Promise<Creative> {
     const response = await super.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/creatives/${id}`
     );
     this.logger.debug(
-      `Fetched Creative: ${id} - ${JSON.stringify(
-        response.data
-      )}`
+      `Fetched Creative: ${id} - ${JSON.stringify(response.data)}`
     );
     return response.data;
   }
 
-  async fetchCreativeProperties(
-    id: string
-  ): Promise<PluginProperty[]> {
+  async fetchCreativeProperties(id: string): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this
-        .outboundPlatformUrl}/v1/creatives/${id}/properties`
+      `${this.outboundPlatformUrl}/v1/creatives/${id}/renderer_properties`
     );
     this.logger.debug(
-      `Fetched Creative Properties: ${id} - ${JSON.stringify(
-        response.data
-      )}`
+      `Fetched Creative Properties: ${id} - ${JSON.stringify(response.data)}`
     );
     return response.data;
   }
@@ -54,14 +45,9 @@ export abstract class EmailRendererPlugin extends BasePlugin {
     creativeId: string
   ): Promise<EmailRendererBaseInstanceContext> {
     const creativeP = this.fetchCreative(creativeId);
-    const creativePropsP = this.fetchCreativeProperties(
-      creativeId
-    );
+    const creativePropsP = this.fetchCreativeProperties(creativeId);
 
-    const results = await Promise.all([
-      creativeP,
-      creativePropsP
-    ]);
+    const results = await Promise.all([creativeP, creativePropsP]);
 
     const creative = results[0];
     const creativeProps = results[1];
@@ -78,7 +64,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailContents(
     request: EmailRenderRequest,
-    instanceContext: ActivityAnalyzerBaseInstanceContext
+    instanceContext: EmailRendererBaseInstanceContext
   ): Promise<EmailRendererPluginResponse>;
 
   private initActivityAnalysis(): void {
@@ -105,28 +91,22 @@ export abstract class EmailRendererPlugin extends BasePlugin {
             throw new Error("No Email Renderer listener registered!");
           }
 
-          if (
-            !this.pluginCache.get(emailRenderRequest.email_renderer_id)
-          ) {
+          if (!this.pluginCache.get(emailRenderRequest.email_renderer_id)) {
             this.pluginCache.put(
               emailRenderRequest.email_renderer_id,
-              this.instanceContextBuilder(
-                emailRenderRequest.email_renderer_id
-              ),
+              this.instanceContextBuilder(emailRenderRequest.email_renderer_id),
               this.INSTANCE_CONTEXT_CACHE_EXPIRATION
             );
           }
 
           this.pluginCache
             .get(emailRenderRequest.email_renderer_id)
-            .then((instanceContext: ActivityAnalyzerBaseInstanceContext) => {
+            .then((instanceContext: EmailRendererBaseInstanceContext) => {
               return this.onEmailContents(
                 emailRenderRequest,
                 instanceContext
               ).then(response => {
-                this.logger.debug(
-                  `Returning: ${JSON.stringify(response)}`
-                );
+                this.logger.debug(`Returning: ${JSON.stringify(response)}`);
                 res.status(200).send(JSON.stringify(response));
               });
             })

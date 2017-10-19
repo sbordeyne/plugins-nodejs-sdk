@@ -85,7 +85,6 @@ describe("Ad Contents API test", function() {
       new Promise((resolve, reject) => {
         const pluginInfo: core.ResponseData<core.Creative> = {
           status: "ok",
-          count: 1,
           data: {
             type: "DISPLAY_AD",
             id: "7168",

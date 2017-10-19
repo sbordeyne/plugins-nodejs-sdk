@@ -18,10 +18,12 @@ export * from "./interfaces/mediarithmics/plugin/InstanceContextInterface";
 export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurInterface"
 export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurPluginResponseInterface"
 export * from "./interfaces/mediarithmics/api/email-routeur/EmailRouteurRequestInterface"
+export * from "./class/mediarithmics/email-routeur/EmailRouteurBasePlugin";
 
 // Email Renderer
 export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererRequestInterface"
 export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererPluginResponseInterface"
+export * from "./class/mediarithmics/email-renderer/EmailRendererBasePlugin";
 
 // Ad Renderer
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererRequestInterface";
