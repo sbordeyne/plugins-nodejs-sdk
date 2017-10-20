@@ -24,7 +24,7 @@ export interface UserActivity {
   $ttl?: number;
   $user_agent_id?: string;
   $user_account_id?: string;
-  $email_hash?: string;
+  $email_hash?: EmailHash;
   $origin?: UserActivityOrigin;
   $location: UserActivityLocation;
   $events: UserActivityEvent[];
