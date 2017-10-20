@@ -10,7 +10,7 @@ import * as cache from "memory-cache";
 
 export abstract class BasePlugin {
 
-  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 3000;
+  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 30000;
   
   pluginCache: any;
   gatewayHost: string = process.env.GATEWAY_HOST || "plugin-gateway.platform";
