@@ -9,8 +9,10 @@ npm link
 
 for ex in examples/*; do  
     cd $ex
-    npm link @mediarithmics/plugins-nodejs-sdk
-    npm i --no-package-lock
-    npm run test
+    if [ -f ./package.json ]; then
+        npm link @mediarithmics/plugins-nodejs-sdk
+        npm i --no-package-lock
+        npm run test
+    fi
     cd -
 done
