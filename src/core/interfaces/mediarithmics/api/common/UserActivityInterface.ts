@@ -26,7 +26,7 @@ export interface UserActivity {
   $user_account_id?: string;
   $email_hash?: EmailHash;
   $origin?: UserActivityOrigin;
-  $location: UserActivityLocation;
+  $location?: UserActivityLocation;
   $events: UserActivityEvent[];
   // An Activity can contain custom fields
   [propsName: string]: any;
@@ -40,18 +40,16 @@ export interface UserVisitActivity extends UserActivity {
 }
 
 export interface UserActivityOrigin {
-  $campaign_id?: string;
+  $campaign_id?: number;
   $campaign_name?: string;
-  $campaign_technical_name?: string;
   $channel?: string;
-  $creative_id?: string;
+  $creative_id?: number;
   $creative_name?: string;
-  $creative_technical_name?: string;
   $engagement_content_id?: string;
   $gclid?: string;
   $keywords?: string;
   $log_id?: string;
-  $message_id?: string;
+  $message_id?: number;
   $message_technical_name?: string;
   $referral_path?: string;
   $social_network?: string;
