@@ -54,7 +54,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
   private initEmailRouting(): void {
     this.app.post(
       "/v1/email_routing",
-      (req: express.Request, res: express.Response) => {
+      async (req: express.Request, res: express.Response) => {
         if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: "Missing request body"
@@ -62,48 +62,51 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           this.logger.error("POST /v1/email_routing : %s", JSON.stringify(msg));
           res.status(500).json(msg);
         } else {
-          this.logger.debug(
-            `POST /v1/email_routing ${JSON.stringify(req.body)}`
-          );
-
-          const emailRoutingRequest = req.body as EmailRoutingRequest;
-
-          if (!this.onEmailRouting) {
-            throw new Error("No Email Routing listener registered!");
-          }
-
-          if (!this.pluginCache.get(emailRoutingRequest.email_router_id)) {
-            this.pluginCache.put(
-              emailRoutingRequest.email_router_id,
-              this.instanceContextBuilder(emailRoutingRequest.email_router_id),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+          try {
+            this.logger.debug(
+              `POST /v1/email_routing ${JSON.stringify(req.body)}`
             );
-          }
 
-          this.pluginCache
-            .get(emailRoutingRequest.email_router_id)
-            .then((instanceContext: EmailRouterBaseInstanceContext) => {
-              return this.onEmailRouting(
-                emailRoutingRequest,
-                instanceContext
-              ).then(response => {
-                this.logger.debug(`Returning: ${JSON.stringify(response)}`);
-                res.status(200).send(JSON.stringify(response));
-              });
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
+            const emailRoutingRequest = req.body as EmailRoutingRequest;
+
+            if (!this.onEmailRouting) {
+              throw new Error("No Email Routing listener registered!");
+            }
+
+            if (!this.pluginCache.get(emailRoutingRequest.email_router_id)) {
+              this.pluginCache.put(
+                emailRoutingRequest.email_router_id,
+                this.instanceContextBuilder(
+                  emailRoutingRequest.email_router_id
+                ),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+            }
+
+            const instanceContext = await this.pluginCache.get(
+              emailRoutingRequest.email_router_id
+            );
+
+            const response = await this.onEmailRouting(
+              emailRoutingRequest,
+              instanceContext
+            );
+
+            this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+            return res.status(200).send(JSON.stringify(response));
+          } catch (error) {
+            this.logger.error(
+              `Something bad happened : ${error.message} - ${error.stack}`
+            );
+            return res.status(500).send(error.message + "\n" + error.stack);
+          }
         }
       }
     );
   }
 
-   // To be overriden by the Plugin to get a custom behavior
-   protected abstract onEmailCheck(
+  // To be overriden by the Plugin to get a custom behavior
+  protected abstract onEmailCheck(
     request: CheckEmailsRequest,
     instanceContext: EmailRouterBaseInstanceContext
   ): Promise<CheckEmailsPluginResponse>;
@@ -116,7 +119,10 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           const msg = {
             error: "Missing request body"
           };
-          this.logger.error("POST /v1/email_router_check : %s", JSON.stringify(msg));
+          this.logger.error(
+            "POST /v1/email_router_check : %s",
+            JSON.stringify(msg)
+          );
           res.status(500).json(msg);
         } else {
           this.logger.debug(

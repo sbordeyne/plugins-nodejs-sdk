@@ -137,60 +137,72 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
   private initBidDecisions(): void {
     this.app.post(
       "/v1/bid_decisions",
-      (req: express.Request, res: express.Response) => {
+      async (req: express.Request, res: express.Response) => {
         if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: "Missing request body"
           };
-          this.logger.error(
-            "POST /v1/bid_decisions : %s",
-            JSON.stringify(msg)
-          );
+          this.logger.error("POST /v1/bid_decisions : %s", JSON.stringify(msg));
           res.status(500).json(msg);
         } else {
-          this.logger.debug(
-            `POST /v1/bid_decisions ${JSON.stringify(req.body)}`
-          );
 
-          const bidOptimizerRequest = req.body as BidOptimizerRequest;
+          try {
 
-          if (!this.onBidDecisions) {
-            throw new Error("No BidOptimizer listener registered!");
-          }
-
-          if (
-            !this.pluginCache.get(
-              bidOptimizerRequest.campaign_info.bid_optimizer_id
-            )
-          ) {
-            this.pluginCache.put(
-              bidOptimizerRequest.campaign_info.bid_optimizer_id,
-              this.instanceContextBuilder(
-                bidOptimizerRequest.campaign_info.bid_optimizer_id
-              ),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
-            );
-          } // We init the specific route to listen for bid decisions requests
-
-          this.pluginCache
-            .get(bidOptimizerRequest.campaign_info.bid_optimizer_id)
-            .then((instanceContext: BidOptimizerBaseInstanceContext) => {
-              return this.onBidDecisions(
-                bidOptimizerRequest,
-                instanceContext
-              ).then(bidOptimizerResponse => {
-                this.logger.debug(
-                  `Returning: ${JSON.stringify(bidOptimizerResponse)}`
-                );
-                res.status(200).send(JSON.stringify(bidOptimizerResponse));
-              });
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
+            if (
+              this.logger.level === "debug" ||
+              this.logger.level === "silly"
+            ) {
+              this.logger.debug(
+                `POST /v1/bid_decisions ${JSON.stringify(req.body)}`
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+            }
+
+            const bidOptimizerRequest = req.body as BidOptimizerRequest;
+
+            if (!this.onBidDecisions) {
+              throw new Error("No BidOptimizer listener registered!");
+            }
+
+            if (
+              !this.pluginCache.get(
+                bidOptimizerRequest.campaign_info.bid_optimizer_id
+              )
+            ) {
+              this.pluginCache.put(
+                bidOptimizerRequest.campaign_info.bid_optimizer_id,
+                this.instanceContextBuilder(
+                  bidOptimizerRequest.campaign_info.bid_optimizer_id
+                ),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+              );
+            } // We init the specific route to listen for bid decisions requests
+
+            const instanceContext = await this.pluginCache.get(
+              bidOptimizerRequest.campaign_info.bid_optimizer_id
+            );
+
+            const bidOptimizerResponse = await this.onBidDecisions(
+              bidOptimizerRequest,
+              instanceContext
+            );
+
+            if (
+              this.logger.level === "debug" ||
+              this.logger.level === "silly"
+            ) {
+              this.logger.debug(
+                `Returning: ${JSON.stringify(bidOptimizerResponse)}`
+              );
+            }
+
+            return res.status(200).send(JSON.stringify(bidOptimizerResponse));
+
+          } catch (error) {
+            this.logger.error(
+              `Something bad happened : ${error.message} - ${error.stack}`
+            );
+            return res.status(500).send(error.message + "\n" + error.stack);
+          }
         }
       }
     );

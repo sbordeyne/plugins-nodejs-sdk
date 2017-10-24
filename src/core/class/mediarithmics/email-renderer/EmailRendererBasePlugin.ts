@@ -70,7 +70,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   private initEmailContents(): void {
     this.app.post(
       "/v1/email_contents",
-      (req: express.Request, res: express.Response) => {
+      async (req: express.Request, res: express.Response) => {
         if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: "Missing request body"
@@ -81,41 +81,47 @@ export abstract class EmailRendererPlugin extends BasePlugin {
           );
           res.status(500).json(msg);
         } else {
-          this.logger.debug(
-            `POST /v1/email_contents ${JSON.stringify(req.body)}`
-          );
-
-          const emailRenderRequest = req.body as EmailRenderRequest;
-
-          if (!this.onEmailContents) {
-            throw new Error("No Email Renderer listener registered!");
-          }
-
-          if (!this.pluginCache.get(emailRenderRequest.email_renderer_id)) {
-            this.pluginCache.put(
-              emailRenderRequest.email_renderer_id,
-              this.instanceContextBuilder(emailRenderRequest.email_renderer_id),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+          try {
+            this.logger.debug(
+              `POST /v1/email_contents ${JSON.stringify(req.body)}`
             );
-          }
 
-          this.pluginCache
-            .get(emailRenderRequest.email_renderer_id)
-            .then((instanceContext: EmailRendererBaseInstanceContext) => {
-              return this.onEmailContents(
-                emailRenderRequest,
-                instanceContext
-              ).then(response => {
-                this.logger.debug(`Returning: ${JSON.stringify(response)}`);
-                res.status(200).send(JSON.stringify(response));
-              });
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
+            const emailRenderRequest = req.body as EmailRenderRequest;
+
+            if (!this.onEmailContents) {
+              const errMsg = "No Email Renderer listener registered!";
+              this.logger.error(errMsg);
+              return res.status(500).send({ error: errMsg });
+            }
+
+            if (!this.pluginCache.get(emailRenderRequest.email_renderer_id)) {
+              this.pluginCache.put(
+                emailRenderRequest.email_renderer_id,
+                this.instanceContextBuilder(
+                  emailRenderRequest.email_renderer_id
+                ),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+            }
+
+            const instanceContext = await this.pluginCache.get(
+              emailRenderRequest.email_renderer_id
+            );
+
+            const response = await this.onEmailContents(
+              emailRenderRequest,
+              instanceContext
+            );
+
+            this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+            return res.status(200).send(JSON.stringify(response));
+            
+          } catch (error) {
+            this.logger.error(
+              `Something bad happened : ${error.message} - ${error.stack}`
+            );
+            return res.status(500).send(error.message + "\n" + error.stack);
+          }
         }
       }
     );
