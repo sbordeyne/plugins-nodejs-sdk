@@ -1,6 +1,7 @@
 import { core } from "@mediarithmics/plugins-nodejs-sdk";
 import { MyInstanceContext } from "./MyInstanceContext";
 import * as rp from "request-promise-native";
+import * as retry from "retry";
 
 export interface MailjetSentResponse {
   Sent: {
@@ -72,6 +73,9 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     identifier: core.UserEmailIdentifierInfo,
     payload: MailjetPayload
   ): Promise<MailjetSentResponse> {
+
+    this.logger.debug(`Sending email to: request: ${JSON.stringify(request)} - identifier: ${JSON.stringify(identifier)} - payload: ${JSON.stringify(payload)}`);
+
     const emailHeaders = {
       "Reply-To": request.meta.reply_to
     };
@@ -92,12 +96,19 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       "Mj-campaign": request.campaign_id
     };
 
-    return super.requestGatewayHelper(
+    const mailjetResponse: MailjetSentResponse = await this.requestGatewayHelper(
       "POST",
       `${this
         .outboundPlatformUrl}/v1/external_services/technical_name=mailjet/call`,
       emailData
     );
+
+    if (mailjetResponse.Sent.length === 0) {
+      this.logger.error("Mailjet sent an empty response, will retry");
+      throw new Error("Mailjet sent an empty response, will retry");
+    }
+
+    return mailjetResponse;
   }
 
   createEmailTrackingActivity(
@@ -370,13 +381,37 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       request.email_router_id
     );
 
-    const mjResponse = await this.sendEmail(request, identifier, payload);
+    // As Mailjet can be a little difficult when shotting an email, we'll try a lot of time
+    const mailjetResponse: MailjetSentResponse = await this.retryPromiseHelper(this.sendEmail, [
+      request,
+      identifier,
+      payload
+    ]);
 
-    if(mjResponse.Sent.length > 0) {
-      return Promise.resolve({ result: true });      
+    if (mailjetResponse.Sent.length > 0) {
+      return { result: true };
     } else {
-      return Promise.resolve({ result: false });            
+      return { result: false };
     }
+  }
+
+  retryPromiseHelper(mainFn: Function, args: any[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const operation = retry.operation();
+      operation.attempt(async attempt => {
+        try {
+          this.logger.debug(`Trying to call for the ${attempt}th time ${mainFn.name}`);
+
+          const response = await mainFn.apply(this, args);
+          resolve(response);
+        } catch (err) {
+          if (operation.retry(err)) {
+            return;
+          }
+          reject(operation.mainError());
+        }
+      });
+    });
   }
 
   constructor() {
