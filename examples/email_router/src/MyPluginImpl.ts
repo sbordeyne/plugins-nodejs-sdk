@@ -230,17 +230,17 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     // Return an emailRoutingResponse
     // Mailjet notify entry point for events such as sent, open, click, bounce, spam, blocked etc...
     super.app.post(
-      "/r/mailjet_email_events/notifications",
+      "/r/external_token_to_be_provided_by_your_account_manager", // This will be listening on : https://plugins.mediarithmics.io/r/external_token_to_be_provided_by_your_account_manager
       async (req, res) => {
         const emailEvent = req.body;
         this.logger.debug(
-          "POST /r/mailjet_email_events/notifications",
+          "POST /r/external_token_to_be_provided_by_your_account_manager",
           JSON.stringify(emailEvent)
         );
         try {
           if (!emailEvent) {
             this.logger.error(
-              "POST /r/mailjet_email_events/notifications: Missing email event"
+              "POST /r/external_token_to_be_provided_by_your_account_manager: Missing email event"
             );
             return res.status(400).json({
               Result: "Missing email event"
@@ -249,7 +249,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
 
           if (!emailEvent.Payload || !emailEvent.MessageID) {
             this.logger.error(
-              "POST /r/mailjet_email_events/notifications: Missing Payload or MessageID"
+              "POST /r/external_token_to_be_provided_by_your_account_manager: Missing Payload or MessageID"
             );
             return res.status(400).json({
               Result: "Missing Payload or MessageID"
@@ -287,7 +287,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
               });
             } catch (err) {
               this.logger.error(
-                `POST /r/mailjet_email_events/notifications: Failed to integrate event ${emailEvent.event} Error: ${err.message} - ${err.stack}`
+                `POST /r/external_token_to_be_provided_by_your_account_manager: Failed to integrate event ${emailEvent.event} Error: ${err.message} - ${err.stack}`
               );
               return res.status(400).json({
                 Result: `Failed to integrate event ${emailEvent.event} Error: ${err.message} - ${err.stack}`
@@ -296,7 +296,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
           }
         } catch (err) {
           this.logger.error(
-            `POST /r/mailjet_email_events/notifications: Failed because of Error: ${err.message} - ${err.stack}`
+            `POST /r/external_token_to_be_provided_by_your_account_manager: Failed because of Error: ${err.message} - ${err.stack}`
           );
           return res.status(500).json({
             Result: `${err.message} - ${err.stack}`
