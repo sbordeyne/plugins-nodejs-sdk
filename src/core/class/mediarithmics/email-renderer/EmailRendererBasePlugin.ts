@@ -79,7 +79,8 @@ export abstract class EmailRendererPlugin extends BasePlugin {
             "POST /v1/email_contents : %s",
             JSON.stringify(msg)
           );
-          res.status(500).json(msg);
+          return res.status(500).json(msg);
+          
         } else {
           try {
             this.logger.debug(
@@ -115,7 +116,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
 
             this.logger.debug(`Returning: ${JSON.stringify(response)}`);
             return res.status(200).send(JSON.stringify(response));
-            
+
           } catch (error) {
             this.logger.error(
               `Something bad happened : ${error.message} - ${error.stack}`

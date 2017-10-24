@@ -60,7 +60,8 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             error: "Missing request body"
           };
           this.logger.error("POST /v1/email_routing : %s", JSON.stringify(msg));
-          res.status(500).json(msg);
+          return res.status(500).json(msg);
+
         } else {
           try {
             this.logger.debug(
@@ -70,7 +71,9 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             const emailRoutingRequest = req.body as EmailRoutingRequest;
 
             if (!this.onEmailRouting) {
-              throw new Error("No Email Routing listener registered!");
+              const errMsg = "No Email Routing listener registered!";
+              this.logger.error(errMsg);
+              return res.status(500).json({error: errMsg});
             }
 
             if (!this.pluginCache.get(emailRoutingRequest.email_router_id)) {

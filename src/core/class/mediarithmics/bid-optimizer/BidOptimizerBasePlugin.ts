@@ -143,7 +143,7 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
             error: "Missing request body"
           };
           this.logger.error("POST /v1/bid_decisions : %s", JSON.stringify(msg));
-          res.status(500).json(msg);
+          return res.status(500).json(msg);
         } else {
 
           try {
@@ -160,7 +160,9 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
             const bidOptimizerRequest = req.body as BidOptimizerRequest;
 
             if (!this.onBidDecisions) {
-              throw new Error("No BidOptimizer listener registered!");
+              const errMsg = "No BidOptimizer listener registered!";
+              this.logger.error(errMsg);
+              return res.status(500).json({error: errMsg});              
             }
 
             if (
