@@ -83,7 +83,8 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           const emailRoutingRequest = req.body as EmailRoutingRequest;
 
           if (!this.onEmailRouting) {
-            throw new Error("No Email Routing listener registered!");
+            res.status(500).json("No Email Routing listener registered!");            
+            this.logger.error("No Email Routing listener registered!");
           }
 
           try {
@@ -94,6 +95,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
               emailRoutingRequest,
               instanceContext
             );
+            
             this.logger.debug(`Returning: ${JSON.stringify(pluginResponse)}`);
             res.status(200).send(JSON.stringify(pluginResponse));
             

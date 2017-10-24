@@ -8,7 +8,8 @@
         "rootDir": "./src",
         "typeRoots": ["node_modules/@types"],
         "declaration": true,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "pretty": true
     },
     "include": [
         "./src/**/*"

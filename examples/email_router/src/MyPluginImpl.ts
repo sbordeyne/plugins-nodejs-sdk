@@ -2,6 +2,13 @@ import { core } from "@mediarithmics/plugins-nodejs-sdk";
 import { MyInstanceContext } from "./MyInstanceContext";
 import * as rp from "request-promise-native";
 
+export interface MailjetSentResponse {
+  Sent: {
+    Email: string;
+    MessageID: number;
+  }[];
+}
+
 export interface MailjetPayload {
   datamartId: string;
   campaignId: string;
@@ -61,10 +68,10 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
  */
 
   async sendEmail(
-    identifier: core.UserIdentifierInfo,
     request: core.EmailRoutingRequest,
+    identifier: core.UserEmailIdentifierInfo,
     payload: MailjetPayload
-  ) {
+  ): Promise<MailjetSentResponse> {
     const emailHeaders = {
       "Reply-To": request.meta.reply_to
     };
@@ -85,7 +92,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       "Mj-campaign": request.campaign_id
     };
 
-    await super.requestGatewayHelper(
+    return super.requestGatewayHelper(
       "POST",
       `${this
         .outboundPlatformUrl}/v1/external_services/technical_name=mailjet/call`,
@@ -229,7 +236,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
   initMailjetNotificationRoute() {
     // Return an emailRoutingResponse
     // Mailjet notify entry point for events such as sent, open, click, bounce, spam, blocked etc...
-    super.app.post(
+    this.app.post(
       "/r/external_token_to_be_provided_by_your_account_manager", // This will be listening on : https://plugins.mediarithmics.io/r/external_token_to_be_provided_by_your_account_manager
       async (req, res) => {
         const emailEvent = req.body;
@@ -268,7 +275,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
             const mailjetEvent = JSON.parse(emailEvent) as MailjetEvent;
             const payload = mailjetEvent.Payload;
 
-            const props = (await super.getInstanceContext(
+            const props = (await this.getInstanceContext(
               payload.routerId
             )) as MyInstanceContext;
             const micsActivity = this.processMailjetEventToMicsTrackingActivity(
@@ -330,18 +337,46 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     }
   }
 
-  protected onEmailCheck(
+  protected async onEmailCheck(
     request: core.CheckEmailsRequest,
     instanceContext: core.EmailRouterBaseInstanceContext
   ): Promise<core.CheckEmailsPluginResponse> {
+    // Mailjet can send emails to every email adress.
+    // Trust me, I've seen it.
     return Promise.resolve({ result: true });
   }
 
-  protected onEmailRouting(
+  protected async onEmailRouting(
     request: core.EmailRoutingRequest,
     instanceContext: core.EmailRouterBaseInstanceContext
   ): Promise<core.EmailRoutingPluginResponse> {
-    return Promise.resolve({ result: true });
+    const identifier:
+      | core.UserEmailIdentifierInfo
+      | undefined = request.user_identifiers.find(
+      (identifier: core.UserEmailIdentifierInfo) => {
+        return identifier.type === "USER_EMAIL" && identifier.email;
+      }
+    ) as core.UserEmailIdentifierInfo;
+
+    if (!identifier) {
+      throw Error("No clear email identifiers were provided");
+    }
+
+    const payload = this.buildMailjetPayload(
+      request.datamart_id,
+      request.datamart_id,
+      request.creative_id,
+      identifier.$hash,
+      request.email_router_id
+    );
+
+    const mjResponse = await this.sendEmail(request, identifier, payload);
+
+    if(mjResponse.Sent.length > 0) {
+      return Promise.resolve({ result: true });      
+    } else {
+      return Promise.resolve({ result: false });            
+    }
   }
 
   constructor() {

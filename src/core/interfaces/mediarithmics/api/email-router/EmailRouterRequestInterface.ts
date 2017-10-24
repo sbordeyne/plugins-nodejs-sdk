@@ -15,7 +15,7 @@ export interface EmailRoutingRequest {
   user_identifiers: UserIdentifierInfo[];
   meta: PluginEmailMeta;
   content: PluginEmailContent;
-  data: string;
+  data: any;
 }
 
 export interface CheckEmailsRequest {
