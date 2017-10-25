@@ -1,10 +1,15 @@
 # Changelog
+
+# 0.2.4 - 2017-10-25
+
+- Add support for email router and email renderer
+- Fix User Activity Interface
+- Add a MailJet Email router as an implementation example
+
 ## 0.2.3 - 2017-09-15
 
 - Updated the UserActivityEventProperty Interface
 - Fix some Activity Analyzer tests
-
-
 
 ## 0.2.2 - 2017-09-14
 
