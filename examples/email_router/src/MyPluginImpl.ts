@@ -340,10 +340,10 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       };
     } else {
       this.logger.error(
-        `There is no authentificationToken configured for routerId: ${routerId}`
+        `There is no authentification_token configured for routerId: ${routerId}`
       );
       throw Error(
-        `There is no authentificationToken configured for routerId: ${routerId}`
+        `There is no authentification_token configured for routerId: ${routerId}`
       );
     }
   }
