@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "outDir": "./build",
+        "target": "es6",
+        "rootDir": "./src",
+        "typeRoots": ["node_modules/@types"],
+        "declaration": true,
+        "strictNullChecks": true,
+        "pretty": true
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./build",
+        "./node_modules"
+        ]
+}
