@@ -196,7 +196,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
         );
       default:
         throw new Error(
-          `POST /v1/email_events: Received ${mailjetEvent.event} with Payload ${mailjetEvent.Payload} - We're not handling this event YET.`
+          `POST /v1/email_events: Received ${mailjetEvent.event} - We're not handling this event YET. With Payload ${JSON.stringify(mailjetEvent.Payload)}`
         );
     }
   }
