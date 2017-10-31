@@ -8,16 +8,21 @@ import {
   AudienceFeedConnectorBaseInstanceContext,
   AudienceFeed,
   UserSegmentUpdateRequest,
+  ExternalSegmentCreationRequest,
+  ExternalSegmentConnectionRequest,
+  ExternalSegmentCreationPluginResponse,
+  ExternalSegmentConnectionPluginResponse,
+  UserSegmentUpdatePluginResponse,
   AudienceFeedConnectorPluginResponse
 } from "../../../index";
 
-export abstract class ActivityAnalyzerPlugin extends BasePlugin {
+export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
   instanceContext: Promise<AudienceFeedConnectorBaseInstanceContext>;
 
   async fetchAudienceFeed(feedId: string): Promise<AudienceFeed> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/external_feeds/${feedId}`
+      `${this.outboundPlatformUrl}/v1/audience_segment_external_feeds/${feedId}`
     );
     this.logger.debug(
       `Fetched External Feed: ${feedId} - ${JSON.stringify(response.data)}`
@@ -28,7 +33,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   async fetchAudienceFeedProperties(feedId: string): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/external_feeds/${feedId}/properties`
+      `${this.outboundPlatformUrl}/v1/audience_segment_external_feeds/${feedId}/properties`
     );
     this.logger.debug(
       `Fetched Creative Properties: ${feedId} - ${JSON.stringify(
@@ -60,25 +65,152 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     return context;
   }
 
+  protected abstract onExternalSegmentCreation(
+    request: ExternalSegmentCreationRequest,
+    instanceContext: AudienceFeedConnectorBaseInstanceContext
+  ): Promise<ExternalSegmentCreationPluginResponse>;
+
+  protected abstract onExternalSegmentConnection(
+    request: ExternalSegmentConnectionRequest,
+    instanceContext: AudienceFeedConnectorBaseInstanceContext
+  ): Promise<ExternalSegmentConnectionPluginResponse>;
+
   protected abstract onUserSegmentUpdate(
     request: UserSegmentUpdateRequest,
     instanceContext: AudienceFeedConnectorBaseInstanceContext
-  ): Promise<AudienceFeedConnectorPluginResponse>;
+  ): Promise<UserSegmentUpdatePluginResponse>;
+
+  private emptyBodyFilter(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) {
+    if (!req.body || _.isEmpty(req.body)) {
+      const msg = {
+        error: "Missing request body"
+      };
+      this.logger.error(
+        "POST /v1/user_segment_update : %s",
+        JSON.stringify(msg)
+      );
+      res.status(500).json(msg);
+    } else {
+      next();
+    }
+  }
+
+  private async getInstanceContext(
+    feedId: string
+  ): Promise<AudienceFeedConnectorBaseInstanceContext> {
+    if (!this.pluginCache.get(feedId)) {
+      this.pluginCache.put(
+        feedId,
+        this.instanceContextBuilder(feedId),
+        this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+      );
+    }
+
+    return this.pluginCache.get(feedId);
+  }
+
+  private initExternalSegmentCreation(): void {
+    this.app.post(
+      "/v1/external_segment_creation",
+      this.emptyBodyFilter,
+      async (req: express.Request, res: express.Response) => {
+        try {
+          this.logger.debug(
+            `POST /v1/external_segment_creation ${JSON.stringify(req.body)}`
+          );
+
+          const request = req.body as ExternalSegmentCreationRequest;
+
+          if (!this.onExternalSegmentCreation) {
+            throw new Error("No External Segment Creation listener registered!");
+          }
+
+          const instanceContext = await this.getInstanceContext(
+            request.feed_id
+          );
+
+          const response = await this.onExternalSegmentCreation(
+            request,
+            instanceContext
+          );
+
+          this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+
+          const pluginResponse: AudienceFeedConnectorPluginResponse = {
+            status: response.status
+          };
+
+          if (response.message) {
+            pluginResponse.message = response.message;
+          }
+
+          return res.status(200).send(JSON.stringify(pluginResponse));
+        } catch (error) {
+          this.logger.error(
+            `Something bad happened : ${error.message} - ${error.stack}`
+          );
+          return res.status(500).send(error.message + "\n" + error.stack);
+        }
+      }
+    );
+  }
+
+  private initExternalSegmentConnection(): void {
+    this.app.post(
+      "/v1/external_segment_connection",
+      this.emptyBodyFilter,
+      async (req: express.Request, res: express.Response) => {
+        try {
+          this.logger.debug(
+            `POST /v1/external_segment_connection ${JSON.stringify(req.body)}`
+          );
+
+          const request = req.body as ExternalSegmentConnectionRequest;
+
+          if (!this.onExternalSegmentConnection) {
+            throw new Error("No External Segment Connection listener registered!");
+          }
+
+          const instanceContext = await this.getInstanceContext(
+            request.feed_id
+          );
+
+          const response = await this.onExternalSegmentConnection(
+            request,
+            instanceContext
+          );
+
+          this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+
+          const pluginResponse: AudienceFeedConnectorPluginResponse = {
+            status: response.status
+          };
+
+          if (response.message) {
+            pluginResponse.message = response.message;
+          }
+
+          return res.status(200).send(JSON.stringify(pluginResponse));
+        } catch (error) {
+          this.logger.error(
+            `Something bad happened : ${error.message} - ${error.stack}`
+          );
+          return res.status(500).send(error.message + "\n" + error.stack);
+        }
+      }
+    );
+  }
 
   private initUserSegmentUpdate(): void {
     this.app.post(
       "/v1/user_segment_update",
-      (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error(
-            "POST /v1/user_segment_update : %s",
-            JSON.stringify(msg)
-          );
-          res.status(500).json(msg);
-        } else {
+      this.emptyBodyFilter,
+      async (req: express.Request, res: express.Response) => {
+        try {
           this.logger.debug(
             `POST /v1/user_segment_update ${JSON.stringify(req.body)}`
           );
@@ -89,47 +221,38 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
             throw new Error("No User Segment Update listener registered!");
           }
 
-          if (!this.pluginCache.get(request.feed_id)) {
-            this.pluginCache.put(
-              request.feed_id,
-              this.instanceContextBuilder(request.feed_id),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+          const instanceContext = await this.getInstanceContext(
+            request.feed_id
+          );
+
+          const response = await this.onUserSegmentUpdate(
+            request,
+            instanceContext
+          );
+
+          this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+
+          const pluginResponse: AudienceFeedConnectorPluginResponse = {
+            status: response.status
+          };
+
+          if (response.nextMsgDelayInMs) {
+            res.set(
+              "x-mics-next-msg-delay",
+              response.nextMsgDelayInMs.toString()
             );
           }
 
-          this.pluginCache
-            .get(request.feed_id)
-            .then(
-              (instanceContext: AudienceFeedConnectorBaseInstanceContext) => {
-                return this.onUserSegmentUpdate(request, instanceContext);
-              }
-            )
-            .then((response: AudienceFeedConnectorPluginResponse) => {
-              this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+          if (response.message) {
+            pluginResponse.message = response.message;
+          }
 
-              const pluginResponse: AudienceFeedConnectorPluginResponse = {
-                status: response.status
-              };
-
-              if (response.nextMsgDelayInMs) {
-                res.set(
-                  "x-mics-next-msg-delay",
-                  response.nextMsgDelayInMs.toString()
-                );
-              }
-
-              if (response.message) {
-                pluginResponse.message = response.message;
-              }
-
-              res.status(200).send(JSON.stringify(pluginResponse));
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
-              );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+          return res.status(200).send(JSON.stringify(pluginResponse));
+        } catch (error) {
+          this.logger.error(
+            `Something bad happened : ${error.message} - ${error.stack}`
+          );
+          return res.status(500).send(error.message + "\n" + error.stack);
         }
       }
     );
@@ -138,6 +261,8 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   constructor() {
     super();
 
+    this.initExternalSegmentCreation();
+    this.initExternalSegmentConnection();
     this.initUserSegmentUpdate();
   }
 }
