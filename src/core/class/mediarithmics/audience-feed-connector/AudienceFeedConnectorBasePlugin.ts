@@ -36,7 +36,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
       `${this.outboundPlatformUrl}/v1/audience_segment_external_feeds/${feedId}/properties`
     );
     this.logger.debug(
-      `Fetched Creative Properties: ${feedId} - ${JSON.stringify(
+      `Fetched External Feed Properties: ${feedId} - ${JSON.stringify(
         response.data
       )}`
     );
@@ -90,7 +90,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
         error: "Missing request body"
       };
       this.logger.error(
-        "POST /v1/user_segment_update : %s",
+        `POST /v1/${req.url} : %s`,
         JSON.stringify(msg)
       );
       res.status(500).json(msg);
