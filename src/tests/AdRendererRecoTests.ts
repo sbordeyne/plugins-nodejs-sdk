@@ -188,8 +188,6 @@ describe("Fetch recommendation API", () => {
   const fakeInstanceContext: core.AdRendererRecoTemplateInstanceContext = {
     recommender_id: "74",
     creative_click_url: "http://yolo.com",
-    ad_layout_id: "48",
-    ad_layout_version: "204",
     template: "toto",
     creative: fakeCreative,
     creativeProperties: fakeCreativeProperties

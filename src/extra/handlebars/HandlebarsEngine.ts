@@ -12,22 +12,47 @@ const numeral = require("numeral");
 const _ = require("lodash");
 
 export interface ClickableContent {
-  item_id: string;
+  item_id?: string;
   catalog_token: any;
   $content_id: number;
 }
 
-export interface HandleBarRootContext {
-  redirectUrls: string[];
-  clickableContents: ClickableContent[];
+// Handlebar Context for URLs (not all macros are available)
+export interface URLHandleBarRootContext {
   request: AdRendererRequest;
   creative: HandleBarRootContextCreative;
+  // Viewability TAGs specific
+  viewabilityTags?: string[];
+  IAS_USER_ID?: string;
+  // Main mediarithmics macros
+  ORGANISATION_ID: string;
+  AD_GROUP_ID?: string;
+  MEDIA_ID?: string;
+  CAMPAIGN_ID?: string;
+  CREATIVE_ID: string;
+  CACHE_BUSTER: string;
+  CB: string;
+}
+
+// Handlebar Context for the Template - without recommandations
+export interface SimpleHandleBarRootContext extends URLHandleBarRootContext {
+  ENCODED_CLICK_URL: string;
+  CLICK_URL: string;
+  imageUrl?: string;
+}
+
+// Handlebar Context for the Template - with recommendations
+export interface HandleBarRootContext extends SimpleHandleBarRootContext {
+  redirectUrls: string[];
+  clickableContents: ClickableContent[];
   recommendations: ItemProposal[];
 }
 
 export interface HandleBarRootContextCreative {
   properties: Creative;
-  click_url: string;
+  click_url?: string;
+  width: string;
+  height: string;
 }
 
 function formatPrice(price: string, pattern: string) {
@@ -35,10 +60,7 @@ function formatPrice(price: string, pattern: string) {
   return number.format(pattern);
 }
 
-const encodeClickUrl = () => (
-  redirectUrls: string[],
-  clickUrl: string
-) => {
+const encodeClickUrl = () => (redirectUrls: string[], clickUrl: string) => {
   let urls = redirectUrls.slice(0);
   urls.push(clickUrl);
 
@@ -71,11 +93,15 @@ const encodeRecoClickUrlHelper = () => (
     return _.replace(url2, doubleEncodedUriPlaceHolder, idx);
   });
 
-  console.log("URL : " + encodeClickUrl()(filledRedirectUrls, recommendation.$url));
-  return encodeClickUrl()(filledRedirectUrls, recommendation.$url);
+  const recommendationUrl = recommendation.$url ? recommendation.$url : "";
+  console.log(
+    "URL : " + encodeClickUrl()(filledRedirectUrls, recommendationUrl)
+  );
+  return encodeClickUrl()(filledRedirectUrls, recommendationUrl);
 };
 
-export class HandlebarsEngine implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {
+export class SimpleHandlebarsEngine
+  implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {
   engine: typeof Handlebars;
 
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
@@ -87,6 +113,19 @@ export class HandlebarsEngine implements TemplatingEngine<void, string, Handleba
     this.engine.registerHelper("toJson", (object: any) =>
       JSON.stringify(object)
     );
+  }
+
+  compile(template: string) {
+    return this.engine.compile(template);
+  }
+
+  constructor() {}
+}
+
+export class HandlebarsEngine extends SimpleHandlebarsEngine {
+  // Initialisation of the engine. Done once at every InstanceContext rebuild.
+  init(): void {
+    super.init();
 
     /* URL Encoding witchcraft */
 
@@ -99,7 +138,8 @@ export class HandlebarsEngine implements TemplatingEngine<void, string, Handleba
     //
     // This is how the encodeClickUrl partial should be used in templates:
     // {{> encodeClickUrl url="http://www.mediarithmics.com/en/"}}
-    const encodeClickUrlPartial = "{{encodeClickUrlInternal @root.redirectUrls url}}";
+    const encodeClickUrlPartial =
+      "{{encodeClickUrlInternal @root.redirectUrls url}}";
     this.engine.registerPartial("encodeClickUrl", encodeClickUrlPartial);
     this.engine.registerHelper("encodeClickUrlInternal", encodeClickUrl());
 
@@ -124,9 +164,7 @@ export class HandlebarsEngine implements TemplatingEngine<void, string, Handleba
     );
   }
 
-  compile(template: string) {
-    return this.engine.compile(template);
+  constructor() {
+    super();
   }
-
-  constructor() {}
 }

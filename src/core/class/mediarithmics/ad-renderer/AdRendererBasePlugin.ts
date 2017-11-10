@@ -9,7 +9,8 @@ import {
   BasePlugin,
   TemplatingEngine,
   AdRendererPluginResponse,
-  PluginProperty
+  PluginProperty,
+  DisplayAd
 } from "../../../index";
 
 export abstract class AdRendererBasePlugin<
@@ -20,7 +21,7 @@ export abstract class AdRendererBasePlugin<
   displayContextHeader = "x-mics-display-context";
 
   // Helper to fetch the creative resource with caching
-  async fetchCreative(creativeId: string): Promise<Creative> {
+  async fetchCreative(creativeId: string): Promise<DisplayAd> {
     const creativeResponse = await super.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
