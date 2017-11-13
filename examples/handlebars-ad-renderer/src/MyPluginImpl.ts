@@ -50,7 +50,9 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     this.logger.debug(
       `CallId: ${adRenderRequest.call_id} - Injecting the rootContext into the compiledTemplate`
     );
+
     const html = instanceContext.compiled_template(properties); //fill the properties
+    
     this.logger.debug(
       `CallId: ${adRenderRequest.call_id} - HTML returned by Handlebars: ${html}`
     );
