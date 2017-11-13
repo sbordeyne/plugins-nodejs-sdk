@@ -90,7 +90,7 @@ describe("Ad Contents API test", function() {
             id: "7168",
             organisation_id: "1126",
             name: "Toto",
-            technical_name: null,
+            technical_name: "hello",
             archived: false,
             editor_version_id: "5",
             editor_version_value: "1.0.0",

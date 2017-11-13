@@ -8,7 +8,7 @@ import { MyHandlebarsAdRenderer } from "../MyPluginImpl";
 import { badChars, escapeChar } from "./utils";
 
 // Creative stub
-const creative: core.CreativeResponse = {
+const creative: core.ResponseData<core.DisplayAd> = {
   status: "ok",
   data: {
     type: "DISPLAY_AD",    
@@ -28,9 +28,9 @@ const creative: core.CreativeResponse = {
     renderer_artifact_id: "multi-advertisers-display-ad-renderer",
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
-    subtype: "BANNER"
-  },
-  count: 1
+    subtype: "BANNER",
+    format: "300x250"
+  }
 };
 
 const creativePropertiesResponse: core.PluginPropertyResponse = {
@@ -40,7 +40,7 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
       technical_name: "click_url",
       value: {
         url:
-          "http://www.april.fr/mon-assurance-de-pret-formulaire?cmpid=disp_datacomp_formadp_bann_300x250"
+          ""
       },
       property_type: "URL",
       origin: "PLUGIN",
