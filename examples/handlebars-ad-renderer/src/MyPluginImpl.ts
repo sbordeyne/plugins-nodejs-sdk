@@ -13,7 +13,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     );
 
     const redirectUrls = adRenderRequest.click_urls;
-    redirectUrls.push(instanceContext.creative_click_url);
+    if(instanceContext.creative_click_url) { redirectUrls.push(instanceContext.creative_click_url); }
     
     const clickUrl = this.getEncodedClickUrl(redirectUrls);
 

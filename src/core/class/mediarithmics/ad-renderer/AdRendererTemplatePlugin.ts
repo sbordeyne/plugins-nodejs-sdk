@@ -136,11 +136,18 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       ? this.engineBuilder.compile(creativeClickUrl)
       : undefined;
 
-      const additionalHTML = additionalHTMLProperty && additionalHTMLProperty.value && additionalHTMLProperty.value.value ?
-        this.engineBuilder.compile(additionalHTMLProperty.value.value as string) : undefined;
-  
-      const IASClientId = IASProperty && IASProperty.value && IASProperty.value.value ?
-        IASProperty.value.value as string : undefined;
+    const additionalHTML =
+      additionalHTMLProperty &&
+      additionalHTMLProperty.value &&
+      additionalHTMLProperty.value.value
+        ? this.engineBuilder.compile(additionalHTMLProperty.value
+            .value as string)
+        : undefined;
+
+    const IASClientId =
+      IASProperty && IASProperty.value && IASProperty.value.value
+        ? IASProperty.value.value as string
+        : undefined;
 
     const width = baseInstanceContext.creative.format.split("x")[0];
     const height = baseInstanceContext.creative.format.split("x")[1];
