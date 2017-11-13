@@ -69,14 +69,14 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       this.logger.warn(msg);
     }
 
-    const imageProperty = _.find(
-      baseInstanceContext.creativeProperties,
-      p => p.property_type === "ASSET"
-    );
-
     const IASProperty = _.find(
       baseInstanceContext.creativeProperties,
-      p => p.technical_name === "IAS_CLIENT_ID"
+      p => p.technical_name === "ias_client_id"
+    );
+
+    const additionalHTMLProperty = _.find(
+      baseInstanceContext.creativeProperties,
+      p => p.technical_name === "additional_html"
     );
 
     // If no 'predefined' template was provided, we retrieve it from the platform
@@ -136,41 +136,27 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       ? this.engineBuilder.compile(creativeClickUrl)
       : undefined;
 
+      const additionalHTML = additionalHTMLProperty && additionalHTMLProperty.value && additionalHTMLProperty.value.value ?
+        this.engineBuilder.compile(additionalHTMLProperty.value.value as string) : undefined;
+  
+      const IASClientId = IASProperty && IASProperty.value && IASProperty.value.value ?
+        IASProperty.value.value as string : undefined;
+
     const width = baseInstanceContext.creative.format.split("x")[0];
     const height = baseInstanceContext.creative.format.split("x")[1];
 
-    let imageUrl: string | undefined;
-
-    if(imageProperty && imageProperty.value && imageProperty.value.file_path) {
-const filePath = imageProperty.value.file_path
-const additionalSlash = filePath.startsWith('/') ? "" : "/";
-imageUrl = `//assets.mediarithmics.com${additionalSlash}${imageProperty.value.file_path}`
-    }
-    
     const context: AdRendererTemplateInstanceContext = {
       creative: baseInstanceContext.creative,
       creativeProperties: baseInstanceContext.creativeProperties,
       width: width,
       height: height,
-      image_url_without_protocol: imageUrl,
       creative_click_url: creativeClickUrl,
       compiled_click_url: compiledClickUrl,
       template: template,
-      compiled_template: compiledTemplate
+      compiled_template: compiledTemplate,
+      compiled_additional_html: additionalHTML,
+      ias_client_id: IASClientId
     };
-
-    const compiledViewabilityTags = [];
-
-    if (IASProperty && IASProperty.value && IASProperty.value.value) {
-      compiledViewabilityTags.push(
-        this.engineBuilder.compile(ViewabilityTags.IAS)
-      );
-      context.ias_user_id = IASProperty.value.value as string;
-    }
-
-    // TODO -- Add more Visibility Tags integrations
-
-    context.compiled_viewability_tags = compiledViewabilityTags;
 
     return context;
   }

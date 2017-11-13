@@ -35,15 +35,14 @@ export interface AdRendererTemplateInstanceContext
   extends AdRendererBaseInstanceContext {
   width: string;
   height: string;
-  image_url_without_protocol?: string;
   creative_click_url?: string;
   compiled_click_url?: any;
-  compiled_viewability_tags?: string[];
   // Raw template to be compiled
   template: any;
   // Compiled template
   compiled_template?: any;
-  ias_user_id?: string;
+  ias_client_id?: string;
+  compiled_additional_html?: any;
 }
 
 export interface AdRendererRecoTemplateInstanceContext

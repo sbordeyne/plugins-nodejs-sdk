@@ -23,7 +23,7 @@ export interface URLHandleBarRootContext {
   creative: HandleBarRootContextCreative;
   // Viewability TAGs specific
   viewabilityTags?: string[];
-  IAS_USER_ID?: string;
+  IAS_CLIENT_ID?: string;
   // Main mediarithmics macros
   ORGANISATION_ID: string;
   AD_GROUP_ID?: string;
@@ -38,7 +38,7 @@ export interface URLHandleBarRootContext {
 export interface SimpleHandleBarRootContext extends URLHandleBarRootContext {
   ENCODED_CLICK_URL: string;
   CLICK_URL: string;
-  imageUrl?: string;
+  ADDITIONAL_HTML?: string;
 }
 
 // Handlebar Context for the Template - with recommendations
