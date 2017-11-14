@@ -11,18 +11,11 @@ const handlebars = require("handlebars");
 const numeral = require("numeral");
 const _ = require("lodash");
 
-export interface ClickableContent {
-  item_id?: string;
-  catalog_token: any;
-  $content_id: number;
-}
-
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {
-  request: AdRendererRequest;
-  creative: HandlebarsRootContextCreative;
+  REQUEST: AdRendererRequest;
+  CREATIVE: HandlebarsRootContextCreative;
   // Viewability TAGs specific
-  viewabilityTags?: string[];
   IAS_CLIENT_ID?: string;
   // Main mediarithmics macros
   ORGANISATION_ID: string;
@@ -42,17 +35,25 @@ export interface HandlebarsRootContext extends URLHandlebarsRootContext {
 }
 
 // Handlebar Context for the Template - with recommendations
-export interface RecommendationsHandlebarsRootContext extends HandlebarsRootContext {
-  redirectUrls: string[];
-  clickableContents: ClickableContent[];
-  recommendations: ItemProposal[];
+export interface RecommendationsHandlebarsRootContext
+  extends HandlebarsRootContext {
+  private: {
+    redirectUrls: string[];
+    clickableContents: ClickableContent[];
+  };
+  RECOMMENDATIONS: ItemProposal[];
+}
+
+export interface ClickableContent {
+  item_id?: string;
+  catalog_token: any;
+  $content_id: number;
 }
 
 export interface HandlebarsRootContextCreative {
-  properties: Creative;
-  click_url?: string;
-  width: string;
-  height: string;
+  CLICK_URL?: string;
+  WIDTH: string;
+  HEIGHT: string;
 }
 
 function formatPrice(price: string, pattern: string) {
@@ -80,18 +81,20 @@ const encodeRecoClickUrlHelper = () => (
   rootContext: RecommendationsHandlebarsRootContext,
   recommendation: ItemProposal
 ) => {
-  rootContext.clickableContents.push({
+  rootContext.private.clickableContents.push({
     item_id: recommendation.$id,
     catalog_token: recommendation.$catalog_token,
     $content_id: idx
   });
 
   // recommendation.url replace placeHolder by idx
-  const filledRedirectUrls = rootContext.redirectUrls.map((url: string) => {
-    const url1 = _.replace(url, placeHolder, idx);
-    const url2 = _.replace(url1, uriEncodePlaceHolder, idx);
-    return _.replace(url2, doubleEncodedUriPlaceHolder, idx);
-  });
+  const filledRedirectUrls = rootContext.private.redirectUrls.map(
+    (url: string) => {
+      const url1 = _.replace(url, placeHolder, idx);
+      const url2 = _.replace(url1, uriEncodePlaceHolder, idx);
+      return _.replace(url2, doubleEncodedUriPlaceHolder, idx);
+    }
+  );
 
   const recommendationUrl = recommendation.$url ? recommendation.$url : "";
   console.log(
@@ -139,7 +142,7 @@ export class RecommendationsHandlebarsEngine extends HandlebarsEngine {
     // This is how the encodeClickUrl partial should be used in templates:
     // {{> encodeClickUrl url="http://www.mediarithmics.com/en/"}}
     const encodeClickUrlPartial =
-      "{{encodeClickUrlInternal @root.redirectUrls url}}";
+      "{{encodeClickUrlInternal @root.private.redirectUrls url}}";
     this.engine.registerPartial("encodeClickUrl", encodeClickUrlPartial);
     this.engine.registerHelper("encodeClickUrlInternal", encodeClickUrl());
 
