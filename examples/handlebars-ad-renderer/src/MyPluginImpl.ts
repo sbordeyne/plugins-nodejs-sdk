@@ -13,22 +13,25 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     );
 
     const redirectUrls = adRenderRequest.click_urls;
-    if(instanceContext.creative_click_url) { redirectUrls.push(instanceContext.creative_click_url); }
-    
+    if (instanceContext.creative_click_url) {
+      redirectUrls.push(instanceContext.creative_click_url);
+    }
+
     const clickUrl = this.getEncodedClickUrl(redirectUrls);
 
-    const properties: extra.HandleBarRootContext = {
-      creative: {
-        properties: instanceContext.creative,
-        click_url: instanceContext.creative_click_url,
-        width: instanceContext.width,
-        height: instanceContext.height
+    const properties: extra.RecommendationsHandlebarsRootContext = {
+      CREATIVE: {
+        CLICK_URL: instanceContext.creative_click_url,
+        WIDTH: instanceContext.width,
+        HEIGHT: instanceContext.height
       },
-      recommendations: recommendations,
-      clickableContents: [],
-      redirectUrls: adRenderRequest.click_urls,
-      request: adRenderRequest,
-      ORGANISATION_ID: instanceContext.creative.organisation_id, // Hack, it should come from the AdRendererRequest
+      RECOMMENDATIONS: recommendations,
+      private: {
+        clickableContents: [],
+        redirectUrls: adRenderRequest.click_urls
+      },
+      REQUEST: adRenderRequest,
+      ORGANISATION_ID: instanceContext.displayAd.organisation_id, // Hack, it should come from the AdRendererRequest
       AD_GROUP_ID: adRenderRequest.ad_group_id,
       MEDIA_ID: adRenderRequest.media_id,
       CAMPAIGN_ID: adRenderRequest.campaign_id,
@@ -52,7 +55,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     );
 
     const html = instanceContext.compiled_template(properties); //fill the properties
-    
+
     this.logger.debug(
       `CallId: ${adRenderRequest.call_id} - HTML returned by Handlebars: ${html}`
     );
@@ -60,13 +63,13 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     return {
       html: html,
       displayContext: {
-        $clickable_contents: properties.clickableContents
+        $clickable_contents: properties.private.clickableContents
       }
     };
   }
 
   constructor() {
     super();
-    this.engineBuilder = new extra.HandlebarsEngine();
+    this.engineBuilder = new extra.RecommendationsHandlebarsEngine();
   }
 }

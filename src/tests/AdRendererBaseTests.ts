@@ -6,7 +6,7 @@ import * as sinon from "sinon";
 import * as mockery from "mockery";
 import * as rp from "request-promise-native";
 
-describe("Fetch creative API", () => {
+describe("Fetch DisplayAd API", () => {
   let requestPromiseProx: sinon.SinonStub = sinon
     .stub()
     .returns(Promise.resolve("Yolo"));
@@ -30,13 +30,45 @@ describe("Fetch creative API", () => {
   const plugin = new MyFakeAdRenderer();
   const runner = new core.TestingPluginRunner(plugin, requestPromiseProx);
 
-  it("Check that creativeId is passed correctly in fetchCreative", function(
+  it("Check that creativeId is passed correctly in fetchDisplayAd", function(
     done
   ) {
     const fakeCreativeId = "422";
 
+    // Creative stub
+    const creative: core.ResponseData<core.DisplayAd> = {
+      status: "ok",
+      data: {
+        type: "DISPLAY_AD",
+        id: "422",
+        organisation_id: "1126",
+        name: "Toto",
+        technical_name: "hello",
+        archived: false,
+        editor_version_id: "5",
+        editor_version_value: "1.0.0",
+        editor_group_id: "com.mediarithmics.creative.display",
+        editor_artifact_id: "default-editor",
+        editor_plugin_id: "5",
+        renderer_version_id: "1054",
+        renderer_version_value: "1.0.0",
+        renderer_group_id: "com.trololo.creative.display",
+        renderer_artifact_id: "multi-advertisers-display-ad-renderer",
+        renderer_plugin_id: "1041",
+        creation_date: 1492785056278,
+        subtype: "BANNER",
+        format: "300x250"
+      }
+    };
+
+    requestPromiseProx
+      .withArgs(
+        sinon.match.has("uri", sinon.match(/\/v1\/creatives\/(.){1,10}$/))
+      )
+      .returns(creative);
+
     // We try a call to the Gateway
-    plugin.fetchCreative(fakeCreativeId).then(() => {
+    plugin.fetchDisplayAd(fakeCreativeId).then(() => {
       expect(requestPromiseProx.args[0][0].uri).to.be.eq(
         `${plugin.outboundPlatformUrl}/v1/creatives/${fakeCreativeId}`
       );
@@ -44,13 +76,13 @@ describe("Fetch creative API", () => {
     });
   });
 
-  it("Check that fakeCreativeId is passed correctly in fetchCreativeProperties", function(
+  it("Check that fakeCreativeId is passed correctly in fetchDisplayAdProperties", function(
     done
   ) {
     const fakeCreativeId = "4255";
 
     // We try a call to the Gateway
-    plugin.fetchCreativeProperties(fakeCreativeId).then(() => {
+    plugin.fetchDisplayAdProperties(fakeCreativeId).then(() => {
       expect(requestPromiseProx.args[1][0].uri).to.be.eq(
         `${plugin.outboundPlatformUrl}/v1/creatives/${fakeCreativeId}/renderer_properties`
       );
