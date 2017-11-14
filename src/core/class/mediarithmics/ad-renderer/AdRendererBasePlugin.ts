@@ -21,23 +21,27 @@ export abstract class AdRendererBasePlugin<
   displayContextHeader = "x-mics-display-context";
 
   // Helper to fetch the creative resource with caching
-  async fetchCreative(creativeId: string): Promise<DisplayAd> {
-    const creativeResponse = await super.requestGatewayHelper(
+  async fetchDisplayAd(creativeId: string): Promise<DisplayAd> {
+    const response = await super.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
     );
 
     this.logger.debug(
       `Fetched Creative: ${creativeId} - ${JSON.stringify(
-        creativeResponse.data
+        response.data
       )}`
     );
 
-    return creativeResponse.data;
+    if((response.data as DisplayAd).type !== "DISPLAY_AD") {
+      throw new Error(`crid: ${creativeId} - When fetching DisplayAd, another creative type was returned!`);
+    } 
+
+    return response.data;
   }
 
   // Helper to fetch the creative properties resource with caching
-  async fetchCreativeProperties(creativeId: string): Promise<PluginProperty[]> {
+  async fetchDisplayAdProperties(creativeId: string): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
       "GET",
       `${this
@@ -68,8 +72,8 @@ export abstract class AdRendererBasePlugin<
     Is it really what you want to do?
     `);
 
-    const creativeP = this.fetchCreative(creativeId);
-    const creativePropsP = this.fetchCreativeProperties(creativeId);
+    const creativeP = this.fetchDisplayAd(creativeId);
+    const creativePropsP = this.fetchDisplayAdProperties(creativeId);
 
     const results = await Promise.all([creativeP, creativePropsP]);
 
