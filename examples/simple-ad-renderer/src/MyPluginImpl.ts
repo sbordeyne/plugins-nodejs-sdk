@@ -10,12 +10,12 @@ export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
     const result: core.AdRendererPluginResponse = {
       html: `<html>
     <body>
-    <h1>Creative: ${instanceContext.creative.name}</h1>
+    <h1>Creative: ${instanceContext.displayAd.name}</h1>
     <br/>
     <p>
-    Powered by the Ad Renderer: ${instanceContext.creative
-      .renderer_group_id}:${instanceContext.creative
-        .renderer_artifact_id} v.${instanceContext.creative
+    Powered by the Ad Renderer: ${instanceContext.displayAd
+      .renderer_group_id}:${instanceContext.displayAd
+        .renderer_artifact_id} v.${instanceContext.displayAd
         .renderer_version_value}
     </p>
     <!-- We always need to include the mediarithmics impression tracking pixel -->
