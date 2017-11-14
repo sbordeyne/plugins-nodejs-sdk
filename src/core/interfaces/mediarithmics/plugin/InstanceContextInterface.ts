@@ -27,8 +27,8 @@ export interface BidOptimizerBaseInstanceContext {
 }
 
 export interface AdRendererBaseInstanceContext {
-  creative: DisplayAd;
-  creativeProperties: PluginProperty[];
+  displayAd: DisplayAd;
+  displayAdProperties: PluginProperty[];
 }
 
 export interface AdRendererTemplateInstanceContext

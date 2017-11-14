@@ -60,7 +60,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
     const baseInstanceContext = await super.instanceContextBuilder(creativeId);
 
     const urlProperty = _.find(
-      baseInstanceContext.creativeProperties,
+      baseInstanceContext.displayAdProperties,
       p => p.property_type === "URL"
     );
 
@@ -70,19 +70,19 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
     }
 
     const IASProperty = _.find(
-      baseInstanceContext.creativeProperties,
+      baseInstanceContext.displayAdProperties,
       p => p.technical_name === "ias_client_id"
     );
 
     const additionalHTMLProperty = _.find(
-      baseInstanceContext.creativeProperties,
+      baseInstanceContext.displayAdProperties,
       p => p.technical_name === "additional_html"
     );
 
     // If no 'predefined' template was provided, we retrieve it from the platform
     if (!template) {
       const adLayoutProperty = _.find(
-        baseInstanceContext.creativeProperties,
+        baseInstanceContext.displayAdProperties,
         p => p.property_type === "AD_LAYOUT"
       );
 
@@ -98,7 +98,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       }
 
       const templateProperties = await this.fetchTemplateProperties(
-        baseInstanceContext.creative.organisation_id,
+        baseInstanceContext.displayAd.organisation_id,
         adLayoutProperty.value.id,
         adLayoutProperty.value.version
       );
@@ -149,12 +149,12 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
         ? IASProperty.value.value as string
         : undefined;
 
-    const width = baseInstanceContext.creative.format.split("x")[0];
-    const height = baseInstanceContext.creative.format.split("x")[1];
+    const width = baseInstanceContext.displayAd.format.split("x")[0];
+    const height = baseInstanceContext.displayAd.format.split("x")[1];
 
     const context: AdRendererTemplateInstanceContext = {
-      creative: baseInstanceContext.creative,
-      creativeProperties: baseInstanceContext.creativeProperties,
+      displayAd: baseInstanceContext.displayAd,
+      displayAdProperties: baseInstanceContext.displayAdProperties,
       width: width,
       height: height,
       creative_click_url: creativeClickUrl,

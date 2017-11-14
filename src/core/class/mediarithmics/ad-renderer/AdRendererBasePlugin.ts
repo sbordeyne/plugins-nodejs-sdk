@@ -81,8 +81,8 @@ export abstract class AdRendererBasePlugin<
     const displayAdProps = results[1];
 
     const context = {
-      creative: displayAd,
-      creativeProperties: displayAdProps
+      displayAd: displayAd,
+      displayAdProperties: displayAdProps
     } as T;
 
     return Promise.resolve(context);

@@ -97,7 +97,7 @@ Error: ${e.message} - ${e.stack}`);
     const baseInstanceContext = await super.instanceContextBuilder(creativeId);
 
     const recommenderProperty = _.find(
-      baseInstanceContext.creativeProperties,
+      baseInstanceContext.displayAdProperties,
       p => p.technical_name === "recommender_id"
     );
 
