@@ -18,9 +18,9 @@ export interface ClickableContent {
 }
 
 // Handlebar Context for URLs (not all macros are available)
-export interface URLHandleBarRootContext {
+export interface URLHandlebarsRootContext {
   request: AdRendererRequest;
-  creative: HandleBarRootContextCreative;
+  creative: HandlebarsRootContextCreative;
   // Viewability TAGs specific
   viewabilityTags?: string[];
   IAS_CLIENT_ID?: string;
@@ -35,20 +35,20 @@ export interface URLHandleBarRootContext {
 }
 
 // Handlebar Context for the Template - without recommandations
-export interface SimpleHandleBarRootContext extends URLHandleBarRootContext {
+export interface HandlebarsRootContext extends URLHandlebarsRootContext {
   ENCODED_CLICK_URL: string;
   CLICK_URL: string;
   ADDITIONAL_HTML?: string;
 }
 
 // Handlebar Context for the Template - with recommendations
-export interface HandleBarRootContext extends SimpleHandleBarRootContext {
+export interface RecommendationsHandlebarsRootContext extends HandlebarsRootContext {
   redirectUrls: string[];
   clickableContents: ClickableContent[];
   recommendations: ItemProposal[];
 }
 
-export interface HandleBarRootContextCreative {
+export interface HandlebarsRootContextCreative {
   properties: Creative;
   click_url?: string;
   width: string;
@@ -77,7 +77,7 @@ const doubleEncodedUriPlaceHolder = encodeURI(encodeURI(placeHolder));
 // insrted into the campaign log
 const encodeRecoClickUrlHelper = () => (
   idx: number,
-  rootContext: HandleBarRootContext,
+  rootContext: RecommendationsHandlebarsRootContext,
   recommendation: ItemProposal
 ) => {
   rootContext.clickableContents.push({
@@ -100,7 +100,7 @@ const encodeRecoClickUrlHelper = () => (
   return encodeClickUrl()(filledRedirectUrls, recommendationUrl);
 };
 
-export class SimpleHandlebarsEngine
+export class HandlebarsEngine
   implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {
   engine: typeof Handlebars;
 
@@ -122,7 +122,7 @@ export class SimpleHandlebarsEngine
   constructor() {}
 }
 
-export class HandlebarsEngine extends SimpleHandlebarsEngine {
+export class RecommendationsHandlebarsEngine extends HandlebarsEngine {
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
   init(): void {
     super.init();
