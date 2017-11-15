@@ -192,8 +192,8 @@ describe("Fetch recommendation API", () => {
     height: "250",
     creative_click_url: "http://yolo.com",
     template: "toto",
-    creative: fakeCreative,
-    creativeProperties: fakeCreativeProperties
+    displayAd: fakeCreative,
+    displayAdProperties: fakeCreativeProperties
   };
 
   const fakeUserAgentId = "vec:888888";
