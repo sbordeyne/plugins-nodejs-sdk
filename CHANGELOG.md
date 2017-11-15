@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.3.0 - 2017-11-15
+
+- New "Templating" support with AdRendererTemplatePlugin class (for AdRenderer that don't need recommendations)
+
 # 0.2.4 - 2017-10-25
 
 - Add support for email router and email renderer
