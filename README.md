@@ -154,9 +154,9 @@ In v0.2.x, the Plugin SDK only provided `AdRendererRecoTemplatePlugin` for build
 
 This base class was forcing developers to handle recommendations while for some use case, you only need the 'Templating' without having to handle the recommendation part.
 
-In v0.3.0, there is now 2 classes to build an AdRenderer:
+In v0.3.0, there are now 2 classes to build an AdRenderer:
 1. AdRendererTemplatePlugin: if you want to do an AdRenderer without any recommendations but with a Templating engine, this is what you want
-2. AdRendererRecoTemplatePlugin: if you want to use recommandations in your AdRenderer while also doing templating, this is what you need 
+2. AdRendererRecoTemplatePlugin: if you want to use recommendations in your AdRenderer while also doing templating, this is what you need 
 
 ### getCreative & getCreativeProperties helper
 
@@ -168,9 +168,9 @@ The AdRenderer base class now only have `getDisplayAd(id)` and `getDisplayAdProp
 
 Previously, the Handlebars extension was providing an `HandleBarRootContext` interface (in `extra`) which was being used for all AdRenderers using Handlebars, whether they were using "Recommendations" or simply doing "basic" templating.
 
-In 0.3.0, there is 3 Handlebars contexts:
+In 0.3.0, there are 3 Handlebars contexts:
 - URLHandlebarsRootContext: to be used when replacing macros in URLs
-- HandlebarsRootContext: to be used when replacing macros in 'simmple' templates without recommendations (e.g. when building a Plugin on top of AdRendererTemplatePlugin)
+- HandlebarsRootContext: to be used when replacing macros in 'simple' templates without recommendations (e.g. when building a Plugin on top of AdRendererTemplatePlugin)
 - RecommendationsHandlebarsRootContext: to be used when replacing macros in a template used with "Rrcommendations (e.g. when building a Plugin on top of AdRendererRecoTemplatePlugin)
 
 The Handlebars context themselves also changed. This is in order to build a set of standard macros in all AdRenderer Plugin available on mediarithmics platform => hence, you now have to propose values to be replaced in all the standard macros.
@@ -183,6 +183,6 @@ All macros are now in UPPER CASE. Some macros (request, creative, etc.) have to 
 
 Prior to the v0.3.0, there was only one Handlebars engine provided in the extra package.
 
-With the 0.3.0, there is now 2 Handlebars engine:
+With the 0.3.0, there are now 2 Handlebars engine:
 - HandlebarsEngine: to be used when building an AdRenderer without recommendations
 - RecommendationsHandlebarsEngine: to be used when building a 'recommendation' Ad Renderer
