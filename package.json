@@ -1,6 +1,6 @@
 {
   "name": "@mediarithmics/plugins-nodejs-sdk",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "This is the mediarithmics nodejs to help plugin developers bootstrapping their plugin without having to deal with most of the plugin boilerplate",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
