@@ -2,6 +2,8 @@
 export * from "./class/mediarithmics/common/BasePlugin";
 export * from "./interfaces/mediarithmics/api/common/ValueInterface";
 
+export * from "./interfaces/mediarithmics/api/common/ViewabilityTags";
+
 export * from "./interfaces/mediarithmics/api/common/Response";
 export * from "./interfaces/mediarithmics/api/common/EmailInterface";
 export * from "./interfaces/mediarithmics/api/common/CreativeInterface";
@@ -39,6 +41,7 @@ export * from "./interfaces/mediarithmics/api/ad-renderer/AdLayoutVersionInterfa
 export * from "./interfaces/mediarithmics/api/ad-renderer/RecommenderInterface";
 
 export * from "./class/mediarithmics/ad-renderer/AdRendererBasePlugin";
+export * from "./class/mediarithmics//ad-renderer/AdRendererTemplatePlugin";
 export * from "./class/mediarithmics//ad-renderer/AdRendererRecoTemplatePlugin";
 export * from "./interfaces/mediarithmics/plugin/TemplatingEngineInterface"
 export * from "./interfaces/mediarithmics/api/ad-renderer/UserCampaignInterface";
