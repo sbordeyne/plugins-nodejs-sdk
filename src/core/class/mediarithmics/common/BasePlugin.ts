@@ -19,11 +19,10 @@ export abstract class BasePlugin {
   INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 120000;
 
   pluginCache: any;
-  gatewayHost: string = process.env.GATEWAY_HOST || "plugin-gateway.platform";
-  gatewayPort: number = parseInt(process.env.GATEWAY_PORT) || 8080;
 
-  outboundPlatformUrl: string = `http://${this.gatewayHost}:${this
-    .gatewayPort}`;
+  gatewayHost: string;
+  gatewayPort: number;
+  outboundPlatformUrl: string;
 
   app: express.Application;
   logger: winston.LoggerInstance;
@@ -68,7 +67,10 @@ export abstract class BasePlugin {
           this.logger.debug(
             `Sending DEBUG_LEVEL_UPDATE_FROM_WORKER from worker ${process.pid} to master with value: ${msg.value}`
           );
-          process.send(msg);
+
+          if(typeof process.send === "function") {
+            process.send(msg);            
+          }
 
           // We have to assume that everything went fine in the propagation...
           res.status(200).end();
@@ -267,7 +269,10 @@ export abstract class BasePlugin {
           this.logger.debug(
             `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${process.pid} to master with value: ${msg.value}`
           );
-          process.send(msg);
+          
+          if(typeof process.send === "function") {
+            process.send(msg);            
+          }
 
           // We have to assume that everything went fine in the propagation...
           res.status(200).end();
@@ -291,6 +296,22 @@ export abstract class BasePlugin {
   start() {}
 
   constructor() {
+    const gatewayHost = process.env.GATEWAY_HOST;
+    if (gatewayHost) {
+      this.gatewayHost = gatewayHost;
+    } else {
+      this.gatewayHost = "plugin-gateway.platform";
+    }
+
+    const gatewayPort = process.env.GATEWAY_PORT;
+    if (gatewayPort) {
+      this.gatewayPort = parseInt(gatewayPort);
+    } else {
+      this.gatewayPort = 8080;
+    }
+
+    this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
+
     this.app = express();
     this.app.use(bodyParser.json({ type: "*/*", limit: "5mb" }));
     this.logger = new winston.Logger({

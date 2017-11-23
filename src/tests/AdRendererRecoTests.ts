@@ -87,7 +87,7 @@ describe("Fetch recommendation API", () => {
     }
   }
 
-  const fakeRecommenderResponse: core.RecommenderResponse = {
+  const fakeRecommenderResponse: core.ResponseData<core.RecommandationsWrapper> = {
     status: "ok",
     data: {
       ts: 1496939189652,
@@ -104,7 +104,7 @@ describe("Fetch recommendation API", () => {
           $image_url:
             "http://hbs.madamevacances.com/photos/etab/87/235x130/residence_les_terrasses_de_veret_piscine.jpg",
           $price: 160.3,
-          $sale_price: null,
+          $sale_price: undefined,
           city: "Flaine",
           country: "France",
           region: "Alpes du Nord",
@@ -121,8 +121,8 @@ describe("Fetch recommendation API", () => {
             "https://www.madamevacances.com/locations/france/alpes-du-nord/val-thorens/le-chalet-altitude/",
           $image_url:
             "http://hbs.madamevacances.com/photos/etab/335/235x130/chalet_altitude_exterieure_2.jpg",
-          $price: null,
-          $sale_price: null,
+          $price: undefined,
+          $sale_price: undefined,
           city: "Val Thorens",
           country: "France",
           region: "Alpes du Nord",
@@ -140,7 +140,7 @@ describe("Fetch recommendation API", () => {
           $image_url:
             "http://hbs.madamevacances.com/photos/etab/65/235x130/valfrejus_chalet_thabor_exterieure_2.jpg",
           $price: 143.2,
-          $sale_price: null,
+          $sale_price: undefined,
           city: "Valfréjus",
           country: "France",
           region: "Alpes du Nord",
@@ -150,12 +150,12 @@ describe("Fetch recommendation API", () => {
     }
   };
 
-  const fakeCreative: core.Creative = {
+  const fakeCreative: core.DisplayAd = {
     type: "DISPLAY_AD",
     id: "7168",
     organisation_id: "1126",
     name: "Toto",
-    technical_name: null,
+    technical_name: "hello",
     archived: false,
     editor_version_id: "5",
     editor_version_value: "1.0.0",
@@ -169,14 +169,7 @@ describe("Fetch recommendation API", () => {
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
     subtype: "BANNER",
-    format: "300x250",
-    published_version: 1,
-    creative_kit: null,
-    ad_layout: null,
-    locale: null,
-    destination_domain: "estcequecestbientotlapero.fr",
-    audit_status: "NOT_AUDITED",
-    available_user_audit_actions: ["START_AUDIT"]
+    format: "300x250"
   };
 
   const fakeCreativeProperties = [
@@ -195,12 +188,12 @@ describe("Fetch recommendation API", () => {
 
   const fakeInstanceContext: core.AdRendererRecoTemplateInstanceContext = {
     recommender_id: "74",
+    width: "300",
+    height: "250",
     creative_click_url: "http://yolo.com",
-    ad_layout_id: "48",
-    ad_layout_version: "204",
     template: "toto",
-    creative: fakeCreative,
-    creativeProperties: fakeCreativeProperties
+    displayAd: fakeCreative,
+    displayAdProperties: fakeCreativeProperties
   };
 
   const fakeUserAgentId = "vec:888888";
@@ -211,13 +204,7 @@ describe("Fetch recommendation API", () => {
     .withArgs(
       sinon.match.has(
         "uri",
-        sinon.match(function(value: string) {
-          console.log(value);
-          return (
-            value.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/) !==
-            null
-          );
-        })
+        sinon.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/)
       )
     )
     .returns(fakeRecommenderResponse);

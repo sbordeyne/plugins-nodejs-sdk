@@ -13,17 +13,17 @@ describe("Fetch analyzer API", () => {
       instanceContext: core.ActivityAnalyzerBaseInstanceContext
     ) {
       const updatedActivity = request.activity;
-      const response: core.ActivityAnalyzerPluginResponse = {
-        status: "ok",
-        data: null
-      };
 
       // We add a field on the processed activitynégative
       updatedActivity.processed_by = `${instanceContext.activityAnalyzer
         .group_id}:${instanceContext.activityAnalyzer
         .artifact_id} v.${instanceContext.activityAnalyzer
         .visit_analyzer_plugin_id}`;
-      response.data = updatedActivity;
+
+      const response: core.ActivityAnalyzerPluginResponse = {
+        status: "ok",
+        data: updatedActivity
+      };
 
       return Promise.resolve(response);
     }
@@ -93,9 +93,8 @@ describe("Activity Analysis API test", function() {
 
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.ActivityAnalyzerResponse = {
+        const pluginInfo: core.ResponseData<core.ActivityAnalyzer> = {
           status: "ok",
-          count: 2,
           data: {
             id: "42",
             organisation_id: "1001",

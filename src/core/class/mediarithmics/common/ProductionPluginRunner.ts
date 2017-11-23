@@ -19,7 +19,7 @@ export interface SocketMsg {
 export class ProductionPluginRunner {
   numCPUs = require("os").cpus().length;
 
-  pluginPort: number = parseInt(process.env.PLUGIN_PORT) || 8080;
+  pluginPort: number;
 
   plugin: BasePlugin;
   server: Server;
@@ -30,18 +30,24 @@ export class ProductionPluginRunner {
    * 2 - If a worker is asking for a token update (ex: the worker was just created because one of his friends died), the master should send a message to each workers
    * 3 - If a log level change is detected by a worker, it receives a message and should send a message to each workers
    * 4 - If a worker is asking for a log level update (ex: the worker was just created because one of his friends died), the master should send a message to each workers
-   * @param recMsg 
+   * @param recMsg
    */
   masterListener = (worker: cluster.Worker, recMsg: SocketMsg) => {
     this.plugin.logger.debug(
-      `Master ${process.pid} is being called with cmd: ${MsgCmd[
-        recMsg.cmd
-      ]}, value: ${recMsg.value}`
+      `Master ${process.pid} is being called with cmd: ${
+        MsgCmd[recMsg.cmd]
+      }, value: ${recMsg.value}`
     );
 
     // If we receive a Token Update, we update the token
     if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER) {
-      this.plugin.credentials = JSON.parse(recMsg.value);
+      if (recMsg.value) {
+        this.plugin.credentials = JSON.parse(recMsg.value);
+      } else {
+        throw new Error(
+          "We received a CREDENTIAL_UPDATE_FROM_WORKER msg without credentials in the value field of the msg."
+        );
+      }
     }
 
     // We send the token to each of the workers
@@ -56,14 +62,23 @@ export class ProductionPluginRunner {
           value: JSON.stringify(this.plugin.credentials)
         };
         for (const id in cluster.workers) {
-          cluster.workers[id].send(msg);
+          const worker = cluster.workers[id];
+          if (worker) {
+            worker.send(msg);
+          }
         }
       }
     }
 
     // If we receive a Log Level, we update the token
     if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_WORKER) {
-      this.plugin.logger.level = recMsg.value;
+      if (recMsg.value) {
+        this.plugin.logger.level = recMsg.value;
+      } else {
+        throw new Error(
+          "We received a LOG_LEVEL_UPDATE_FROM_WORKER msg without logLevel in the value field of the msg."
+        );
+      }
     }
 
     // We send the log level to each of the workers
@@ -74,24 +89,32 @@ export class ProductionPluginRunner {
       };
 
       for (const id in cluster.workers) {
-        cluster.workers[id].send(msg);
+        const worker = cluster.workers[id];
+        if (worker) {
+          worker.send(msg);
+        }
       }
     }
   };
 
   /**
    * Socker Listener of the workers. It should listen for Token update from master and for Log Level changes
-   * @param recMsg 
+   * @param recMsg
    */
   workerListener = (recMsg: SocketMsg) => {
     this.plugin.logger.debug(
-      `Worker ${process.pid} is being called with cmd: ${MsgCmd[
-        recMsg.cmd
-      ]}, value: ${recMsg.value}`
+      `Worker ${process.pid} is being called with cmd: ${
+        MsgCmd[recMsg.cmd]
+      }, value: ${recMsg.value}`
     );
 
     // If we receive a Token Update, we propagate it to all workers
     if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER) {
+      if (!recMsg.value) {
+        throw new Error(
+          "We received a CREDENTIAL_UPDATE_FROM_MASTER msg without credentials in the value field of the msg."
+        );
+      }
       const creds: Credentials = JSON.parse(recMsg.value);
 
       const initUpdateResult = this.plugin.onInitRequest(creds);
@@ -106,13 +129,20 @@ export class ProductionPluginRunner {
         );
       }
     } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
+      if (!recMsg.value) {
+        throw new Error(
+          "We received a LOG_LEVEL_UPDATE_FROM_MASTER msg without logLevel in the value field of the msg."
+        );
+      }
       const level = recMsg.value.toLocaleLowerCase();
 
       const logLevelUpdateResult = this.plugin.onLogLevelUpdate(level);
 
       if (logLevelUpdateResult.status === "error") {
         this.plugin.logger.error(
-          `${process.pid}: Error while updateting LogLevel: ${logLevelUpdateResult.msg}`
+          `${process.pid}: Error while updateting LogLevel: ${
+            logLevelUpdateResult.msg
+          }`
         );
       } else {
         this.plugin.logger.debug(
@@ -129,10 +159,15 @@ export class ProductionPluginRunner {
   }
 
   /**
- * Multi threading launch of the App, with socket communicaton to propagate token updates
- * @param port 
- */
+   * Multi threading launch of the App, with socket communicaton to propagate token updates
+   * @param port
+   */
   start(port?: number) {
+    const pluginPort = process.env.PLUGIN_PORT;
+    this.pluginPort = pluginPort ? parseInt(pluginPort) : 8080;
+
+    const serverPort = port ? port : this.pluginPort;
+
     if (cluster.isMaster) {
       this.plugin.logger.info(`Master ${process.pid} is running`);
 

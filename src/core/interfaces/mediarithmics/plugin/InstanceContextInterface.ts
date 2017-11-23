@@ -1,9 +1,19 @@
-import { BidOptimizer, Creative, ActivityAnalyzer, PluginProperty } from "../../../index";
+import {
+  BidOptimizer,
+  Creative,
+  ActivityAnalyzer,
+  PluginProperty,
+  EmailRouter,
+  DisplayAd
+} from "../../../index";
 
-// AdRenderer Instance Contexts
-export interface AdRendererBaseInstanceContext {
+export interface EmailRendererBaseInstanceContext {
   creative: Creative;
   creativeProperties: PluginProperty[];
+}
+
+export interface EmailRouterBaseInstanceContext {
+  routerProperties: PluginProperty[];
 }
 
 export interface ActivityAnalyzerBaseInstanceContext {
@@ -16,14 +26,26 @@ export interface BidOptimizerBaseInstanceContext {
   bidOptimizerProperties: PluginProperty[];
 }
 
-export interface AdRendererRecoTemplateInstanceContext
+export interface AdRendererBaseInstanceContext {
+  displayAd: DisplayAd;
+  displayAdProperties: PluginProperty[];
+}
+
+export interface AdRendererTemplateInstanceContext
   extends AdRendererBaseInstanceContext {
-  recommender_id: string;
-  creative_click_url: string;
-  ad_layout_id: string;
-  ad_layout_version: string;
+  width: string;
+  height: string;
+  creative_click_url?: string;
+  compiled_click_url?: any;
   // Raw template to be compiled
   template: any;
-  // Compiled tempalte
+  // Compiled template
   compiled_template?: any;
+  ias_client_id?: string;
+  compiled_additional_html?: any;
+}
+
+export interface AdRendererRecoTemplateInstanceContext
+  extends AdRendererTemplateInstanceContext {
+  recommender_id?: string;
 }
