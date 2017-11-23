@@ -169,7 +169,7 @@ export abstract class BasePlugin {
     } catch (e) {
       if (e.name === "StatusCodeError") {
         throw new Error(
-          `Error while calling ${method} '${uri}' with the request body '${body ||
+          `Error while calling ${method} '${uri}' with the request body '${JSON.stringify(body) ||
             ""}': got a ${e.response.statusCode} ${e.response
             .statusMessage} with the response body ${JSON.stringify(
             e.response.body
