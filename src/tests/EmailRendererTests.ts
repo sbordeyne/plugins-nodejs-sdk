@@ -85,7 +85,7 @@ describe("Email Renderer API test", function() {
             id: "8592",
             organisation_id: "1135",
             name: "Market Box",
-            technical_name: null,
+            technical_name: "hello",
             archived: false,
             editor_version_id: "1020",
             editor_version_value: "1.0.0",
@@ -98,7 +98,7 @@ describe("Email Renderer API test", function() {
             renderer_artifact_id: "email-handlebars-template",
             renderer_plugin_id: "1034",
             creation_date: 1504533940679,
-            subtype: null
+            subtype: "EMAIL_TEMPLATE"
           }
         };
         resolve(creative);

@@ -8,7 +8,7 @@ import { MyHandlebarsAdRenderer } from "../MyPluginImpl";
 import { badChars, escapeChar } from "./utils";
 
 // Creative stub
-const creative: core.CreativeResponse = {
+const creative: core.ResponseData<core.DisplayAd> = {
   status: "ok",
   data: {
     type: "DISPLAY_AD",    
@@ -28,9 +28,9 @@ const creative: core.CreativeResponse = {
     renderer_artifact_id: "multi-advertisers-display-ad-renderer",
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
-    subtype: "BANNER"
-  },
-  count: 1
+    subtype: "BANNER",
+    format: "300x250"
+  }
 };
 
 const creativePropertiesResponse: core.PluginPropertyResponse = {
@@ -40,7 +40,7 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
       technical_name: "click_url",
       value: {
         url:
-          "http://www.april.fr/mon-assurance-de-pret-formulaire?cmpid=disp_datacomp_formadp_bann_300x250"
+          ""
       },
       property_type: "URL",
       origin: "PLUGIN",
@@ -311,7 +311,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -388,7 +388,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
   it("Check encodeRecoClickUrl macro", function(done) {
     // Template File stub
     const templateContent: string = `
-    {{#each recommendations}}
+    {{#each RECOMMENDATIONS}}
     {{> encodeRecoClickUrl }},
     {{/each}}`;
     const rpMockup = buildRpMockup(templateContent);
@@ -407,7 +407,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -462,7 +462,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -487,7 +487,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
 
   it("Check toJson macro", function(done) {
     // Template File stub
-    const templateContent: string = `{{toJson request}}`;
+    const templateContent: string = `{{toJson REQUEST}}`;
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
@@ -504,48 +504,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
-          .end((err, res) => {
-            expect(res.status).to.equal(200);
-
-            // Activity to process
-            request(runner.plugin.app)
-              .post("/v1/ad_contents")
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const json = res.text.trim();
-
-                expect(json).to.be.eq(
-                  JSON.stringify(adRequest).replace(badChars, escapeChar)
-                );
-
-                done();
-              });
-          });
-      });
-  });
-
-  it("Check toJson macro", function(done) {
-    // Template File stub
-    const templateContent: string = `{{toJson request}}`;
-    const rpMockup = buildRpMockup(templateContent);
-
-    // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer();
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    // Plugin init
-    request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        // Plugin log level to debug
-        request(runner.plugin.app)
-          .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -569,7 +528,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
 
   it("Check displayTracking", function(done) {
     // Template File stub
-    const templateContent: string = `{{request.display_tracking_url}}`;
+    const templateContent: string = `{{REQUEST.display_tracking_url}}`;
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
@@ -586,7 +545,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -610,7 +569,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
   it("Check Headers", function(done) {
     // Template File stub
     const templateContent: string = `
-    {{#each recommendations}}
+    {{#each RECOMMENDATIONS}}
     {{> encodeRecoClickUrl }},
     {{/each}}`;
     const rpMockup = buildRpMockup(templateContent);
@@ -629,7 +588,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -769,7 +728,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 
@@ -810,7 +769,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
         // Plugin log level to debug
         request(runner.plugin.app)
           .put("/v1/log_level")
-          .send({ level: "silly" })
+          .send({ level: "info" })
           .end((err, res) => {
             expect(res.status).to.equal(200);
 

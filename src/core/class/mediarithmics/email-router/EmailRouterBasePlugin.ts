@@ -51,6 +51,20 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     instanceContext: EmailRouterBaseInstanceContext
   ): Promise<EmailRoutingPluginResponse>;
 
+  protected async getInstanceContext(
+    emailRouterId: string
+  ): Promise<EmailRouterBaseInstanceContext> {
+    if (!this.pluginCache.get(emailRouterId)) {
+      this.pluginCache.put(
+        emailRouterId,
+        this.instanceContextBuilder(emailRouterId),
+        this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+      );
+    }
+
+    return await this.pluginCache.get(emailRouterId);
+  }
+
   private initEmailRouting(): void {
     this.app.post(
       "/v1/email_routing",
@@ -61,7 +75,6 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           };
           this.logger.error("POST /v1/email_routing : %s", JSON.stringify(msg));
           return res.status(500).json(msg);
-
         } else {
           try {
             this.logger.debug(
@@ -73,30 +86,19 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             if (!this.onEmailRouting) {
               const errMsg = "No Email Routing listener registered!";
               this.logger.error(errMsg);
-              return res.status(500).json({error: errMsg});
+              return res.status(500).json({ error: errMsg });
             }
 
-            if (!this.pluginCache.get(emailRoutingRequest.email_router_id)) {
-              this.pluginCache.put(
-                emailRoutingRequest.email_router_id,
-                this.instanceContextBuilder(
-                  emailRoutingRequest.email_router_id
-                ),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
-              );
-            }
-
-            const instanceContext = await this.pluginCache.get(
+            const instanceContext = await this.getInstanceContext(
               emailRoutingRequest.email_router_id
             );
-
-            const response = await this.onEmailRouting(
+            const pluginResponse = await this.onEmailRouting(
               emailRoutingRequest,
               instanceContext
             );
 
-            this.logger.debug(`Returning: ${JSON.stringify(response)}`);
-            return res.status(200).send(JSON.stringify(response));
+            this.logger.debug(`Returning: ${JSON.stringify(pluginResponse)}`);
+            res.status(200).send(JSON.stringify(pluginResponse));
           } catch (error) {
             this.logger.error(
               `Something bad happened : ${error.message} - ${error.stack}`
@@ -149,13 +151,12 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           this.pluginCache
             .get(emailCheckRequest.email_router_id)
             .then((instanceContext: EmailRouterBaseInstanceContext) => {
-              return this.onEmailCheck(
-                emailCheckRequest,
-                instanceContext
-              ).then(response => {
-                this.logger.debug(`Returning: ${JSON.stringify(response)}`);
-                res.status(200).send(JSON.stringify(response));
-              });
+              return this.onEmailCheck(emailCheckRequest, instanceContext).then(
+                response => {
+                  this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+                  res.status(200).send(JSON.stringify(response));
+                }
+              );
             })
             .catch((error: Error) => {
               this.logger.error(

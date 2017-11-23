@@ -26,3 +26,7 @@ export interface Creative {
     creation_date: number;
     subtype: string;
 }
+
+export interface DisplayAd extends Creative {
+    format: string;
+}

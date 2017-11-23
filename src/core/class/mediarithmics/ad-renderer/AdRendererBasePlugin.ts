@@ -9,7 +9,8 @@ import {
   BasePlugin,
   TemplatingEngine,
   AdRendererPluginResponse,
-  PluginProperty
+  PluginProperty,
+  DisplayAd
 } from "../../../index";
 
 export abstract class AdRendererBasePlugin<
@@ -19,32 +20,36 @@ export abstract class AdRendererBasePlugin<
 
   displayContextHeader = "x-mics-display-context";
 
-  // Helper to fetch the creative resource with caching
-  async fetchCreative(creativeId: string): Promise<Creative> {
-    const creativeResponse = await super.requestGatewayHelper(
+  // Helper to fetch the Display Ad resource with caching
+  async fetchDisplayAd(displayAdId: string): Promise<DisplayAd> {
+    const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/creatives/${creativeId}`
+      `${this.outboundPlatformUrl}/v1/creatives/${displayAdId}`
     );
 
     this.logger.debug(
-      `Fetched Creative: ${creativeId} - ${JSON.stringify(
-        creativeResponse.data
+      `Fetched Creative: ${displayAdId} - ${JSON.stringify(
+        response.data
       )}`
     );
 
-    return creativeResponse.data;
+    if((response.data as DisplayAd).type !== "DISPLAY_AD") {
+      throw new Error(`crid: ${displayAdId} - When fetching DisplayAd, another creative type was returned!`);
+    } 
+
+    return response.data;
   }
 
-  // Helper to fetch the creative properties resource with caching
-  async fetchCreativeProperties(creativeId: string): Promise<PluginProperty[]> {
+  // Helper to fetch the Display Ad properties resource with caching
+  async fetchDisplayAdProperties(displayAdId: string): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
       "GET",
       `${this
-        .outboundPlatformUrl}/v1/creatives/${creativeId}/renderer_properties`
+        .outboundPlatformUrl}/v1/creatives/${displayAdId}/renderer_properties`
     );
 
     this.logger.debug(
-      `Fetched Creative Properties: ${creativeId} - ${JSON.stringify(
+      `Fetched Creative Properties: ${displayAdId} - ${JSON.stringify(
         creativePropertyResponse.data
       )}`
     );
@@ -67,17 +72,17 @@ export abstract class AdRendererBasePlugin<
     Is it really what you want to do?
     `);
 
-    const creativeP = this.fetchCreative(creativeId);
-    const creativePropsP = this.fetchCreativeProperties(creativeId);
+    const displayAdP = this.fetchDisplayAd(creativeId);
+    const displayAdPropsP = this.fetchDisplayAdProperties(creativeId);
 
-    const results = await Promise.all([creativeP, creativePropsP]);
+    const results = await Promise.all([displayAdP, displayAdPropsP]);
 
-    const creative = results[0];
-    const creativeProps = results[1];
+    const displayAd = results[0];
+    const displayAdProps = results[1];
 
     const context = {
-      creative: creative,
-      creativeProperties: creativeProps
+      displayAd: displayAd,
+      displayAdProperties: displayAdProps
     } as T;
 
     return Promise.resolve(context);

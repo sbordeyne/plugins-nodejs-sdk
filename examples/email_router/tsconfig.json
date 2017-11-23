@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "noImplicitAny": true,
-        "strictNullChecks": true,
         "moduleResolution": "node",
         "module": "commonjs",
         "outDir": "./build",
@@ -9,15 +8,14 @@
         "rootDir": "./src",
         "typeRoots": ["node_modules/@types"],
         "declaration": true,
-        "alwaysStrict": true
+        "strictNullChecks": true,
+        "pretty": true
     },
     "include": [
         "./src/**/*"
     ],
     "exclude": [
         "./build",
-        "./node_modules",
-        "./examples",
-        "./src/tests"
-    ]
+        "./node_modules"
+        ]
 }
