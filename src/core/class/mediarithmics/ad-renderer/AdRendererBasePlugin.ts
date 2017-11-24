@@ -68,9 +68,6 @@ export abstract class AdRendererBasePlugin<
   // Method to build an instance context
   // To be overriden to get a custom behavior
   protected async instanceContextBuilder(creativeId: string): Promise<T> {
-    console.warn(`You are using the default InstanceContextBuilder of AdRendererBasePlugin
-    Is it really what you want to do?
-    `);
 
     const displayAdP = this.fetchDisplayAd(creativeId);
     const displayAdPropsP = this.fetchDisplayAdProperties(creativeId);
