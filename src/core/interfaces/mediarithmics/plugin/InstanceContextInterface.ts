@@ -2,10 +2,16 @@ import {
   BidOptimizer,
   Creative,
   ActivityAnalyzer,
-  PluginProperty,
   EmailRouter,
+  AudienceFeed,
+  PluginProperty,
   DisplayAd
 } from "../../../index";
+
+export interface AudienceFeedConnectorBaseInstanceContext {
+  feed: AudienceFeed;
+  feedProperties: PluginProperty[];
+}
 
 export interface EmailRendererBaseInstanceContext {
   creative: Creative;
