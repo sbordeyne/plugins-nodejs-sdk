@@ -174,12 +174,12 @@ export abstract class BasePlugin {
       return await this._transport(options);
     } catch (e) {
       if (e.name === "StatusCodeError") {
+        const bodyString =
+          isJson !== undefined && !isJson ? body : JSON.stringify(body);
         throw new Error(
-          `Error while calling ${method} '${
-            uri
-          }' with the request body '${body || ""}': got a ${
-            e.response.statusCode
-          } ${e.response.statusMessage} with the response body ${JSON.stringify(
+          `Error while calling ${method} '${uri}' with the request body '${bodyString ||
+            ""}': got a ${e.response.statusCode} ${e.response
+            .statusMessage} with the response body ${JSON.stringify(
             e.response.body
           )}`
         );
