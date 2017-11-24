@@ -68,15 +68,18 @@ export abstract class EmailRouterPlugin extends BasePlugin {
   private initEmailRouting(): void {
     this.app.post(
       "/v1/email_routing",
-      async (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error("POST /v1/email_routing : %s", JSON.stringify(msg));
-          return res.status(500).json(msg);
-        } else {
-          try {
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
+            const msg = {
+              error: "Missing request body"
+            };
+            this.logger.error(
+              "POST /v1/email_routing : %s",
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else {
             this.logger.debug(
               `POST /v1/email_routing ${JSON.stringify(req.body)}`
             );
@@ -99,14 +102,9 @@ export abstract class EmailRouterPlugin extends BasePlugin {
 
             this.logger.debug(`Returning: ${JSON.stringify(pluginResponse)}`);
             res.status(200).send(JSON.stringify(pluginResponse));
-          } catch (error) {
-            this.logger.error(
-              `Something bad happened : ${error.message} - ${error.stack}`
-            );
-            return res.status(500).send(error.message + "\n" + error.stack);
           }
         }
-      }
+      )
     );
   }
 
@@ -175,5 +173,6 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     // We init the specific route to listen for activity analysis requests
     this.initEmailRouting();
     this.initEmailCheck();
+    this.setErrorHandler();
   }
 }

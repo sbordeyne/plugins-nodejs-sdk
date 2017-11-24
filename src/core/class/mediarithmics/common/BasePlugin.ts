@@ -169,9 +169,11 @@ export abstract class BasePlugin {
     } catch (e) {
       if (e.name === "StatusCodeError") {
         throw new Error(
-          `Error while calling ${method} '${uri}' with the request body '${body ||
-            ""}': got a ${e.response.statusCode} ${e.response
-            .statusMessage} with the response body ${JSON.stringify(
+          `Error while calling ${method} '${
+            uri
+          }' with the request body '${body || ""}': got a ${
+            e.response.statusCode
+          } ${e.response.statusMessage} with the response body ${JSON.stringify(
             e.response.body
           )}`
         );
@@ -208,6 +210,36 @@ export abstract class BasePlugin {
     this.app.post("/v1/init", (req: express.Request, res: express.Response) => {
       this.onInitRequest(req, res);
     });
+  }
+
+  protected asyncMiddleware = (
+    fn: (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => any
+  ) => (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
+  protected setErrorHandler() {
+    this.app.use(
+      (
+        err: any,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        this.logger.error(
+          `Something bad happened : ${err.message} - ${err.stack}`
+        );
+        return res.status(500).send(err.message + "\n" + err.stack);
+      }
+    );
   }
 
   // Method to start the plugin

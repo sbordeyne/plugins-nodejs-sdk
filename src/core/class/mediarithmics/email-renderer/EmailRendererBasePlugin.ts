@@ -70,19 +70,18 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   private initEmailContents(): void {
     this.app.post(
       "/v1/email_contents",
-      async (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error(
-            "POST /v1/email_contents : %s",
-            JSON.stringify(msg)
-          );
-          return res.status(500).json(msg);
-          
-        } else {
-          try {
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
+            const msg = {
+              error: "Missing request body"
+            };
+            this.logger.error(
+              "POST /v1/email_contents : %s",
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else {
             this.logger.debug(
               `POST /v1/email_contents ${JSON.stringify(req.body)}`
             );
@@ -116,15 +115,9 @@ export abstract class EmailRendererPlugin extends BasePlugin {
 
             this.logger.debug(`Returning: ${JSON.stringify(response)}`);
             return res.status(200).send(JSON.stringify(response));
-
-          } catch (error) {
-            this.logger.error(
-              `Something bad happened : ${error.message} - ${error.stack}`
-            );
-            return res.status(500).send(error.message + "\n" + error.stack);
           }
         }
-      }
+      )
     );
   }
 
@@ -133,5 +126,6 @@ export abstract class EmailRendererPlugin extends BasePlugin {
 
     // We init the specific route to listen for email contents requests
     this.initEmailContents();
+    this.setErrorHandler();
   }
 }

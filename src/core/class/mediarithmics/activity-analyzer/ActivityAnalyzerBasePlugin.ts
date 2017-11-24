@@ -37,8 +37,9 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   ): Promise<PluginProperty[]> {
     const activityAnalyzerPropertyResponse = await super.requestGatewayHelper(
       "GET",
-      `${this
-        .outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}/properties`
+      `${this.outboundPlatformUrl}/v1/activity_analyzers/${
+        activityAnalyzerId
+      }/properties`
     );
     this.logger.debug(
       `Fetched Creative Properties: ${activityAnalyzerId} - ${JSON.stringify(
@@ -85,18 +86,18 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   private initActivityAnalysis(): void {
     this.app.post(
       "/v1/activity_analysis",
-      async (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error(
-            "POST /v1/activity_analysis : %s",
-            JSON.stringify(msg)
-          );
-          return res.status(500).json(msg);
-        } else {
-          try {
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
+            const msg = {
+              error: "Missing request body"
+            };
+            this.logger.error(
+              "POST /v1/activity_analysis : %s",
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else {
             this.logger.debug(
               `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
             );
@@ -134,14 +135,9 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
             this.logger.debug(`Returning: ${JSON.stringify(pluginResponse)}`);
             return res.status(200).send(JSON.stringify(pluginResponse));
-          } catch (error) {
-            this.logger.error(
-              `Something bad happened : ${error.message} - ${error.stack}`
-            );
-            return res.status(500).send(error.message + "\n" + error.stack);
           }
         }
-      }
+      )
     );
   }
 
@@ -150,5 +146,6 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
     // We init the specific route to listen for activity analysis requests
     this.initActivityAnalysis();
+    this.setErrorHandler();
   }
 }

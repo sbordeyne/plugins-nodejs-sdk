@@ -28,24 +28,29 @@ export abstract class AdRendererBasePlugin<
     );
 
     this.logger.debug(
-      `Fetched Creative: ${displayAdId} - ${JSON.stringify(
-        response.data
-      )}`
+      `Fetched Creative: ${displayAdId} - ${JSON.stringify(response.data)}`
     );
 
-    if((response.data as DisplayAd).type !== "DISPLAY_AD") {
-      throw new Error(`crid: ${displayAdId} - When fetching DisplayAd, another creative type was returned!`);
-    } 
+    if ((response.data as DisplayAd).type !== "DISPLAY_AD") {
+      throw new Error(
+        `crid: ${
+          displayAdId
+        } - When fetching DisplayAd, another creative type was returned!`
+      );
+    }
 
     return response.data;
   }
 
   // Helper to fetch the Display Ad properties resource with caching
-  async fetchDisplayAdProperties(displayAdId: string): Promise<PluginProperty[]> {
+  async fetchDisplayAdProperties(
+    displayAdId: string
+  ): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
       "GET",
-      `${this
-        .outboundPlatformUrl}/v1/creatives/${displayAdId}/renderer_properties`
+      `${this.outboundPlatformUrl}/v1/creatives/${
+        displayAdId
+      }/renderer_properties`
     );
 
     this.logger.debug(
@@ -96,15 +101,15 @@ export abstract class AdRendererBasePlugin<
   private initAdContentsRoute(): void {
     this.app.post(
       "/v1/ad_contents",
-      async (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error("POST /v1/ad_contents : %s", JSON.stringify(msg));
-          return res.status(500).json(msg);
-        } else {
-          try {
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
+            const msg = {
+              error: "Missing request body"
+            };
+            this.logger.error("POST /v1/ad_contents : %s", JSON.stringify(msg));
+            return res.status(500).json(msg);
+          } else {
             this.logger.debug(
               `POST /v1/ad_contents ${JSON.stringify(req.body)}`
             );
@@ -149,15 +154,9 @@ export abstract class AdRendererBasePlugin<
               )
               .status(200)
               .send(adRendererResponse.html);
-              
-          } catch (error) {
-            this.logger.error(
-              `Something bad happened : ${error.message} - ${error.stack}`
-            );
-            return res.status(500).send(error.message + "\n" + error.stack);
           }
         }
-      }
+      )
     );
   }
 
@@ -165,5 +164,6 @@ export abstract class AdRendererBasePlugin<
     super();
 
     this.initAdContentsRoute();
+    this.setErrorHandler();
   }
 }
