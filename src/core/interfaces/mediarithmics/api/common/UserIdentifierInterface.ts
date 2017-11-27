@@ -40,8 +40,10 @@ export interface UserAgentIdentifierInfo extends UserIdentifierInfo {
     $mappings: Array<UserAgentIdMappingResource>;
 }
 
-export interface UserAgentIdMappingResource extends UserIdentifierInfo {
-
+export interface UserAgentIdMappingResource {
+    user_agent_id: string;
+    realm_name: string;
+    last_activity_ts: number;
 }
 
 export interface UserAgentIdentifierProviderResource {
