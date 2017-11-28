@@ -28,24 +28,29 @@ export abstract class AdRendererBasePlugin<
     );
 
     this.logger.debug(
-      `Fetched Creative: ${displayAdId} - ${JSON.stringify(
-        response.data
-      )}`
+      `Fetched Creative: ${displayAdId} - ${JSON.stringify(response.data)}`
     );
 
-    if((response.data as DisplayAd).type !== "DISPLAY_AD") {
-      throw new Error(`crid: ${displayAdId} - When fetching DisplayAd, another creative type was returned!`);
-    } 
+    if ((response.data as DisplayAd).type !== "DISPLAY_AD") {
+      throw new Error(
+        `crid: ${
+          displayAdId
+        } - When fetching DisplayAd, another creative type was returned!`
+      );
+    }
 
     return response.data;
   }
 
   // Helper to fetch the Display Ad properties resource with caching
-  async fetchDisplayAdProperties(displayAdId: string): Promise<PluginProperty[]> {
+  async fetchDisplayAdProperties(
+    displayAdId: string
+  ): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
       "GET",
-      `${this
-        .outboundPlatformUrl}/v1/creatives/${displayAdId}/renderer_properties`
+      `${this.outboundPlatformUrl}/v1/creatives/${
+        displayAdId
+      }/renderer_properties`
     );
 
     this.logger.debug(
@@ -96,62 +101,62 @@ export abstract class AdRendererBasePlugin<
   private initAdContentsRoute(): void {
     this.app.post(
       "/v1/ad_contents",
-      (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error("POST /v1/ad_contents : %s", JSON.stringify(msg));
-          return res.status(500).json(msg);
-        } else {
-          this.logger.debug(`POST /v1/ad_contents ${JSON.stringify(req.body)}`);
-
-          const adRendererRequest = req.body as AdRendererRequest;
-
-          if (!this.onAdContents) {
-            this.logger.error(
-              "POST /v1/ad_contents: No AdContents listener registered!"
-            );
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "No AdContents listener registered!"
+              error: "Missing request body"
             };
+            this.logger.error("POST /v1/ad_contents : %s", JSON.stringify(msg));
             return res.status(500).json(msg);
-          }
-
-          if (
-            !this.pluginCache.get(adRendererRequest.creative_id) ||
-            adRendererRequest.context === "PREVIEW" ||
-            adRendererRequest.context === "STAGE"
-          ) {
-            this.pluginCache.put(
-              adRendererRequest.creative_id,
-              this.instanceContextBuilder(adRendererRequest.creative_id),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+          } else {
+            this.logger.debug(
+              `POST /v1/ad_contents ${JSON.stringify(req.body)}`
             );
-          }
 
-          this.pluginCache
-            .get(adRendererRequest.creative_id)
-            .then((instanceContext: T) =>
-              this.onAdContents(adRendererRequest, instanceContext as T)
-            )
-            .then((adRendererResponse: AdRendererPluginResponse) =>
-              res
-                .header(
-                  this.displayContextHeader,
-                  JSON.stringify(adRendererResponse.displayContext)
-                )
-                .status(200)
-                .send(adRendererResponse.html)
-            )
-            .catch((error: Error) => {
+            const adRendererRequest = req.body as AdRendererRequest;
+
+            if (!this.onAdContents) {
               this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
+                "POST /v1/ad_contents: No AdContents listener registered!"
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+              const msg = {
+                error: "No AdContents listener registered!"
+              };
+              return res.status(500).json(msg);
+            }
+
+            if (
+              !this.pluginCache.get(adRendererRequest.creative_id) ||
+              adRendererRequest.context === "PREVIEW" ||
+              adRendererRequest.context === "STAGE"
+            ) {
+              this.pluginCache.put(
+                adRendererRequest.creative_id,
+                this.instanceContextBuilder(adRendererRequest.creative_id),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+              );
+            }
+
+            const instanceContext: T = await this.pluginCache.get(
+              adRendererRequest.creative_id
+            );
+
+            const adRendererResponse = await this.onAdContents(
+              adRendererRequest,
+              instanceContext as T
+            );
+
+            return res
+              .header(
+                this.displayContextHeader,
+                JSON.stringify(adRendererResponse.displayContext)
+              )
+              .status(200)
+              .send(adRendererResponse.html);
+          }
         }
-      }
+      )
     );
   }
 
@@ -159,5 +164,6 @@ export abstract class AdRendererBasePlugin<
     super();
 
     this.initAdContentsRoute();
+    this.setErrorHandler();
   }
 }

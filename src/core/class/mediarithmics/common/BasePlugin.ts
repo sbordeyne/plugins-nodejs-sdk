@@ -46,9 +46,11 @@ export abstract class BasePlugin {
     //Route used by the plugin manager to check if the plugin is UP and running
     this.app.put(
       "/v1/log_level",
-      (req: express.Request, res: express.Response) => {
-        this.onLogLevelUpdate(req, res);
-      }
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          this.onLogLevelUpdate(req, res);
+        }
+      )
     );
   }
 
@@ -61,9 +63,11 @@ export abstract class BasePlugin {
   private initLogLevelGetRoute() {
     this.app.get(
       "/v1/log_level",
-      (req: express.Request, res: express.Response) => {
-        this.onLogLevelRequest(req, res);
-      }
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          this.onLogLevelRequest(req, res);
+        }
+      )
     );
   }
 
@@ -85,9 +89,11 @@ export abstract class BasePlugin {
   private initStatusRoute() {
     this.app.get(
       "/v1/status",
-      (req: express.Request, res: express.Response) => {
-        this.onStatusRequest(req, res);
-      }
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          this.onStatusRequest(req, res);
+        }
+      )
     );
   }
 
@@ -207,9 +213,44 @@ export abstract class BasePlugin {
   }
 
   private initInitRoute() {
-    this.app.post("/v1/init", (req: express.Request, res: express.Response) => {
-      this.onInitRequest(req, res);
-    });
+    this.app.post(
+      "/v1/init",
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          this.onInitRequest(req, res);
+        }
+      )
+    );
+  }
+
+  protected asyncMiddleware = (
+    fn: (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => any
+  ) => (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
+  protected setErrorHandler() {
+    this.app.use(
+      (
+        err: any,
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+      ) => {
+        this.logger.error(
+          `Something bad happened : ${err.message} - ${err.stack}`
+        );
+        return res.status(500).send(err.message + "\n" + err.stack);
+      }
+    );
   }
 
   // Method to start the plugin

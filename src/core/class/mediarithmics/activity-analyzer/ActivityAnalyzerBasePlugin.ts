@@ -37,8 +37,9 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   ): Promise<PluginProperty[]> {
     const activityAnalyzerPropertyResponse = await super.requestGatewayHelper(
       "GET",
-      `${this
-        .outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}/properties`
+      `${this.outboundPlatformUrl}/v1/activity_analyzers/${
+        activityAnalyzerId
+      }/properties`
     );
     this.logger.debug(
       `Fetched Creative Properties: ${activityAnalyzerId} - ${JSON.stringify(
@@ -67,7 +68,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     const activityAnalyzer = results[0];
     const activityAnalyzerProps = results[1];
 
-    const context:ActivityAnalyzerBaseInstanceContext = {
+    const context: ActivityAnalyzerBaseInstanceContext = {
       activityAnalyzer: activityAnalyzer,
       activityAnalyzerProperties: activityAnalyzerProps
     };
@@ -85,60 +86,58 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   private initActivityAnalysis(): void {
     this.app.post(
       "/v1/activity_analysis",
-      (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
-          const msg = {
-            error: "Missing request body"
-          };
-          this.logger.error(
-            "POST /v1/activity_analysis : %s",
-            JSON.stringify(msg)
-          );
-          res.status(500).json(msg);
-        } else {
-          this.logger.debug(
-            `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
-          );
-
-          const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
-
-          if (!this.onActivityAnalysis) {
-            throw new Error("No Activity Analyzer listener registered!");
-          }
-
-          if (
-            !this.pluginCache.get(activityAnalyzerRequest.activity_analyzer_id)
-          ) {
-            this.pluginCache.put(
-              activityAnalyzerRequest.activity_analyzer_id,
-              this.instanceContextBuilder(
-                activityAnalyzerRequest.activity_analyzer_id
-              ),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+      this.asyncMiddleware(
+        async (req: express.Request, res: express.Response) => {
+          if (!req.body || _.isEmpty(req.body)) {
+            const msg = {
+              error: "Missing request body"
+            };
+            this.logger.error(
+              "POST /v1/activity_analysis : %s",
+              JSON.stringify(msg)
             );
-          }
+            return res.status(500).json(msg);
+          } else {
+            this.logger.debug(
+              `POST /v1/activity_analysis ${JSON.stringify(req.body)}`
+            );
 
-          this.pluginCache
-            .get(activityAnalyzerRequest.activity_analyzer_id)
-            .then((instanceContext: ActivityAnalyzerBaseInstanceContext) => {
-              return this.onActivityAnalysis(
-                activityAnalyzerRequest,
-                instanceContext
-              ).then(activityAnalyzerResponse => {
-                this.logger.debug(
-                  `Returning: ${JSON.stringify(activityAnalyzerResponse)}`
-                );
-                res.status(200).send(JSON.stringify(activityAnalyzerResponse));
-              });
-            })
-            .catch((error: Error) => {
-              this.logger.error(
-                `Something bad happened : ${error.message} - ${error.stack}`
+            const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
+
+            if (!this.onActivityAnalysis) {
+              const errMsg = "No Activity Analyzer listener registered!";
+              this.logger.error(errMsg);
+              return res.status(500).json({ error: errMsg });
+            }
+
+            if (
+              !this.pluginCache.get(
+                activityAnalyzerRequest.activity_analyzer_id
+              )
+            ) {
+              this.pluginCache.put(
+                activityAnalyzerRequest.activity_analyzer_id,
+                this.instanceContextBuilder(
+                  activityAnalyzerRequest.activity_analyzer_id
+                ),
+                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
-            });
+            }
+
+            const instanceContext: ActivityAnalyzerBaseInstanceContext = await this.pluginCache.get(
+              activityAnalyzerRequest.activity_analyzer_id
+            );
+
+            const pluginResponse = await this.onActivityAnalysis(
+              activityAnalyzerRequest,
+              instanceContext
+            );
+
+            this.logger.debug(`Returning: ${JSON.stringify(pluginResponse)}`);
+            return res.status(200).send(JSON.stringify(pluginResponse));
+          }
         }
-      }
+      )
     );
   }
 
@@ -147,5 +146,6 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
     // We init the specific route to listen for activity analysis requests
     this.initActivityAnalysis();
+    this.setErrorHandler();
   }
 }
