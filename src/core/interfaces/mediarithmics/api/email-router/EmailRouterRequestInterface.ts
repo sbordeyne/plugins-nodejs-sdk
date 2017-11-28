@@ -1,8 +1,11 @@
 import {
-  UserIdentifierInfo,
   PluginEmailMeta,
   PluginEmailContent,
-  EmailRenderingContext
+  EmailRenderingContext,
+  UserPointIdentifierInfo,
+  UserEmailIdentifierInfo,
+  UserAccountIdentifierInfo,
+  UserAgentIdentifierInfo
 } from "../../../../index";
 
 export interface EmailRoutingRequest {
@@ -12,7 +15,7 @@ export interface EmailRoutingRequest {
   creative_id: string;
   campaign_id: string;
   datamart_id: string;
-  user_identifiers: UserIdentifierInfo[];
+  user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
   meta: PluginEmailMeta;
   content: PluginEmailContent;
   data: any;
@@ -20,5 +23,5 @@ export interface EmailRoutingRequest {
 
 export interface CheckEmailsRequest {
   email_router_id: string;
-  user_identifiers: UserIdentifierInfo[];
+  user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
 }

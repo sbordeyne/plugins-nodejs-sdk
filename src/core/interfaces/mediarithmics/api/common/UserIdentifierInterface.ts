@@ -13,6 +13,7 @@ export interface UserIdentifierInfo {
 
 export interface UserPointIdentifierInfo extends UserIdentifierInfo {
     user_point_id: UUID;
+    creation_ts: TimeStamp;    
 }
 
 export interface UserEmailIdentifierInfo extends UserIdentifierInfo {

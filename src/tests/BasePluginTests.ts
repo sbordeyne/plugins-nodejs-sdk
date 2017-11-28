@@ -211,7 +211,7 @@ describe("Data File helper Tests", function() {
 
     const confFileName = "toto";
     const method = "GET";
-    const confFileGatewayURI = `/v1/files/technical_name=${confFileName}`;
+    const confFileGatewayURI = `/v1/configuration/technical_name=${confFileName}`;
 
     // We init the plugin
     request(runner.plugin.app)

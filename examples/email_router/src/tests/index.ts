@@ -66,21 +66,21 @@ const rpMockup: sinon.SinonStub = sinon.stub();
           {
             type: "USER_POINT",
             user_point_id: "26340584-f777-404c-82c5-56220667464b"
-          },
+          } as core.UserPointIdentifierInfo,
           {
             type: "USER_ACCOUNT",
             user_account_id: "914eb2aa50cef7f3a8705b6bb54e50bb",
-            creation_ts: null
-          },
+            creation_ts: 123456
+          } as core.UserAccountIdentifierInfo,
           {
             type: "USER_EMAIL",
             hash: "e2749f6f4d8104ec385a75490b587c86",
             email: "wow@hello.com",
-            operator: null,
+            operator: undefined,
             creation_ts: 1493118667529,
             last_activity_ts: 1493127642622,
             providers: []
-          },
+          } as core.UserEmailIdentifierInfo,
           {
             type: "USER_AGENT",
             vector_id: "vec:886742516",
@@ -97,7 +97,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
             last_activity_ts: 1493126966889,
             providers: [],
             mappings: []
-          }
+          } as core.UserAgentIdentifierInfo
         ],
         meta: {
           from_email: "news@info.velvetconsulting.paris",
@@ -189,21 +189,21 @@ const rpMockup: sinon.SinonStub = sinon.stub();
           {
             type: "USER_POINT",
             user_point_id: "26340584-f777-404c-82c5-56220667464b"
-          },
+          } as core.UserPointIdentifierInfo,
           {
             type: "USER_ACCOUNT",
             user_account_id: "914eb2aa50cef7f3a8705b6bb54e50bb",
-            creation_ts: null
-          },
+            creation_ts: 123456
+          } as core.UserAccountIdentifierInfo,
           {
             type: "USER_EMAIL",
             hash: "e2749f6f4d8104ec385a75490b587c86",
             email: "wow@hello.com",
-            operator: null,
+            operator: undefined,
             creation_ts: 1493118667529,
             last_activity_ts: 1493127642622,
             providers: []
-          },
+          } as core.UserEmailIdentifierInfo,
           {
             type: "USER_AGENT",
             vector_id: "vec:886742516",
@@ -220,7 +220,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
             last_activity_ts: 1493126966889,
             providers: [],
             mappings: []
-          }
+          } as core.UserAgentIdentifierInfo
         ],
         meta: {
           from_email: "news@info.velvetconsulting.paris",

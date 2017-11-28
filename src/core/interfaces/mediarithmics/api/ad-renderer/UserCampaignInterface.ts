@@ -1,4 +1,4 @@
-import { UserIdentifierInfo } from "../../../../index";
+import { UserPointIdentifierInfo, UserEmailIdentifierInfo, UserAccountIdentifierInfo, UserAgentIdentifierInfo } from "../../../../index";
 
 export interface UserCampaignResponse {
     status: string;
@@ -10,5 +10,5 @@ export interface UserCampaignResource {
     user_account_id: string;
     user_agent_ids: Array<string>;
     databag: string;
-    user_identifiers: UserIdentifierInfo[];
+    user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
 }

@@ -44,8 +44,8 @@ export interface MailjetEvent {
 
 export class MySimpleEmailRouter extends core.EmailRouterPlugin {
   /**
-    * Helpers
-    */
+   * Helpers
+   */
 
   buildMailjetPayload(
     datamartId: string,
@@ -65,16 +65,21 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
   }
 
   /**
- * Mailjet Send Email
- */
+   * Mailjet Send Email
+   */
 
   async sendEmail(
     request: core.EmailRoutingRequest,
     identifier: core.UserEmailIdentifierInfo,
     payload: MailjetPayload
   ): Promise<MailjetSentResponse> {
-
-    this.logger.debug(`Sending email to: request: ${JSON.stringify(request)} - identifier: ${JSON.stringify(identifier)} - payload: ${JSON.stringify(payload)}`);
+    this.logger.debug(
+      `Sending email to: request: ${JSON.stringify(
+        request
+      )} - identifier: ${JSON.stringify(
+        identifier
+      )} - payload: ${JSON.stringify(payload)}`
+    );
 
     const emailHeaders = {
       "Reply-To": request.meta.reply_to
@@ -98,8 +103,9 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
 
     const mailjetResponse: MailjetSentResponse = await this.requestGatewayHelper(
       "POST",
-      `${this
-        .outboundPlatformUrl}/v1/external_services/technical_name=mailjet/call`,
+      `${
+        this.outboundPlatformUrl
+      }/v1/external_services/technical_name=mailjet/call`,
       emailData
     );
 
@@ -196,7 +202,11 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
         );
       default:
         throw new Error(
-          `POST /v1/email_events: Received ${mailjetEvent.event} - We're not handling this event YET. With Payload ${JSON.stringify(mailjetEvent.Payload)}`
+          `POST /v1/email_events: Received ${
+            mailjetEvent.event
+          } - We're not handling this event YET. With Payload ${JSON.stringify(
+            mailjetEvent.Payload
+          )}`
         );
     }
   }
@@ -231,12 +241,12 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     return rp(options).catch(function(e) {
       if (e.name === "StatusCodeError") {
         throw new Error(
-          `Error while calling ${options.method} '${options.uri}' with the request body '${JSON.stringify(
-            options.body
-          ) || ""}': got a ${e.response.statusCode} ${e.response
-            .statusMessage} with the response body ${JSON.stringify(
-            e.response.body
-          )}`
+          `Error while calling ${options.method} '${
+            options.uri
+          }' with the request body '${JSON.stringify(options.body) ||
+            ""}': got a ${e.response.statusCode} ${
+            e.response.statusMessage
+          } with the response body ${JSON.stringify(e.response.body)}`
         );
       } else {
         throw e;
@@ -305,16 +315,22 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
               });
             } catch (err) {
               this.logger.error(
-                `POST /r/external_token_to_be_provided_by_your_account_manager: Failed to integrate event ${emailEvent.event} Error: ${err.message} - ${err.stack}`
+                `POST /r/external_token_to_be_provided_by_your_account_manager: Failed to integrate event ${
+                  emailEvent.event
+                } Error: ${err.message} - ${err.stack}`
               );
               return res.status(400).json({
-                Result: `Failed to integrate event ${emailEvent.event} Error: ${err.message} - ${err.stack}`
+                Result: `Failed to integrate event ${emailEvent.event} Error: ${
+                  err.message
+                } - ${err.stack}`
               });
             }
           }
         } catch (err) {
           this.logger.error(
-            `POST /r/external_token_to_be_provided_by_your_account_manager: Failed because of Error: ${err.message} - ${err.stack}`
+            `POST /r/external_token_to_be_provided_by_your_account_manager: Failed because of Error: ${
+              err.message
+            } - ${err.stack}`
           );
           return res.status(500).json({
             Result: `${err.message} - ${err.stack}`
@@ -340,10 +356,14 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       };
     } else {
       this.logger.error(
-        `There is no authentification_token configured for routerId: ${routerId}`
+        `There is no authentification_token configured for routerId: ${
+          routerId
+        }`
       );
       throw Error(
-        `There is no authentification_token configured for routerId: ${routerId}`
+        `There is no authentification_token configured for routerId: ${
+          routerId
+        }`
       );
     }
   }
@@ -361,13 +381,12 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     request: core.EmailRoutingRequest,
     instanceContext: core.EmailRouterBaseInstanceContext
   ): Promise<core.EmailRoutingPluginResponse> {
-    const identifier:
-      | core.UserEmailIdentifierInfo
-      | undefined = request.user_identifiers.find(
-      (identifier: core.UserEmailIdentifierInfo) => {
-        return identifier.type === "USER_EMAIL" && identifier.email;
-      }
-    ) as core.UserEmailIdentifierInfo;
+    const identifier = request.user_identifiers.find(identifier => {
+      return (
+        identifier.type === "USER_EMAIL" &&
+        !!(identifier as core.UserEmailIdentifierInfo).email
+      );
+    }) as core.UserEmailIdentifierInfo;
 
     if (!identifier) {
       throw Error("No clear email identifiers were provided");
@@ -377,16 +396,15 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       request.datamart_id,
       request.datamart_id,
       request.creative_id,
-      identifier.$hash,
+      identifier.hash,
       request.email_router_id
     );
 
     // As Mailjet can be a little difficult when shotting an email, we'll try a lot of time
-    const mailjetResponse: MailjetSentResponse = await this.retryPromiseHelper(this.sendEmail, [
-      request,
-      identifier,
-      payload
-    ]);
+    const mailjetResponse: MailjetSentResponse = await this.retryPromiseHelper(
+      this.sendEmail,
+      [request, identifier, payload]
+    );
 
     if (mailjetResponse.Sent.length > 0) {
       return { result: true };
@@ -400,7 +418,9 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       const operation = retry.operation();
       operation.attempt(async attempt => {
         try {
-          this.logger.debug(`Trying to call for the ${attempt}th time ${mainFn.name}`);
+          this.logger.debug(
+            `Trying to call for the ${attempt}th time ${mainFn.name}`
+          );
 
           const response = await mainFn.apply(this, args);
           resolve(response);

@@ -1,9 +1,9 @@
-import { UserIdentifierInfo } from "../../../../index";
+import { UserPointIdentifierInfo, UserEmailIdentifierInfo, UserAccountIdentifierInfo, UserAgentIdentifierInfo } from "../../../../index";
 
 export interface RecommenderRequest {
   recommender_id: string;
   datamart_id: string;
-  user_identifiers: UserIdentifierInfo[];
+  user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
 
   //Customizable
   [propsName: string]: any;
