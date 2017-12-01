@@ -1,5 +1,16 @@
 # Changelog
 
+# 0.3.1 - 2017-12-01
+
+- Improve error handling with async/await
+- Fix error message of gateway helper
+- Fix the JSON vs non JSON situations
+- Add async middleware to stop using try catch in routes
+- Add async middleware to all plugin routes
+- Remove legacy log
+- Update IAS Tag integration
+
+
 # 0.3.0 - 2017-11-15
 
 - New "Templating" support with AdRendererTemplatePlugin class (for AdRenderer that don't need recommendations)
