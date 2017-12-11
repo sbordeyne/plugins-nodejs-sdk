@@ -8,33 +8,40 @@ import {
   DisplayAd
 } from "../../../index";
 
+import { Index } from '../../../utils';
+
+export interface BaseIntanceContext {
+  properties: PluginProperty[];
+  normalizedProperties: Index<PluginProperty>;
+}
+
 export interface AudienceFeedConnectorBaseInstanceContext {
-  feed: AudienceFeed;
-  feedProperties: PluginProperty[];
+    feed: AudienceFeed;
+    feedProperties: PluginProperty[];
 }
 
-export interface EmailRendererBaseInstanceContext {
+export interface EmailRendererBaseInstanceContext
+  extends BaseIntanceContext {
   creative: Creative;
-  creativeProperties: PluginProperty[];
 }
 
-export interface EmailRouterBaseInstanceContext {
-  routerProperties: PluginProperty[];
+export interface EmailRouterBaseInstanceContext
+  extends BaseIntanceContext {
 }
 
-export interface ActivityAnalyzerBaseInstanceContext {
+export interface ActivityAnalyzerBaseInstanceContext
+  extends BaseIntanceContext {
   activityAnalyzer: ActivityAnalyzer;
-  activityAnalyzerProperties: PluginProperty[];
 }
 
-export interface BidOptimizerBaseInstanceContext {
+export interface BidOptimizerBaseInstanceContext
+  extends BaseIntanceContext {
   bidOptimizer: BidOptimizer;
-  bidOptimizerProperties: PluginProperty[];
 }
 
-export interface AdRendererBaseInstanceContext {
+export interface AdRendererBaseInstanceContext
+  extends BaseIntanceContext {
   displayAd: DisplayAd;
-  displayAdProperties: PluginProperty[];
 }
 
 export interface AdRendererTemplateInstanceContext
