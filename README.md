@@ -109,7 +109,7 @@ export class MyActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
   protected onActivityAnalysis(
     request: core.ActivityAnalyzerRequest,
     instanceContext: core.ActivityAnalyzerBaseInstanceContext
-  ): Promise<core.ActivityAnalyzerPluginResponse> {
+  ): Promise<core.ResponseData<core.UserActivity>> {
     ......
   }
 }
@@ -141,6 +141,19 @@ This SDK provides you a 'TestingPluginRunner' that you can use to mock the trans
 The Plugin examples provided with the SDK are all tested and you can read their tests in order to build your own tests.
 
 Testing Plugins is highly recommended.
+
+## Migration from 0.3.x to 0.4.x
+
+* the type `Value` has been removed and replaced by a serie of specialized types. Following this change, `PluginProperty` has been transformed to a discriminated union (see the eponym section at https://www.typescriptlang.org/docs/handbook/advanced-types.html ).
+
+* in `EmailRendererBaseInstanceContext`, `EmailRouterBaseInstanceContext`, `ActivityAnalyzerBaseInstanceContext`, `BidOptimizerBaseInstanceContext`and `AdRendererBaseInstanceContext` the fields `creativeProperties`, `routerProperties`, `activityAnalyzerProperties`, `bidOptimizerProperties` and `displayAdProperties` have been rename `properties` which is now typed as a `PropertiesWrapper`.
+
+* `PropertiesWrapper` is a class with a constructor that takes as parameter an `Array<PluginProperty>`. The `PropertiesWrapper` normalize the array to give an access to these properties by their `technical_name` in O(1).
+
+* `core.BidOptimizerResponse` has been replaced by `core.ResponseData<core.BidOptimizer>`. Other kinds of Response with a `data` field still have an alias but we recommand to use the `core.ResponseData<X>` syntax.
+
+* `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
+
 
 ## Migration from 0.2.x to 0.3.x
 
