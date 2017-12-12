@@ -1,6 +1,6 @@
-import {ResponseListOfData} from "../common/Response";
+import {DataListResponse} from "../common/Response";
 
-export type BidOptimizerResponse = ResponseListOfData<BidOptimizer>;
+export type BidOptimizerResponse = DataListResponse<BidOptimizer>;
 
 export interface BidOptimizer {
     id: string;

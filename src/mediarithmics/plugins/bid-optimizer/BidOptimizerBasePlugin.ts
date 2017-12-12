@@ -5,8 +5,9 @@ import {PropertiesWrapper, BasePlugin} from "../common";
 import {BidOptimizer} from "../../api/core/bidoptimizer/BidOptimizerInterface";
 import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
 import {BidOptimizerRequest, SaleCondition} from "../../api/plugin/bidoptimizer/BidOptimizerRequestInterface";
-import {BidOptimizerPluginResponse} from "../../../../build/core/interfaces/mediarithmics/api/bid-optimizer/BidOptimizerPluginResponseInterface";
+import {BidDecision} from "../../api/plugin/bidoptimizer/BidDecision";
 
+export type BidOptimizerPluginResponse = BidDecision;
 
 export interface BidOptimizerBaseInstanceContext {
   properties: PropertiesWrapper;

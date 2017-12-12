@@ -1,7 +1,7 @@
-import { ResponseData, ResponseListOfData } from "../../api/core/common/Response";
+import { DataResponse } from "../../api/core/common/Response";
 import { UserActivity } from "../../index";
 
-export type ActivityAnalyzerResponse = ResponseListOfData<ActivityAnalyzer>;
+export type ActivityAnalyzerResponse = DataResponse<ActivityAnalyzer>;
 
 export interface ActivityAnalyzer {
     id: string;
@@ -18,4 +18,4 @@ export interface ActivityAnalyzerRequest {
     activity: UserActivity;
 }
 
-export type ActivityAnalyzerPluginResponse = ResponseData<UserActivity>
+export type ActivityAnalyzerPluginResponse = DataResponse<UserActivity>

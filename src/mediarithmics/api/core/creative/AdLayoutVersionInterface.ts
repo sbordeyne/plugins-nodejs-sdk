@@ -1,6 +1,6 @@
-import { ResponseListOfData } from "../common/Response";
+import { DataResponse } from "../common/Response";
 
-export type AdLayoutVersionResponse  = ResponseListOfData<AdLayoutVersion>;
+export type AdLayoutVersionResponse  = DataResponse<AdLayoutVersion>;
 
 export interface AdLayoutVersion {
     id: string;

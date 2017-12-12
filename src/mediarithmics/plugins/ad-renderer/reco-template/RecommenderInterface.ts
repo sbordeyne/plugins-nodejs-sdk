@@ -4,7 +4,7 @@ import {
     UserAccountIdentifierInfo,
     UserAgentIdentifierInfo
 } from "../../../api/reference/UserIdentifierInterface";
-import { ResponseData } from "../../../api/core/common/Response";
+import { DataResponse } from "../../../api/core/common/Response";
 
 export interface RecommenderRequest {
   recommender_id: string;
@@ -15,7 +15,7 @@ export interface RecommenderRequest {
   [propsName: string]: any;
 }
 
-export type RecommenderResponse = ResponseData<RecommandationsWrapper>;
+export type RecommenderResponse = DataResponse<RecommandationsWrapper>;
 
 export interface RecommandationsWrapper {
   ts: number;

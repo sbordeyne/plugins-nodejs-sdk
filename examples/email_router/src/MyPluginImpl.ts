@@ -344,15 +344,12 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     routerId: string
   ): Promise<MyInstanceContext> {
     const defaultInstanceContext = await super.instanceContextBuilder(routerId);
-    const authenticationToken = defaultInstanceContext.routerProperties.find(
-      prop => {
-        return prop.technical_name === "authentication_token";
-      }
-    );
-    if (authenticationToken && authenticationToken.value.value) {
+    const authenticationToken = defaultInstanceContext.properties.findStringProperty("authentication_token");
+
+    if (authenticationToken) {
       return {
         ...defaultInstanceContext,
-        authenticationToken: authenticationToken.value.value as string
+        authenticationToken: authenticationToken.value.value
       };
     } else {
       this.logger.error(

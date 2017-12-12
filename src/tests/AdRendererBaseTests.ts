@@ -36,7 +36,7 @@ describe("Fetch DisplayAd API", () => {
     const fakeCreativeId = "422";
 
     // Creative stub
-    const creative: core.ResponseData<core.DisplayAd> = {
+    const creative: core.DataResponse<core.DisplayAd> = {
       status: "ok",
       data: {
         type: "DISPLAY_AD",
@@ -115,7 +115,7 @@ describe("Ad Contents API test", function() {
     const rpMockup = sinon.stub();
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.ResponseData<core.Creative> = {
+        const pluginInfo: core.DataResponse<core.Creative> = {
           status: "ok",
           data: {
             type: "DISPLAY_AD",

@@ -78,7 +78,7 @@ describe("Email Renderer API test", function() {
 
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const creative: core.ResponseData<core.Creative> = {
+        const creative: core.DataResponse<core.Creative> = {
           status: "ok",
           data: {
             type: "EMAIL_TEMPLATE",

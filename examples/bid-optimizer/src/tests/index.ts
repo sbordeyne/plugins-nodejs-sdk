@@ -11,7 +11,7 @@ describe("Test Example BidOptimizer", function() {
     const rpMockup: sinon.SinonStub = sinon.stub();
   
     // Activity Analyzer stub
-    const bidOptimizer: core.BidOptimizerResponse = {
+    const bidOptimizer: core.DataResponse<core.BidOptimizer> = {
       status: "ok",
       data: {
         id: "1000",
@@ -20,8 +20,7 @@ describe("Test Example BidOptimizer", function() {
         engine_version_id: "123456",
         engine_group_id: "com.mediarithmics.visit-analyzer",
         engine_artifact_id: "default"
-      },
-      count: 1
+      }
     };
   
     rpMockup
@@ -43,9 +42,9 @@ describe("Test Example BidOptimizer", function() {
           technical_name: "name",
           value: {
             value:
-              "my bid optimizer"
+              "my bid optimizer",
           },
-          property_type: "DATA_FILE",
+          property_type: "STRING",
           origin: "STRING",
           writable: true,
           deletable: true

@@ -1,13 +1,16 @@
+
 export type StatusCode = "ok" | "error";
 
-export interface ResponseData<T> {
+export interface SimpleResponse { status: StatusCode };
+
+export interface DataResponse<T> 
+ extends SimpleResponse {
   data: T;
-  status: StatusCode;
 }
 
-export interface ResponseListOfData<T> {
+export interface DataListResponse<T> 
+ extends SimpleResponse {
   data: T[];
-  status: string;
   count: number;
   first_result?: number;
   max_results?: number;

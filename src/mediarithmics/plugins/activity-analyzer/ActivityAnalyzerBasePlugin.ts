@@ -7,7 +7,7 @@ import {
   PropertiesWrapper
 } from '../common/BasePlugin';
 
-import { ResponseData } from '../../api/core/common/Response';
+import { DataResponse } from '../../api/core/common/Response';
 
 import { UserActivity } from '../../api/datamart/UserActivityInterface';
 
@@ -92,7 +92,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   protected abstract onActivityAnalysis(
     request: ActivityAnalyzerRequest,
     instanceContext: ActivityAnalyzerBaseInstanceContext
-  ): Promise<ResponseData<UserActivity>>;
+  ): Promise<DataResponse<UserActivity>>;
 
   private initActivityAnalysis(): void {
     this.app.post(

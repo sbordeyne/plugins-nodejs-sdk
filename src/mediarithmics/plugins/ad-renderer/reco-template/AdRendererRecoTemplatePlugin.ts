@@ -1,5 +1,8 @@
 import * as _ from "lodash";
-import {AdRendererTemplateInstanceContext} from '../template/AdRendererTemplatePlugin';
+import {
+  AdRendererTemplateInstanceContext,
+  AdRendererTemplatePlugin
+} from '../template/AdRendererTemplatePlugin';
 import {map} from '../../../utils';
 
 import {
@@ -10,8 +13,7 @@ import {
   UserCampaignResource,
   AdRendererBasePlugin,
   RecommenderResponse,
-  TemplatingEngine,
-  AdRendererTemplatePlugin
+  TemplatingEngine  
 } from "../../../index";
 
 
