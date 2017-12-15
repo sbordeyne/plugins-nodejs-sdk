@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.3.2 - 2017-12-15
+
+- Remove a console.log in the handlebars engine
+
 # 0.3.1 - 2017-12-01
 
 - Improve error handling with async/await
