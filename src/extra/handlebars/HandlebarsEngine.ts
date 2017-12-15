@@ -97,9 +97,7 @@ const encodeRecoClickUrlHelper = () => (
   );
 
   const recommendationUrl = recommendation.$url ? recommendation.$url : "";
-  console.log(
-    "URL : " + encodeClickUrl()(filledRedirectUrls, recommendationUrl)
-  );
+
   return encodeClickUrl()(filledRedirectUrls, recommendationUrl);
 };
 
