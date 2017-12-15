@@ -18,8 +18,9 @@ import {
   StringProperty,
   asStringProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
-import {Index, Option, flatMap} from '../../utils/index';
+import {Index, Option, flatMap} from '../../utils';
 import { normalizeArray } from '../../utils/Normalizer';
+import {DataResponse} from "../../";
 
 
 export class PropertiesWrapper {
@@ -146,7 +147,18 @@ export abstract class BasePlugin {
     );
   }
 
-  fetchDataFile(uri: string): Promise<Buffer> {
+
+  async fetchVersionProperties(): Promise<DataResponse<Array<PluginProperty>>> {
+    return this.requestGatewayHelper(
+        "GET",
+        `${this.outboundPlatformUrl}/v1/properties`,
+        undefined,
+        undefined,
+        true
+    );
+  }
+
+  async fetchDataFile(uri: string): Promise<Buffer> {
     return this.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/data_file/data`,
@@ -175,10 +187,13 @@ export abstract class BasePlugin {
     qs?: any,
     isJson?: boolean,
     isBinary?: boolean
-  ) {
-    let options: request.OptionsWithUri = {
+  ) : Promise<any> {
+    let options : rp.Options = {
       method: method,
       uri: uri,
+      json: true,
+      body: body,
+      qs: qs,
       auth: {
         user: this.worker_id,
         pass: this.authentication_token,

@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "npm run build",
     "test": "mocha build/tests/*.js",
-    "build": "tsc -p ./ --outDir build/"
+    "build": "tsc"
   },
   "author": "",
   "license": "Apache-2.0",

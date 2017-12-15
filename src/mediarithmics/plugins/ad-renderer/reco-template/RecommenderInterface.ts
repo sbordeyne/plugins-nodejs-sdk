@@ -5,14 +5,13 @@ import {
     UserAgentIdentifierInfo
 } from "../../../api/reference/UserIdentifierInterface";
 import { DataResponse } from "../../../api/core/common/Response";
+import { Customizable } from "../../../api/core/common/Customizable";
 
-export interface RecommenderRequest {
+export interface RecommenderRequest
+    extends Customizable {
   recommender_id: string;
   datamart_id: string;
   user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
-
-  //Customizable
-  [propsName: string]: any;
 }
 
 export type RecommenderResponse = DataResponse<RecommandationsWrapper>;
@@ -28,13 +27,12 @@ export type ProposalType =
   | "CATEGORY_PROPOSAL"
   | "CONTENT_PROPOSAL";
 
-export interface Proposal {
+export interface Proposal
+    extends Customizable {
   $type: ProposalType;
   $id?: string;
   $gid?: string;
 
-  //Customizable
-  [propsName: string]: any;
 }
 
 export interface ProductProposal extends Proposal {

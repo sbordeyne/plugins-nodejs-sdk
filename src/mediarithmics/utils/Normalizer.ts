@@ -25,3 +25,7 @@ export function normalizeArray<T, K extends keyof T>(arr: Array<T>, key: K): Ind
       };
   }, {});
 }
+
+export function denormalize<T>(index: Index<T>) : Array<[string, T]>{
+    return Object.keys(index).map(k => [k, index[k]] as [string, T]);
+}

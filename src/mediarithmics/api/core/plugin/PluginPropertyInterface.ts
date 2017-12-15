@@ -47,9 +47,11 @@ export type PropertyType =
   | 'INT'
   | 'RECOMMENDER';
 
+export type PropertyOrigin = 'PLUGIN_STATIC' | 'PLUGIN' | 'INSTANCE';
+
 export interface AbstractProperty {
   technical_name: string;
-  origin: string;
+  origin: PropertyOrigin;
   writable: boolean;
   deletable: boolean;
 }

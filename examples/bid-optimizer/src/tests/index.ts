@@ -45,7 +45,7 @@ describe("Test Example BidOptimizer", function() {
               "my bid optimizer",
           },
           property_type: "STRING",
-          origin: "STRING",
+          origin: "PLUGIN",
           writable: true,
           deletable: true
         }
