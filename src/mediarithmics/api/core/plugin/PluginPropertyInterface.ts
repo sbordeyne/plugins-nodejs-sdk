@@ -112,6 +112,12 @@ export interface RecommenderProperty
   value: RecommenderPropertyResource;
 }
 
+export function asAssetFileProperty(p : PluginProperty): Option<AssetFileProperty> {
+    return p.property_type === 'ASSET' ? p : undefined;
+}
+export function asDataFileProperty(p : PluginProperty): Option<DataFileProperty> {
+    return p.property_type === 'DATA_FILE' ? p : undefined;
+}
 export function asAdLayoutProperty(p : PluginProperty): Option<AdLayoutProperty> {
   return p.property_type === 'AD_LAYOUT' ? p : undefined;
 }
