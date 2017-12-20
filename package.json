@@ -7,6 +7,7 @@
   "types": "./lib/index.d.ts",
   "scripts": {
     "test": "./test_sdk_and_examples.sh",
+    "testOnly": "./testOnly.sh",
     "prepublishOnly": "tsc",
     "build": "tsc",
     "docs": "typedoc --out docs/ --mode modules --target es6 --module commonjs ./src"
