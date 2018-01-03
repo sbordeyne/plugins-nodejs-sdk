@@ -9,19 +9,17 @@ export interface UserSegmentUpdateRequest {
   segment_id: string;
   user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
   ts: number;
-  type: UpdateType;
+  operation: UpdateType;
 }
 
 export interface ExternalSegmentConnectionRequest {
   feed_id: string;
-  session_id: string;
   datamart_id: string;
   segment_id: string;
 }
 
 export interface ExternalSegmentCreationRequest {
   feed_id: string;
-  session_id: string;
   datamart_id: string;
   segment_id: string;
 }
