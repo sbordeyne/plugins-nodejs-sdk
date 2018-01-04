@@ -13,11 +13,23 @@ import {
   ExternalSegmentCreationPluginResponse,
   ExternalSegmentConnectionPluginResponse,
   UserSegmentUpdatePluginResponse,
-  AudienceFeedConnectorPluginResponse
+  AudienceFeedConnectorPluginResponse,
+  AudienceSegment
 } from "../../../index";
 
 export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
   instanceContext: Promise<AudienceFeedConnectorBaseInstanceContext>;
+
+  async fetchAudienceSegment(feedId: string): Promise<AudienceSegment> {
+    const response = await super.requestGatewayHelper(
+      "GET",
+      `${this.outboundPlatformUrl}/v1/audience_segment_external_feeds/${feedId}/audience_segment`
+    );
+    this.logger.debug(
+      `Fetched External Segment: FeedId: ${feedId} - ${JSON.stringify(response.data)}`
+    );
+    return response.data;
+  }
 
   async fetchAudienceFeed(feedId: string): Promise<AudienceFeed> {
     const response = await super.requestGatewayHelper(

@@ -44,7 +44,7 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
   })
 );
 
-describe("Fetch Audience Feed Properties API", () => {
+describe("Fetch Audience Feed Gateway API", () => {
   // All the magic is here
   const plugin = new MyFakeAudienceFeedConnector();
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
@@ -61,6 +61,23 @@ describe("Fetch Audience Feed Properties API", () => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${runner.plugin
             .outboundPlatformUrl}/v1/audience_segment_external_feeds/${fakeId}/properties`
+        );
+        done();
+      });
+  });
+
+  it("Check that feed_id is passed correctly in fetchAudienceSegment", function(
+    done
+  ) {
+    const fakeId = "42000000";
+
+    // We try a call to the Gateway
+    (runner.plugin as MyFakeAudienceFeedConnector)
+      .fetchAudienceSegment(fakeId)
+      .then(() => {
+        expect(rpMockup.args[1][0].uri).to.be.eq(
+          `${runner.plugin
+            .outboundPlatformUrl}/v1/audience_segment_external_feeds/${fakeId}/audience_segment`
         );
         done();
       });
@@ -145,14 +162,12 @@ describe("External Audience Feed API test", function() {
 
     const externalSegmentCreation: core.ExternalSegmentCreationRequest = {
       feed_id: "42",
-      session_id: "43",
       datamart_id: "1023",
       segment_id: "451256"
     };
 
     const externalSegmentConnection: core.ExternalSegmentConnectionRequest = {
       feed_id: "42",
-      session_id: "43",
       datamart_id: "1023",
       segment_id: "451256"
     };
@@ -163,7 +178,7 @@ describe("External Audience Feed API test", function() {
       datamart_id: "1023",
       segment_id: "451256",
       ts: 1254412,
-      type: "UPSERT",
+      operation: "UPSERT",
       user_identifiers: [
         {
           type: "USER_POINT",
