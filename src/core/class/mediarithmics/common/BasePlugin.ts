@@ -108,6 +108,17 @@ export abstract class BasePlugin {
     );
   }
 
+  fetchConfigurationFile(fileName: string): Promise<Buffer> {
+    return this.requestGatewayHelper(
+      "GET",
+      `${this.outboundPlatformUrl}/v1/configuration/technical_name=${fileName}`,
+      undefined,
+      undefined,
+      false,
+      true
+    );
+  }
+
   async requestGatewayHelper(
     method: string,
     uri: string,

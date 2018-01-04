@@ -9,46 +9,45 @@ export type UserAgentInfo = any; //TODO
 
 export interface UserIdentifierInfo {
     type: UserIdentifierInfoType;
-    // Customizable
-    [propsName: string]: any;
 }
 
 export interface UserPointIdentifierInfo extends UserIdentifierInfo {
-    $user_point_id: UUID;
+    user_point_id: UUID;
+    creation_ts: TimeStamp;    
 }
 
 export interface UserEmailIdentifierInfo extends UserIdentifierInfo {
-    $hash: string;
-    $email?: string;
-    $operator?: string;
-    $creation_ts: TimeStamp;
-    $last_activity_ts: TimeStamp;
-    $providers: Array<UserEmailIdentifierProviderResource>;
+    hash: string;
+    email?: string;
+    operator?: string;
+    creation_ts: TimeStamp;
+    last_activity_ts: TimeStamp;
+    providers: Array<UserEmailIdentifierProviderResource>;
 }
 
 export interface UserAccountIdentifierInfo extends UserIdentifierInfo {
-    $user_account_id: string;
-    $creation_ts: TimeStamp;
+    user_account_id: string;
+    creation_ts: TimeStamp;
 }
 
 export interface UserAgentIdentifierInfo extends UserIdentifierInfo {
-    $vector_id: VectorId;
-    $device?: UserAgentInfo;
-    $creation_ts: TimeStamp;
-    $last_activity_ts: TimeStamp;
-    $providers: Array<UserAgentIdentifierProviderResource>;
-    $mappings: Array<UserAgentIdMappingResource>;
+    vector_id: VectorId;
+    device?: UserAgentInfo;
+    creation_ts: TimeStamp;
+    last_activity_ts: TimeStamp;
+    providers: Array<UserAgentIdentifierProviderResource>;
+    mappings: Array<UserAgentIdMappingResource>;
 }
 
-export interface UserAgentIdMappingResource extends UserIdentifierInfo {
-
+export interface UserAgentIdMappingResource {
+    user_agent_id: string;
+    realm_name: string;
+    last_activity_ts: number;
 }
 
 export interface UserAgentIdentifierProviderResource {
-    $technical_name: string;
-    $creation_ts?: TimeStamp;
-    $last_activity_ts?: TimeStamp;
-    $expiration_ts?: TimeStamp;
-    // Customizable
-    [propsName: string]: any;
+    technical_name: string;
+    creation_ts?: TimeStamp;
+    last_activity_ts?: TimeStamp;
+    expiration_ts?: TimeStamp;
 }
