@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.3.4 - 2018-01-09
+
+- Fix overiding request options parameters in requestGatewayHelper
+
 # 0.3.3 - 2018-01-05
 
 - Add support for Audience Feed Connectors plugins
