@@ -127,7 +127,7 @@ export abstract class BasePlugin {
     isJson?: boolean,
     isBinary?: boolean
   ) {
-    let options = {
+    let options: request.OptionsWithUri = {
       method: method,
       uri: uri,
       auth: {
@@ -138,37 +138,16 @@ export abstract class BasePlugin {
     };
 
     // Set the body if provided
-    options = body
-      ? Object.assign(
-          {
-            body: body
-          },
-          options
-        )
-      : options;
+    options.body = body !== undefined ? body : undefined;
 
     // Set the querystring if provided
-    options = qs
-      ? Object.assign(
-          {
-            qs: qs
-          },
-          options
-        )
-      : options;
+    options.qs = qs !== undefined ? qs : undefined;
 
     // Set the json flag if provided
     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options = isBinary
-      ? Object.assign(
-          {
-            encoding: null
-          },
-          options
-        )
-      : options;
+    options.encoding = (isBinary !== undefined || isBinary) ? null : undefined;
 
     this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
