@@ -147,7 +147,7 @@ export abstract class BasePlugin {
     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options.encoding = (isBinary !== undefined || isBinary) ? null : undefined;
+    options.encoding = (isBinary !== undefined && isBinary) ? null : undefined;
 
     this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
