@@ -160,12 +160,14 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             pluginResponse.message = response.message;
           }
 
-          return res.status(200).send(JSON.stringify(pluginResponse));
+          const statusCode = (response.status === 'ok') ? 200 : 500;
+
+          return res.status(statusCode).send(JSON.stringify(pluginResponse));
         } catch (error) {
           this.logger.error(
             `Something bad happened : ${error.message} - ${error.stack}`
           );
-          return res.status(500).send(error.message + "\n" + error.stack);
+          return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
         }
       }
     );
@@ -196,9 +198,9 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             instanceContext
           );
 
-          this.logger.debug(`Returning: ${JSON.stringify(response)}`);
+          this.logger.debug(`FeedId: ${request.feed_id} - Plugin impl returned: ${JSON.stringify(response)}`);
 
-          const pluginResponse: AudienceFeedConnectorPluginResponse = {
+          const pluginResponse: ExternalSegmentConnectionPluginResponse = {
             status: response.status
           };
 
@@ -206,12 +208,31 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             pluginResponse.message = response.message;
           }
 
-          return res.status(200).send(JSON.stringify(pluginResponse));
+          let statusCode;
+          
+          switch (response.status) {
+            case 'external_segment_not_ready_yet':
+            statusCode = 502;
+            break;
+            case 'ok':
+            statusCode = 200;
+            break;
+            case 'error':
+            statusCode = 500;
+            break;
+            default: 
+            statusCode = 500;
+          } 
+
+          this.logger.debug(`FeedId: ${request.feed_id} - Returning: ${statusCode} - ${JSON.stringify(response)}`);
+
+          return res.status(statusCode).send(JSON.stringify(pluginResponse));
+
         } catch (error) {
           this.logger.error(
             `Something bad happened : ${error.message} - ${error.stack}`
           );
-          return res.status(500).send(error.message + "\n" + error.stack);
+          return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
         }
       }
     );
@@ -264,7 +285,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
           this.logger.error(
             `Something bad happened : ${error.message} - ${error.stack}`
           );
-          return res.status(500).send(error.message + "\n" + error.stack);
+          return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
         }
       }
     );

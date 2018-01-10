@@ -1,4 +1,5 @@
 export type AudienceFeedConnectorStatus = 'ok' | 'error';
+export declare type AudienceFeedConnectorConnectionStatus = 'ok' | 'error' | 'external_segment_not_ready_yet';
 
 export interface AudienceFeedConnectorPluginResponse {
   status: AudienceFeedConnectorStatus;
@@ -11,7 +12,7 @@ export interface ExternalSegmentCreationPluginResponse {
 }
 
 export interface ExternalSegmentConnectionPluginResponse {
-  status: AudienceFeedConnectorStatus;
+  status: AudienceFeedConnectorConnectionStatus;
   message?: string;
 }
 
