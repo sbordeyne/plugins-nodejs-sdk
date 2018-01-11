@@ -1,5 +1,11 @@
 # Changelog
 
+# 0.3.5 - 2018-01-11
+
+- Fix Audience Feed support (wrong initial integration which was not aligned with the API)
+- Add an Helper to do the Handlebars macros mapping for AdRenderer with Templating using the Handlebars Engine
+- Update IAS TAG integration for AdRenderer using the Handlebars engine (escape the media_id as it's passed in an IAS URL)
+
 # 0.3.4 - 2018-01-09
 
 - Fix overiding request options parameters in requestGatewayHelper
