@@ -31,6 +31,12 @@ export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererReques
 export * from "./interfaces/mediarithmics/api/email-renderer/EmailRendererPluginResponseInterface"
 export * from "./class/mediarithmics/email-renderer/EmailRendererBasePlugin";
 
+// Audience Feed Connector
+export * from "./interfaces/mediarithmics/api/audience-feed-connector/AudienceFeedInterface"
+export * from "./interfaces/mediarithmics/api/audience-feed-connector/AudienceFeedConnectorRequestInterface"
+export * from "./interfaces/mediarithmics/api/audience-feed-connector/AudienceFeedConnectorPluginResponseInterface"
+export * from "./class/mediarithmics/audience-feed-connector/AudienceFeedConnectorBasePlugin";
+
 // Ad Renderer
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererRequestInterface";
 export * from "./interfaces/mediarithmics/api/ad-renderer/AdRendererPluginResponseInterface";

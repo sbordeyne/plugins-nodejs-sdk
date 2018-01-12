@@ -4,7 +4,8 @@ import {
   AdRendererBaseInstanceContext,
   AdRendererRequest,
   Creative,
-  ItemProposal
+  ItemProposal,
+  AdRendererTemplateInstanceContext
 } from "../../core/index";
 
 const handlebars = require("handlebars");
@@ -21,6 +22,7 @@ export interface URLHandlebarsRootContext {
   ORGANISATION_ID: string;
   AD_GROUP_ID?: string;
   MEDIA_ID?: string;
+  ENCODED_MEDIA_ID?: string;
   CAMPAIGN_ID?: string;
   CREATIVE_ID: string;
   CACHE_BUSTER: string;
@@ -97,11 +99,34 @@ const encodeRecoClickUrlHelper = () => (
   );
 
   const recommendationUrl = recommendation.$url ? recommendation.$url : "";
-  console.log(
-    "URL : " + encodeClickUrl()(filledRedirectUrls, recommendationUrl)
-  );
+
   return encodeClickUrl()(filledRedirectUrls, recommendationUrl);
 };
+
+export function buildURLHandlebarsRootContext(
+  adRenderRequest: AdRendererRequest,
+  instanceContext: AdRendererTemplateInstanceContext
+): URLHandlebarsRootContext {
+
+  return {
+    REQUEST: adRenderRequest,
+    CREATIVE: {
+      CLICK_URL: instanceContext.creative_click_url,
+      WIDTH: instanceContext.width,
+      HEIGHT: instanceContext.height
+    },
+    ORGANISATION_ID: instanceContext.displayAd.organisation_id, // Hack, it should come from the AdRendererRequest
+    AD_GROUP_ID: adRenderRequest.ad_group_id,
+    MEDIA_ID: adRenderRequest.media_id,
+    ENCODED_MEDIA_ID: adRenderRequest.media_id ? encodeURIComponent(adRenderRequest.media_id) : undefined,
+    CAMPAIGN_ID: adRenderRequest.campaign_id,
+    CREATIVE_ID: adRenderRequest.creative_id,
+    CACHE_BUSTER: Date.now().toString(),
+    IAS_CLIENT_ID: instanceContext.ias_client_id,
+    CB: Date.now().toString()
+  }
+
+}
 
 export class HandlebarsEngine
   implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {

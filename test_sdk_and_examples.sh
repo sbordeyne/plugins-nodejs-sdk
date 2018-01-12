@@ -1,15 +1,16 @@
 #!/bin/bash
-set -eu 
+set -eu
 
 rm -rf node_modules
 npm install
 npm run prepublishOnly
 
+export TS_NODE_TYPE_CHECK=1
 mocha -r ts-node/register src/tests/*.ts
 
 npm link
 
-for ex in examples/*; do  
+for ex in examples/*; do
     cd $ex
     if [ -f ./package.json ]; then
         rm -rf node_modules

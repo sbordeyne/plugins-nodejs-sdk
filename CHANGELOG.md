@@ -1,5 +1,34 @@
 # Changelog
 
+# 0.3.5 - 2018-01-11
+
+- Fix Audience Feed support (wrong initial integration which was not aligned with the API)
+- Add an Helper to do the Handlebars macros mapping for AdRenderer with Templating using the Handlebars Engine
+- Update IAS TAG integration for AdRenderer using the Handlebars engine (escape the media_id as it's passed in an IAS URL)
+
+# 0.3.4 - 2018-01-09
+
+- Fix overiding request options parameters in requestGatewayHelper
+
+# 0.3.3 - 2018-01-05
+
+- Add support for Audience Feed Connectors plugins
+
+# 0.3.2 - 2017-12-15
+
+- Remove a console.log in the handlebars engine
+
+# 0.3.1 - 2017-12-01
+
+- Improve error handling with async/await
+- Fix error message of gateway helper
+- Fix the JSON vs non JSON situations
+- Add async middleware to stop using try catch in routes
+- Add async middleware to all plugin routes
+- Remove legacy log
+- Update IAS Tag integration
+
+
 # 0.3.0 - 2017-11-15
 
 - New "Templating" support with AdRendererTemplatePlugin class (for AdRenderer that don't need recommendations)
