@@ -119,15 +119,10 @@ export class ProductionPluginRunner {
 
       const initUpdateResult = this.plugin.onInitRequest(creds);
 
-      if (initUpdateResult.status === "error") {
-        this.plugin.logger.error(
-          `${process.pid}: Error while Init: ${initUpdateResult.msg}`
-        );
-      } else {
         this.plugin.logger.debug(
           `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
         );
-      }
+      
     } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
       if (!recMsg.value) {
         throw new Error(
@@ -138,19 +133,12 @@ export class ProductionPluginRunner {
 
       const logLevelUpdateResult = this.plugin.onLogLevelUpdate(level);
 
-      if (logLevelUpdateResult.status === "error") {
-        this.plugin.logger.error(
-          `${process.pid}: Error while updateting LogLevel: ${
-            logLevelUpdateResult.msg
-          }`
-        );
-      } else {
         this.plugin.logger.debug(
           `${process.pid}: Updated log level with: ${JSON.stringify(
             this.plugin.logger.level
           )}`
         );
-      }
+    
     }
   };
 

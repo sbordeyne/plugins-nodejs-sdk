@@ -30,9 +30,15 @@ export abstract class BasePlugin {
 
   _transport: any = rp;
 
+  onLogLevelUpdate(level: string) {
+    const logLevel = level.toLowerCase();
+    this.logger.info("Setting log level to " + logLevel);
+    this.logger.level = logLevel;
+  }
+
   // Log level update implementation
   // This method can be overridden by any subclass
-  protected onLogLevelUpdate(req: express.Request, res: express.Response) {
+  protected onLogLevelUpdateHandler(req: express.Request, res: express.Response) {
       if (req.body && req.body.level) {
         const level = req.body.level;
 
@@ -54,9 +60,8 @@ export abstract class BasePlugin {
         res.status(200).end();
       } else {
         // Lowering case
-        const logLevel = level.toLowerCase();
-        this.logger.info("Setting log level to " + logLevel);
-        this.logger.level = logLevel;
+        
+        this.onLogLevelUpdate(level);
         
         return res.status(200).end();
         }
@@ -77,7 +82,7 @@ export abstract class BasePlugin {
       
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          this.onLogLevelUpdate(req, res);
+          this.onLogLevelUpdateHandler(req, res);
         }
       )
     );
@@ -201,9 +206,18 @@ export abstract class BasePlugin {
     }
   }
 
+  onInitRequest(creds: Credentials) {
+      this.credentials.authentication_token = creds.authentication_token;
+      this.credentials.worker_id = creds.worker_id;
+      this.logger.info(
+        "Update authentication_token with %s",
+        this.credentials.authentication_token
+      );
+  }
+
   // Plugin Init implementation
   // This method can be overridden by any subclass
-  onInitRequest(req: express.Request, res: express.Response) {
+  protected onInitRequestHandler(req: express.Request, res: express.Response) {
       if (req.body.authentication_token && req.body.worker_id) {
         const creds: Credentials = {
           authentication_token: req.body.authentication_token,
@@ -235,12 +249,8 @@ export abstract class BasePlugin {
           this.logger.debug("POST /v1/init ", JSON.stringify(creds));
       
           if (creds && creds.authentication_token && creds.worker_id) {
-            this.credentials.authentication_token = creds.authentication_token;
-            this.credentials.worker_id = creds.worker_id;
-            this.logger.info(
-              "Update authentication_token with %s",
-              this.credentials.authentication_token
-            );
+
+          this.onInitRequest(creds);
             res.status(200).end();
           } else {
             this.logger.error(`Error while Init: "creds are undefined"`);
@@ -260,7 +270,7 @@ export abstract class BasePlugin {
       "/v1/init",
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          this.onInitRequest(req, res);
+          this.onInitRequestHandler(req, res);
         }
       )
     );
