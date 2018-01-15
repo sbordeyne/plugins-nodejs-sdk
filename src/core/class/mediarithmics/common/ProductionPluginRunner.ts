@@ -119,10 +119,9 @@ export class ProductionPluginRunner {
 
       const initUpdateResult = this.plugin.onInitRequest(creds);
 
-        this.plugin.logger.debug(
-          `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
-        );
-      
+      this.plugin.logger.debug(
+        `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
+      );
     } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
       if (!recMsg.value) {
         throw new Error(
@@ -133,12 +132,11 @@ export class ProductionPluginRunner {
 
       const logLevelUpdateResult = this.plugin.onLogLevelUpdate(level);
 
-        this.plugin.logger.debug(
-          `${process.pid}: Updated log level with: ${JSON.stringify(
-            this.plugin.logger.level
-          )}`
-        );
-    
+      this.plugin.logger.debug(
+        `${process.pid}: Updated log level with: ${JSON.stringify(
+          this.plugin.logger.level
+        )}`
+      );
     }
   };
 

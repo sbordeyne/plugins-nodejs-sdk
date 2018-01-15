@@ -38,9 +38,12 @@ export abstract class BasePlugin {
 
   // Log level update implementation
   // This method can be overridden by any subclass
-  protected onLogLevelUpdateHandler(req: express.Request, res: express.Response) {
-      if (req.body && req.body.level) {
-        const level = req.body.level;
+  protected onLogLevelUpdateHandler(
+    req: express.Request,
+    res: express.Response
+  ) {
+    if (req.body && req.body.level) {
+      const level = req.body.level;
 
       if (this.multiThread) {
         const msg: SocketMsg = {
@@ -49,37 +52,37 @@ export abstract class BasePlugin {
         };
 
         this.logger.debug(
-          `Sending DEBUG_LEVEL_UPDATE_FROM_WORKER from worker ${process.pid} to master with value: ${msg.value}`
+          `Sending DEBUG_LEVEL_UPDATE_FROM_WORKER from worker ${
+            process.pid
+          } to master with value: ${msg.value}`
         );
 
-        if(typeof process.send === "function") {
-          process.send(msg);            
+        if (typeof process.send === "function") {
+          process.send(msg);
         }
 
         // We have to assume that everything went fine in the propagation...
         res.status(200).end();
       } else {
         // Lowering case
-        
+
         this.onLogLevelUpdate(level);
-        
+
         return res.status(200).end();
-        }
-      } else {
-        this.logger.error(
-          "Incorrect body : Cannot change log level, actual: " +
-            this.logger.level
-        );
-        res.status(400).end();
       }
+    } else {
+      this.logger.error(
+        "Incorrect body : Cannot change log level, actual: " + this.logger.level
+      );
+      res.status(400).end();
     }
-  
+  }
 
   private initLogLevelUpdateRoute() {
     //Route used by the plugin manager to check if the plugin is UP and running
     this.app.put(
       "/v1/log_level",
-      
+
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           this.onLogLevelUpdateHandler(req, res);
@@ -181,7 +184,7 @@ export abstract class BasePlugin {
     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options.encoding = (isBinary !== undefined && isBinary) ? null : undefined;
+    options.encoding = isBinary !== undefined && isBinary ? null : undefined;
 
     this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
@@ -207,63 +210,63 @@ export abstract class BasePlugin {
   }
 
   onInitRequest(creds: Credentials) {
-      this.credentials.authentication_token = creds.authentication_token;
-      this.credentials.worker_id = creds.worker_id;
-      this.logger.info(
-        "Update authentication_token with %s",
-        this.credentials.authentication_token
-      );
+    this.credentials.authentication_token = creds.authentication_token;
+    this.credentials.worker_id = creds.worker_id;
+    this.logger.info(
+      "Update authentication_token with %s",
+      this.credentials.authentication_token
+    );
   }
 
   // Plugin Init implementation
   // This method can be overridden by any subclass
   protected onInitRequestHandler(req: express.Request, res: express.Response) {
-      if (req.body.authentication_token && req.body.worker_id) {
-        const creds: Credentials = {
-          authentication_token: req.body.authentication_token,
-          worker_id: req.body.worker_id
-        };
-  
-        // If MultiThread, we send a message to the cluster master,
-        // the onInitRequest() will be called once the master will propagate the update to each worker
-        if (this.multiThread) {
-          const msg: SocketMsg = {
-            value: JSON.stringify(creds),
-            cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER
-          };
-  
-          this.logger.debug(
-            `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${process.pid} to master with value: ${msg.value}`
-          );
-          
-          if(typeof process.send === "function") {
-            process.send(msg);            
-          }
-  
-          // We have to assume that everything went fine in the propagation...
-          res.status(200).end();
-  
-          // Else, we handle the onInitRequest in this process
-        } else {
-  
-          this.logger.debug("POST /v1/init ", JSON.stringify(creds));
-      
-          if (creds && creds.authentication_token && creds.worker_id) {
+    if (req.body.authentication_token && req.body.worker_id) {
+      const creds: Credentials = {
+        authentication_token: req.body.authentication_token,
+        worker_id: req.body.worker_id
+      };
 
-          this.onInitRequest(creds);
-            res.status(200).end();
-          } else {
-            this.logger.error(`Error while Init: "creds are undefined"`);
-            res.status(500).end();
-          }
-        }
-      } else {
-        this.logger.error(
-          `Received /v1/init call without authentification_token or worker_id`
+      // If MultiThread, we send a message to the cluster master,
+      // the onInitRequest() will be called once the master will propagate the update to each worker
+      if (this.multiThread) {
+        const msg: SocketMsg = {
+          value: JSON.stringify(creds),
+          cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER
+        };
+
+        this.logger.debug(
+          `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${
+            process.pid
+          } to master with value: ${msg.value}`
         );
-        res.status(400).end();
+
+        if (typeof process.send === "function") {
+          process.send(msg);
+        }
+
+        // We have to assume that everything went fine in the propagation...
+        res.status(200).end();
+
+        // Else, we handle the onInitRequest in this process
+      } else {
+        this.logger.debug("POST /v1/init ", JSON.stringify(creds));
+
+        if (creds && creds.authentication_token && creds.worker_id) {
+          this.onInitRequest(creds);
+          res.status(200).end();
+        } else {
+          this.logger.error(`Error while Init: "creds are undefined"`);
+          res.status(500).end();
+        }
       }
+    } else {
+      this.logger.error(
+        `Received /v1/init call without authentification_token or worker_id`
+      );
+      res.status(400).end();
     }
+  }
 
   private initInitRoute() {
     this.app.post(
