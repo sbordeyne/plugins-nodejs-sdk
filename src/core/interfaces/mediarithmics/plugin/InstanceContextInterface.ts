@@ -55,3 +55,7 @@ export interface AdRendererRecoTemplateInstanceContext
   extends AdRendererTemplateInstanceContext {
   recommender_id?: string;
 }
+
+export interface RecommenderBaseInstanceContext {
+  recommenderProperties: PluginProperty[];
+}

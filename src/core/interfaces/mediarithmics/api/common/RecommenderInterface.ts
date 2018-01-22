@@ -5,8 +5,7 @@ export interface RecommenderRequest {
   datamart_id: string;
   user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
 
-  //Customizable
-  [propsName: string]: any;
+  input_data: any;
 }
 
 export interface RecommenderResponse {
@@ -17,6 +16,7 @@ export interface RecommenderResponse {
 export interface RecommandationsWrapper {
   ts: number;
   proposals: ItemProposal[];
+  recommendation_log: string;
 }
 
 export type ProposalType =
