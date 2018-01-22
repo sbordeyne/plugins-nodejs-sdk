@@ -16,7 +16,7 @@ export interface RecommenderResponse {
 export interface RecommandationsWrapper {
   ts: number;
   proposals: ItemProposal[];
-  recommendation_log: string;
+  recommendation_log?: string;
 }
 
 export type ProposalType =
