@@ -8,7 +8,8 @@ import {
   PluginProperty,
   RecommenderBaseInstanceContext,
   RecommenderRequest,
-  RecommandationsWrapper
+  RecommandationsWrapper,
+  RecommenderPluginResponse
 } from "../../../index";
 
 export abstract class RecommenderPlugin extends BasePlugin {
@@ -73,7 +74,7 @@ export abstract class RecommenderPlugin extends BasePlugin {
   protected abstract onRecommendationRequest(
     request: RecommenderRequest,
     instanceContext: RecommenderBaseInstanceContext
-  ): Promise<RecommandationsWrapper>;
+  ): Promise<RecommenderPluginResponse>;
 
   private initRecommendationRequest(): void {
     this.app.post(

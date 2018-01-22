@@ -61,6 +61,11 @@ export * from "./interfaces/mediarithmics/api/bid-optimizer/BidOptimizerPluginRe
 export * from "./interfaces/mediarithmics/api/bid-optimizer/BidOptimizerInterface";
 export * from "./class/mediarithmics/bid-optimizer/BidOptimizerBasePlugin";
 
+// Recommender
+export * from "./interfaces/mediarithmics/api/recommender/RecommenderPluginResponse";
+
+export * from "./class/mediarithmics/recommender/RecommenderBasePlugin";
+
 // Plugin Runner
 export * from "./class/mediarithmics/common/ProductionPluginRunner";
 export * from "./class/mediarithmics/common/TestingPluginRunner";
