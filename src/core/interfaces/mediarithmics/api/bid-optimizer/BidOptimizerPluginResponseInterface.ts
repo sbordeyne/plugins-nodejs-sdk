@@ -11,4 +11,5 @@ export interface Bid{
   debug?: string;
   model_id?: string;
   model_parameter?: string;
+  creative_variant?:string;
 }
