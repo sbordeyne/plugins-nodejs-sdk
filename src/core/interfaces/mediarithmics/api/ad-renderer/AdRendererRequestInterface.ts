@@ -23,6 +23,7 @@ export interface AdRendererRequest {
     display_tracking_url: string;
     latitude?: number;
     longitude?: number;
+    creative_variant?: string;
     ssp_extension?: SspExtension;
     restrictions: any;
 }
