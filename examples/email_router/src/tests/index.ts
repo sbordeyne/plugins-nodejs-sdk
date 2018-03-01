@@ -61,6 +61,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
         context: "LIVE",
         creative_id: "7197",
         campaign_id: "1896",
+        blast_id: "1993",
         datamart_id: "1090",
         user_identifiers: [
           {
@@ -184,6 +185,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
         context: "LIVE",
         creative_id: "7197",
         campaign_id: "1896",
+        blast_id: "1993",
         datamart_id: "1090",
         user_identifiers: [
           {
