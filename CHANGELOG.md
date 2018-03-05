@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.3.6 - 2018-03-05
+
+- Add `blast_id` on the `EmailRoutingRequest` interface
+- Add `creative_variant` on the `AdRendererRequest` interface
+
 # 0.3.5 - 2018-01-11
 
 - Fix Audience Feed support (wrong initial integration which was not aligned with the API)
