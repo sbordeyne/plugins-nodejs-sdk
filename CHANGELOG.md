@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.3.7 - 2018-03-13
+
+- Add `creative_variant` on the `BidOptimizerPluginResponse` interface
+- Add `compartment_id` on the `UserAccountIdentifierInfo` interface
+
 # 0.3.6 - 2018-03-05
 
 - Add `blast_id` on the `EmailRoutingRequest` interface
