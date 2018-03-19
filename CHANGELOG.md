@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.3.8 - 2018-03-19
+
+- Fix invalid characters issues in the DisplayContext header
+
 # 0.3.7 - 2018-03-13
 
 - Add `creative_variant` on the `BidOptimizerPluginResponse` interface
