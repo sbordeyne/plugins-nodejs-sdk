@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as _ from "lodash";
+import * as jsesc from "jsesc";
 
 import {
   AdRendererRequest,
@@ -147,7 +148,7 @@ export abstract class AdRendererBasePlugin<
             return res
               .header(
                 this.displayContextHeader,
-                JSON.stringify(adRendererResponse.displayContext)
+                jsesc(adRendererResponse.displayContext, {json: true})
               )
               .status(200)
               .send(adRendererResponse.html);
