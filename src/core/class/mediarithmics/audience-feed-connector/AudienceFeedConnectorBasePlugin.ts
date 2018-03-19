@@ -18,7 +18,6 @@ import {
 } from "../../../index";
 
 export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
-  instanceContext: Promise<AudienceFeedConnectorBaseInstanceContext>;
 
   async fetchAudienceSegment(feedId: string): Promise<AudienceSegment> {
     const response = await super.requestGatewayHelper(
@@ -111,7 +110,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
     }
   }
 
-  private async getInstanceContext(
+  protected async getInstanceContext(
     feedId: string
   ): Promise<AudienceFeedConnectorBaseInstanceContext> {
     if (!this.pluginCache.get(feedId)) {
