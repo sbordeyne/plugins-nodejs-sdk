@@ -21,7 +21,8 @@ export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
     <!-- We always need to include the mediarithmics impression tracking pixel -->
     <img src="${request.display_tracking_url}" />
     </body>
-    </html>`
+    </html>`,
+    displayContext: { hello: "❤" }
     };
 
     return Promise.resolve(result);

@@ -214,6 +214,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
+                expect(res.header["x-mics-display-context"]).to.eq("{\"hello\":\"\\u2764\"}")
 
                 done();
               });
