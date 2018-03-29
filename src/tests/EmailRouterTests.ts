@@ -171,9 +171,7 @@ describe("Email Router API test", function() {
 
       expect(JSON.parse(res.text).result).to.be.true;
 
-    });
-
-    request(runner.plugin.app)
+      request(runner.plugin.app)
       .post("/v1/email_routing")
       .send(requestBody)
       .end(function(err, res) {
@@ -183,5 +181,8 @@ describe("Email Router API test", function() {
 
         done();
       });
+
+    });
+
   });
 });
