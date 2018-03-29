@@ -5,6 +5,7 @@ import * as winston from "winston";
 import * as bodyParser from "body-parser";
 import { Server } from "http";
 import * as cache from "memory-cache";
+import * as toobusy from "toobusy-js";
 
 // Helper request function
 
@@ -254,6 +255,13 @@ export abstract class BasePlugin {
     this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
 
     this.app = express();
+    this.app.use((req, res, next) => {
+      if (toobusy()) {
+        res.status(429).send("I'm busy right now, sorry.");
+      } else {
+        next();
+      }
+    });
     this.app.use(bodyParser.json({ type: "*/*" }));
     this.logger = new winston.Logger({
       transports: [new winston.transports.Console()],
