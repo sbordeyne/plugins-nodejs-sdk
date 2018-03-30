@@ -68,8 +68,8 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     };
   }
 
-  constructor() {
-    super();
+  constructor(disableThrottling?: boolean) {
+    super(disableThrottling);
     this.engineBuilder = new extra.RecommendationsHandlebarsEngine();
   }
 }

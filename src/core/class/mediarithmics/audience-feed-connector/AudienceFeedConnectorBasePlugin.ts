@@ -291,8 +291,8 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(disableThrottling?: boolean) {
+    super(disableThrottling);
 
     this.initExternalSegmentCreation();
     this.initExternalSegmentConnection();

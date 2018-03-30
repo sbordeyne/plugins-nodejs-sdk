@@ -17,8 +17,8 @@ describe("Fetch template API", () => {
       };
     }
 
-    constructor() {
-      super();
+    constructor(disableThrottling?: boolean) {
+      super(disableThrottling);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
@@ -30,7 +30,7 @@ describe("Fetch template API", () => {
   it("Check that templateURI is passed correctly in fetchTemplateContent", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(true);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const faketemplatePath = "mics://yolo";
@@ -50,7 +50,7 @@ describe("Fetch template API", () => {
   it("Check that orgId / adLayoutId / versionId are passed correctly in fetchTemplateProperties", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(true);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const fakeOrgId = "1";
@@ -81,8 +81,8 @@ describe("Fetch recommendation API", () => {
       };
     }
 
-    constructor() {
-      super();
+    constructor(disableThrottling?: boolean) {
+      super(true);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
@@ -212,7 +212,7 @@ describe("Fetch recommendation API", () => {
   it("Check that recommenderId and userAgentId are passed correctly in fetchRecommendations", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(true);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We try a call to the Gateway
@@ -232,7 +232,7 @@ describe("Fetch recommendation API", () => {
   it("Check that fetched itemProposal are the same as sent by the recommender", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(true);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We try a call to the Gateway

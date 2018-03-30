@@ -138,7 +138,7 @@ describe("Test Example Activity Analyzer", function() {
 
   it("Check behavior of dummy activity analyzer", function(done) {
     // All the magic is here
-    const plugin = new MyActivityAnalyzerPlugin();
+    const plugin = new MyActivityAnalyzerPlugin(true);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init

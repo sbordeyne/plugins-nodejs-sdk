@@ -141,8 +141,8 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(disableThrottling?: boolean) {
+    super(disableThrottling);
 
     // We init the specific route to listen for activity analysis requests
     this.initActivityAnalysis();

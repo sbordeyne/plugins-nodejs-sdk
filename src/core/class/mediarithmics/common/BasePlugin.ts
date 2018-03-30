@@ -5,6 +5,7 @@ import * as winston from "winston";
 import * as bodyParser from "body-parser";
 import { Server } from "http";
 import * as cache from "memory-cache";
+import * as toobusy from "toobusy-js";
 
 // Helper request function
 
@@ -23,6 +24,8 @@ export abstract class BasePlugin {
   authentication_token: string;
 
   _transport: any = rp;
+
+  disableThrottling: boolean = false;
 
   // Log level update implementation
   // This method can be overridden by any subclass
@@ -147,7 +150,7 @@ export abstract class BasePlugin {
     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options.encoding = (isBinary !== undefined && isBinary) ? null : undefined;
+    options.encoding = isBinary !== undefined && isBinary ? null : undefined;
 
     this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
@@ -236,7 +239,9 @@ export abstract class BasePlugin {
   // Method to start the plugin
   start() {}
 
-  constructor() {
+  constructor(disableThrottling?: boolean) {
+
+    if(disableThrottling) { this.disableThrottling = disableThrottling }
     const gatewayHost = process.env.GATEWAY_HOST;
     if (gatewayHost) {
       this.gatewayHost = gatewayHost;
@@ -254,6 +259,17 @@ export abstract class BasePlugin {
     this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
 
     this.app = express();
+
+    if (!this.disableThrottling) {
+      this.app.use((req, res, next) => {
+        if (toobusy()) {
+          res.status(429).send("I'm busy right now, sorry.");
+        } else {
+          next();
+        }
+      });
+    }
+
     this.app.use(bodyParser.json({ type: "*/*" }));
     this.logger = new winston.Logger({
       transports: [new winston.transports.Console()],
