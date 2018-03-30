@@ -239,7 +239,7 @@ export abstract class BasePlugin {
   // Method to start the plugin
   start() {}
 
-  constructor(enableThrottling?: boolean) {
+  constructor(enableThrottling = false) {
 
     if(enableThrottling) { this.enableThrottling = enableThrottling }
     const gatewayHost = process.env.GATEWAY_HOST;
