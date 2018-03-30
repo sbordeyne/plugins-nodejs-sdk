@@ -141,8 +141,8 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
 
     // We init the specific route to listen for activity analysis requests
     this.initActivityAnalysis();

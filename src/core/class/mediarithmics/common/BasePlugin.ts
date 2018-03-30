@@ -25,6 +25,8 @@ export abstract class BasePlugin {
 
   _transport: any = rp;
 
+  testingMode: boolean = false;
+
   // Log level update implementation
   // This method can be overridden by any subclass
   protected onLogLevelUpdate(req: express.Request, res: express.Response) {
@@ -148,7 +150,7 @@ export abstract class BasePlugin {
     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options.encoding = (isBinary !== undefined && isBinary) ? null : undefined;
+    options.encoding = isBinary !== undefined && isBinary ? null : undefined;
 
     this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
@@ -237,7 +239,9 @@ export abstract class BasePlugin {
   // Method to start the plugin
   start() {}
 
-  constructor() {
+  constructor(testingMode?: boolean) {
+
+    if(testingMode) { this.testingMode = testingMode }
     const gatewayHost = process.env.GATEWAY_HOST;
     if (gatewayHost) {
       this.gatewayHost = gatewayHost;
@@ -255,13 +259,17 @@ export abstract class BasePlugin {
     this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
 
     this.app = express();
-    this.app.use((req, res, next) => {
-      if (toobusy()) {
-        res.status(429).send("I'm busy right now, sorry.");
-      } else {
-        next();
-      }
-    });
+
+    if (!this.testingMode) {
+      this.app.use((req, res, next) => {
+        if (toobusy()) {
+          res.status(429).send("I'm busy right now, sorry.");
+        } else {
+          next();
+        }
+      });
+    }
+
     this.app.use(bodyParser.json({ type: "*/*" }));
     this.logger = new winston.Logger({
       transports: [new winston.transports.Console()],

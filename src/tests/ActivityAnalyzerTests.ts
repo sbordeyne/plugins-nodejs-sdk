@@ -36,7 +36,7 @@ describe("Fetch analyzer API", () => {
   );
 
   // All the magic is here
-  const plugin = new MyFakeActivityAnalyzerPlugin();
+  const plugin = new MyFakeActivityAnalyzerPlugin(true);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that ActivityAnalyzerId is passed correctly in FetchActivityAnalyzer", function(
@@ -84,7 +84,7 @@ describe("Activity Analysis API test", function() {
   }
 
   // All the magic is here
-  const plugin = new MyFakeSimpleActivityAnalyzerPlugin();
+  const plugin = new MyFakeSimpleActivityAnalyzerPlugin(true);
 
   it("Check that the plugin is giving good results with a simple activityAnalysis handler", function(
     done

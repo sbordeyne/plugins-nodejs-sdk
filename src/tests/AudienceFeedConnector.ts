@@ -46,7 +46,7 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
 
 describe("Fetch Audience Feed Gateway API", () => {
   // All the magic is here
-  const plugin = new MyFakeAudienceFeedConnector();
+  const plugin = new MyFakeAudienceFeedConnector(true);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that feed_id is passed correctly in fetchAudienceFeedProperties", function(
@@ -86,7 +86,7 @@ describe("Fetch Audience Feed Gateway API", () => {
 
 describe("External Audience Feed API test", function() {
   // All the magic is here
-  const plugin = new MyFakeAudienceFeedConnector();
+  const plugin = new MyFakeAudienceFeedConnector(true);
 
   it("Check that the plugin is giving good results with a simple handler", function(
     done
@@ -225,26 +225,29 @@ describe("External Audience Feed API test", function() {
         expect(res.status).to.equal(200);
 
         expect(JSON.parse(res.text).status).to.be.eq("ok");
+
+        request(runner.plugin.app)
+        .post("/v1/external_segment_connection")
+        .send(externalSegmentConnection)
+        .end(function(err, res) {
+          expect(res.status).to.equal(200);
+  
+          expect(JSON.parse(res.text).status).to.be.eq("ok");
+
+          request(runner.plugin.app)
+          .post("/v1/user_segment_update")
+          .send(userSegmentUpdateRequest)
+          .end(function(err, res) {
+            expect(res.status).to.equal(200);
+    
+            expect(JSON.parse(res.text).status).to.be.eq("ok");
+    
+            done();
+          });
+
+        });
+
       });
 
-    request(runner.plugin.app)
-      .post("/v1/external_segment_connection")
-      .send(externalSegmentConnection)
-      .end(function(err, res) {
-        expect(res.status).to.equal(200);
-
-        expect(JSON.parse(res.text).status).to.be.eq("ok");
-      });
-
-    request(runner.plugin.app)
-      .post("/v1/user_segment_update")
-      .send(userSegmentUpdateRequest)
-      .end(function(err, res) {
-        expect(res.status).to.equal(200);
-
-        expect(JSON.parse(res.text).status).to.be.eq("ok");
-
-        done();
-      });
   });
 });

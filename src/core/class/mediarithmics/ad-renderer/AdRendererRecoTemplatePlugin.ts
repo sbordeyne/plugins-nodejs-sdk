@@ -111,7 +111,7 @@ Error: ${e.message} - ${e.stack}`);
     return context;
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
   }
 }

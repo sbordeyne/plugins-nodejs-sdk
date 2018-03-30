@@ -168,7 +168,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
     return context;
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
   }
 }

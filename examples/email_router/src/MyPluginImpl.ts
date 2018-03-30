@@ -434,8 +434,8 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     });
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
     this.initMailjetNotificationRoute();
   }
 }

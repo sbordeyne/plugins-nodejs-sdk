@@ -291,8 +291,8 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
 
     this.initExternalSegmentCreation();
     this.initExternalSegmentConnection();

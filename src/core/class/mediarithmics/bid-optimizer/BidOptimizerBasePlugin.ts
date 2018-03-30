@@ -200,8 +200,8 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
 
     this.initBidDecisions();
     this.setErrorHandler();

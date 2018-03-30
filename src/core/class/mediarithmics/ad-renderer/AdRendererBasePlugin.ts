@@ -158,8 +158,8 @@ export abstract class AdRendererBasePlugin<
     );
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
 
     this.initAdContentsRoute();
     this.setErrorHandler();

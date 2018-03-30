@@ -121,8 +121,8 @@ export abstract class EmailRendererPlugin extends BasePlugin {
     );
   }
 
-  constructor() {
-    super();
+  constructor(testingMode?: boolean) {
+    super(testingMode);
 
     // We init the specific route to listen for email contents requests
     this.initEmailContents();

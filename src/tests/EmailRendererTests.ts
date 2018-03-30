@@ -37,7 +37,7 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
 
 describe("Fetch Email Renderer API", () => {
   // All the magic is here
-  const plugin = new MyFakeEmailRendererPlugin();
+  const plugin = new MyFakeEmailRendererPlugin(true);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that email_renderer_id is passed correctly in fetchCreative & fetchCreativeProperties", function(
@@ -69,7 +69,7 @@ describe("Fetch Email Renderer API", () => {
 
 describe("Email Renderer API test", function() {
   // All the magic is here
-  const plugin = new MyFakeEmailRendererPlugin();
+  const plugin = new MyFakeEmailRendererPlugin(true);
 
   it("Check that the plugin is giving good results with a simple onEmailContents handler", function(
     done
