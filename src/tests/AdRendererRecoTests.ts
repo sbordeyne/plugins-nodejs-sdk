@@ -17,8 +17,8 @@ describe("Fetch template API", () => {
       };
     }
 
-    constructor(testingMode?: boolean) {
-      super(testingMode);
+    constructor(disableThrottling?: boolean) {
+      super(disableThrottling);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
@@ -81,7 +81,7 @@ describe("Fetch recommendation API", () => {
       };
     }
 
-    constructor(testingMode?: boolean) {
+    constructor(disableThrottling?: boolean) {
       super(true);
       this.engineBuilder = new extra.HandlebarsEngine();
     }

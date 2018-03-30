@@ -25,7 +25,7 @@ export abstract class BasePlugin {
 
   _transport: any = rp;
 
-  testingMode: boolean = false;
+  disableThrottling: boolean = false;
 
   // Log level update implementation
   // This method can be overridden by any subclass
@@ -239,9 +239,9 @@ export abstract class BasePlugin {
   // Method to start the plugin
   start() {}
 
-  constructor(testingMode?: boolean) {
+  constructor(disableThrottling?: boolean) {
 
-    if(testingMode) { this.testingMode = testingMode }
+    if(disableThrottling) { this.disableThrottling = disableThrottling }
     const gatewayHost = process.env.GATEWAY_HOST;
     if (gatewayHost) {
       this.gatewayHost = gatewayHost;
@@ -260,7 +260,7 @@ export abstract class BasePlugin {
 
     this.app = express();
 
-    if (!this.testingMode) {
+    if (!this.disableThrottling) {
       this.app.use((req, res, next) => {
         if (toobusy()) {
           res.status(429).send("I'm busy right now, sorry.");
