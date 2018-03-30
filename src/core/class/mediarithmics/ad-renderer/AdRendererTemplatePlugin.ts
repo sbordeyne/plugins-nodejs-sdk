@@ -168,7 +168,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
     return context;
   }
 
-  constructor(disableThrottling?: boolean) {
-    super(disableThrottling);
+  constructor(enableThrottling?: boolean) {
+    super(enableThrottling);
   }
 }

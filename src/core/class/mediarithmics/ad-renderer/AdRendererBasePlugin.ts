@@ -158,8 +158,8 @@ export abstract class AdRendererBasePlugin<
     );
   }
 
-  constructor(disableThrottling?: boolean) {
-    super(disableThrottling);
+  constructor(enableThrottling?: boolean) {
+    super(enableThrottling);
 
     this.initAdContentsRoute();
     this.setErrorHandler();

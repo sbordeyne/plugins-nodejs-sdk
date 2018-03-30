@@ -434,8 +434,8 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     });
   }
 
-  constructor(disableThrottling?: boolean) {
-    super(disableThrottling);
+  constructor(enableThrottling?: boolean) {
+    super(enableThrottling);
     this.initMailjetNotificationRoute();
   }
 }

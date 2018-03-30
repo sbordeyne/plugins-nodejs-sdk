@@ -167,8 +167,8 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     );
   }
 
-  constructor(disableThrottling?: boolean) {
-    super(disableThrottling);
+  constructor(enableThrottling?: boolean) {
+    super(enableThrottling);
 
     // We init the specific route to listen for activity analysis requests
     this.initEmailRouting();

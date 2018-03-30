@@ -298,7 +298,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const templateContent: string = `Hello World!`;
     const rpMockup = buildRpMockup(templateContent);
 
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -347,7 +347,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -394,7 +394,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -449,7 +449,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -491,7 +491,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -532,7 +532,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -575,7 +575,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const rpMockup = buildRpMockup(templateContent);
 
     // All the magic is here
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -715,7 +715,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     )
     .returns(creativePropertiesResponse);
 
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -753,7 +753,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
 
     const rpMockup = buildRpMockup(templateContent);
 
-    const plugin = new MyHandlebarsAdRenderer(true);
+    const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const adRequest2 = Object.assign({}, adRequest); 

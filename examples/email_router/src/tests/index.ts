@@ -51,7 +51,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
 
   it("Check behavior of dummy Email Router", function(done) {
     // All the magic is here
-    const plugin = new MySimpleEmailRouter(true);
+    const plugin = new MySimpleEmailRouter(false);
     const rpMockup = buildRpMockup();    
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
@@ -175,7 +175,7 @@ const rpMockup: sinon.SinonStub = sinon.stub();
     this.timeout(50000);
 
     // All the magic is here
-    const plugin = new MySimpleEmailRouter(true);
+    const plugin = new MySimpleEmailRouter(false);
     const rpMockup = buildRpMockup();    
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
     

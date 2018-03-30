@@ -39,7 +39,7 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
 describe("Fetch Email Router API", () => {
 
   // All the magic is here
-  const plugin = new MyFakeEmailRouterPlugin(true);
+  const plugin = new MyFakeEmailRouterPlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that email_router_id is passed correctly in fetchEmailRouterProperties", function(
@@ -64,7 +64,7 @@ describe("Fetch Email Router API", () => {
 describe("Email Router API test", function() {
 
   // All the magic is here
-  const plugin = new MyFakeEmailRouterPlugin(true);
+  const plugin = new MyFakeEmailRouterPlugin(false);
 
   it("Check that the plugin is giving good results with a simple onEmailRouting handler", function(
     done
