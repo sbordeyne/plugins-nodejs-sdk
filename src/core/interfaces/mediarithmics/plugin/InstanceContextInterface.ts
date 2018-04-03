@@ -42,13 +42,13 @@ export interface AdRendererTemplateInstanceContext
   width: string;
   height: string;
   creative_click_url?: string;
-  compiled_click_url?: any;
+  render_click_url?: (...args: any[]) => string;
   // Raw template to be compiled
   template: any;
   // Compiled template
-  compiled_template?: any;
+  render_template?: (...args: any[]) => string;
   ias_client_id?: string;
-  compiled_additional_html?: any;
+  render_additional_html?: (...args: any[]) => string;
 }
 
 export interface AdRendererRecoTemplateInstanceContext

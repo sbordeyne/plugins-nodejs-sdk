@@ -158,10 +158,10 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       width: width,
       height: height,
       creative_click_url: creativeClickUrl,
-      compiled_click_url: compiledClickUrl,
+      render_click_url: compiledClickUrl,
       template: template,
-      compiled_template: compiledTemplate,
-      compiled_additional_html: additionalHTML,
+      render_template: compiledTemplate,
+      render_additional_html: additionalHTML,
       ias_client_id: IASClientId
     };
 
