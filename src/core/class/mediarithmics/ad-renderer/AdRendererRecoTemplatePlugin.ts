@@ -111,7 +111,7 @@ Error: ${e.message} - ${e.stack}`);
     return context;
   }
 
-  constructor(enableThrottling?: boolean) {
+  constructor(enableThrottling = false) {
     super(enableThrottling);
   }
 }

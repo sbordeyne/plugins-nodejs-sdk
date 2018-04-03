@@ -121,7 +121,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
     );
   }
 
-  constructor(enableThrottling?: boolean) {
+  constructor(enableThrottling = false) {
     super(enableThrottling);
 
     // We init the specific route to listen for email contents requests

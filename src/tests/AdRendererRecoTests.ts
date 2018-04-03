@@ -17,7 +17,7 @@ describe("Fetch template API", () => {
       };
     }
 
-    constructor(enableThrottling?: boolean) {
+    constructor(enableThrottling = false) {
       super(enableThrottling);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
@@ -81,7 +81,7 @@ describe("Fetch recommendation API", () => {
       };
     }
 
-    constructor(enableThrottling?: boolean) {
+    constructor(enableThrottling = false) {
       super(false);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
