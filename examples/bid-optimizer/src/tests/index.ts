@@ -158,7 +158,7 @@ describe("Test Example BidOptimizer", function() {
   
     it("Check behavior of dummy bid optimizer", function(done) {
       // All the magic is here
-      const plugin = new MyBidOptimizerPlugin(true);
+      const plugin = new MyBidOptimizerPlugin(false);
       const runner = new core.TestingPluginRunner(plugin, rpMockup);
   
       // Plugin init

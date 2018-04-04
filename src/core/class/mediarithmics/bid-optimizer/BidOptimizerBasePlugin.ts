@@ -200,8 +200,8 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
     );
   }
 
-  constructor(disableThrottling?: boolean) {
-    super(disableThrottling);
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
 
     this.initBidDecisions();
     this.setErrorHandler();
