@@ -1,4 +1,4 @@
-import { UserPointIdentifierInfo, UserEmailIdentifierInfo, UserAccountIdentifierInfo, UserAgentIdentifierInfo } from "../../../../index";
+import {UserIdentifierInfo} from '../../reference/UserIdentifierInterface';
 
 export type UpdateType = 'UPSERT' | 'DELETE';
 
@@ -7,7 +7,7 @@ export interface UserSegmentUpdateRequest {
   session_id: string;
   datamart_id: string;
   segment_id: string;
-  user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
+  user_identifiers: UserIdentifierInfo[];
   ts: number;
   operation: UpdateType;
 }

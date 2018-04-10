@@ -1,4 +1,5 @@
-export interface AudienceFeed {
+
+export interface AudienceSegmentExternalFeedResource {
     id: string;
     plugin_id: string;
     organisation_id: string;
@@ -7,7 +8,8 @@ export interface AudienceFeed {
     version_id: string;
 }
 
-export interface AudienceSegment {
+
+export interface AudienceSegmentResource {
     id: string;
     organisation_id: string;
     name: string;
