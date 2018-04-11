@@ -20,7 +20,9 @@ export interface EmailHash {
     email?: string;
 }
 
-export interface UserActivity {
+export interface UserActivity
+    extends Customizable{
+
     $ts?: number;
     $type: UserActivityTypeEnum;
     $session_status: UserActivitySessionStatusEnum;
@@ -32,9 +34,6 @@ export interface UserActivity {
     $origin?: UserActivityOrigin;
     $location?: UserActivityLocation;
     $events: UserActivityEvent[];
-
-    // An Activity can contain custom fields
-    [propsName: string]: any;
 }
 
 export interface UserVisitActivity extends UserActivity {
@@ -46,6 +45,7 @@ export interface UserVisitActivity extends UserActivity {
 
 export interface UserActivityOrigin
     extends Customizable{
+
     $campaign_id?: number;
     $campaign_name?: string;
     $channel?: string;
@@ -65,7 +65,9 @@ export interface UserActivityOrigin
     $ts?: number;
 }
 
-export interface UserActivityLocation {
+export interface UserActivityLocation
+    extends Customizable{
+
     $source?: LocationSourceEnum;
     $country?: string;
     $region?: string;
@@ -75,16 +77,15 @@ export interface UserActivityLocation {
     $zip_code?: string;
     $latlon: number[];
 
-    [propsName: string]: any;
 }
 
 
-export interface UserActivityEventProperty {
-    [propsName: string]: any;
+export interface UserActivityEventProperty extends Customizable {
 }
 
 export interface CampaignTrackingProperties
     extends Customizable {
+
     $campaign_technical_name?: string;
     $sub_campaign_technical_name?: string;
     $message_technical_name?: string;
@@ -97,6 +98,7 @@ export interface CampaignTrackingProperties
 
 export interface ConversionProperties
     extends Customizable {
+
     $conversion_id?: string;
     $goal_id?: number;
     //@Deprecated

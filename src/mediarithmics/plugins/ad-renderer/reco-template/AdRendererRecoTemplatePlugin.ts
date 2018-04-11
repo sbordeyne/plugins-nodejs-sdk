@@ -106,7 +106,6 @@ Error: ${e.message} - ${e.stack}`);
   protected async instanceContextBuilder(creativeId: string) {
     const baseInstanceContext = await super.instanceContextBuilder(creativeId);
 
-    //baseInstanceContext.normalizedProperties['']
     const recommenderProperty = baseInstanceContext.properties.findStringProperty("recommender_id");
 
     const context: AdRendererRecoTemplateInstanceContext = {

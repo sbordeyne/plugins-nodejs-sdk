@@ -44,6 +44,7 @@ export class PropertiesWrapper {
         const p = key ? this.get(key) : this.ofType('ASSET');
         return flatMap(p, asAssetFileProperty);
     };
+
     findDataFileProperty = (key?: string): Option<DataFileProperty> => {
         const p = key ? this.get(key) : this.ofType('DATA_FILE');
         return flatMap(p, asDataFileProperty);
@@ -203,17 +204,16 @@ export abstract class BasePlugin {
     // Set the body if provided
     options .body = body !== undefined ? body : undefined;
 
-            // Set the querystring if provided
-            options.qs = qs !== undefined ? qs : undefined;
+    // Set the querystring if provided
+    options.qs = qs !== undefined ? qs : undefined;
 
-        // Set the json flag if provided options.json = isJson !== undefined ? isJson : true;
+    // Set the json flag if provided options.json = isJson !== undefined ? isJson : true;
+     options.json = isJson !== undefined ? isJson : true;
 
     // Set the encoding to null if it is binary
-    options.encoding = isBinary
-      !== undefined && isBinary ? null
-          : undefined;
+    options.encoding = isBinary !== undefined && isBinary ? null : undefined;
 
-        this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
+    this.logger.silly(`Doing gateway call with ${JSON.stringify(options)}`);
 
     try {
       return await this._transport(options);

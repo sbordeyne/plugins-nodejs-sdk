@@ -14,9 +14,9 @@ import { UserActivity } from '../../api/datamart/UserActivityInterface';
 import { PluginProperty } from '../../api/core/plugin/PluginPropertyInterface'
 
 import {
-  ActivityAnalyzerRequest,
-  ActivityAnalyzer,
-  ActivityAnalyzerResponse,
+    ActivityAnalyzerRequest,
+    ActivityAnalyzer,
+    ActivityAnalyzerPluginResponse,
 } from './ActivityAnalyzerInterface';
 
 export interface ActivityAnalyzerBaseInstanceContext{
@@ -92,7 +92,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
   protected abstract onActivityAnalysis(
     request: ActivityAnalyzerRequest,
     instanceContext: ActivityAnalyzerBaseInstanceContext
-  ): Promise<DataResponse<UserActivity>>;
+  ): Promise<ActivityAnalyzerPluginResponse>;
 
   private initActivityAnalysis(): void {
     this.app.post(

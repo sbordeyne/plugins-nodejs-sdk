@@ -109,7 +109,7 @@ export class MyActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
   protected onActivityAnalysis(
     request: core.ActivityAnalyzerRequest,
     instanceContext: core.ActivityAnalyzerBaseInstanceContext
-  ): Promise<core.ResponseData<core.UserActivity>> {
+  ): Promise<core.ActivityAnalyzerPluginResponse> {
     ......
   }
 }
@@ -150,7 +150,7 @@ Testing Plugins is highly recommended.
 
 * `PropertiesWrapper` is a class with a constructor that takes as parameter an `Array<PluginProperty>`. The `PropertiesWrapper` normalize the array to give an access to these properties by their `technical_name` in O(1).
 
-* `core.BidOptimizerResponse` has been replaced by `core.ResponseData<core.BidOptimizer>`. Other kinds of Response with a `data` field still have an alias but we recommand to use the `core.ResponseData<X>` syntax.
+* `BidOptimizerPluginResponse` has been replaced by `BidDecision`
 
 * `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
 
