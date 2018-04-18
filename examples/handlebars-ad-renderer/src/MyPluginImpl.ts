@@ -54,7 +54,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
       `CallId: ${adRenderRequest.call_id} - Injecting the rootContext into the compiledTemplate`
     );
 
-    const html = instanceContext.compiled_template(properties); //fill the properties
+    const html = instanceContext.render_template(properties); //fill the properties
 
     this.logger.debug(
       `CallId: ${adRenderRequest.call_id} - HTML returned by Handlebars: ${html}`
@@ -68,8 +68,8 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     };
   }
 
-  constructor() {
-    super();
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
     this.engineBuilder = new extra.RecommendationsHandlebarsEngine();
   }
 }

@@ -5,6 +5,7 @@ import * as request from "supertest";
 import * as sinon from "sinon";
 import * as mockery from "mockery";
 import * as rp from "request-promise-native";
+import { PropertiesWrapper } from "../mediarithmics/index";
 
 describe("Fetch template API", () => {
   class MyDummyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
@@ -17,8 +18,8 @@ describe("Fetch template API", () => {
       };
     }
 
-    constructor() {
-      super();
+    constructor(enableThrottling = false) {
+      super(enableThrottling);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
@@ -30,7 +31,7 @@ describe("Fetch template API", () => {
   it("Check that templateURI is passed correctly in fetchTemplateContent", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const faketemplatePath = "mics://yolo";
@@ -50,7 +51,7 @@ describe("Fetch template API", () => {
   it("Check that orgId / adLayoutId / versionId are passed correctly in fetchTemplateProperties", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const fakeOrgId = "1";
@@ -81,13 +82,13 @@ describe("Fetch recommendation API", () => {
       };
     }
 
-    constructor() {
-      super();
+    constructor(enableThrottling = false) {
+      super(false);
       this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
 
-  const fakeRecommenderResponse: core.ResponseData<core.RecommandationsWrapper> = {
+  const fakeRecommenderResponse: core.DataResponse<core.RecommandationsWrapper> = {
     status: "ok",
     data: {
       ts: 1496939189652,
@@ -172,9 +173,8 @@ describe("Fetch recommendation API", () => {
     format: "300x250"
   };
 
-  const fakeCreativeProperties = [
+  const fakeCreativeProperty : core.StringProperty = 
     {
-      id: "42",
       technical_name: "hello_world",
       value: {
         value: "Yay"
@@ -184,7 +184,7 @@ describe("Fetch recommendation API", () => {
       writable: true,
       deletable: false
     }
-  ];
+  ;
 
   const fakeInstanceContext: core.AdRendererRecoTemplateInstanceContext = {
     recommender_id: "74",
@@ -193,7 +193,7 @@ describe("Fetch recommendation API", () => {
     creative_click_url: "http://yolo.com",
     template: "toto",
     displayAd: fakeCreative,
-    displayAdProperties: fakeCreativeProperties
+    properties: new PropertiesWrapper([fakeCreativeProperty])
   };
 
   const fakeUserAgentId = "vec:888888";
@@ -212,7 +212,7 @@ describe("Fetch recommendation API", () => {
   it("Check that recommenderId and userAgentId are passed correctly in fetchRecommendations", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We try a call to the Gateway
@@ -232,7 +232,7 @@ describe("Fetch recommendation API", () => {
   it("Check that fetched itemProposal are the same as sent by the recommender", function(
     done
   ) {
-    const plugin = new MyDummyHandlebarsAdRenderer();
+    const plugin = new MyDummyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We try a call to the Gateway

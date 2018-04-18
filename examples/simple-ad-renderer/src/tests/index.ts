@@ -7,7 +7,7 @@ import * as rp from "request-promise-native";
 import { MySimpleAdRenderer } from '../MyPluginImpl'
 
 // Creative stub
-const creative: core.ResponseData<core.Creative> = {
+const creative: core.DataResponse<core.Creative> = {
   status: "ok",
   data: {
     type: "DISPLAY_AD",    
@@ -189,7 +189,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const templateContent: string = `Hello World!`;
     const rpMockup = buildRpMockup(templateContent);
 
-    const plugin = new MySimpleAdRenderer();
+    const plugin = new MySimpleAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init
@@ -212,6 +212,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
+                expect(res.header["x-mics-display-context"]).to.eq("{\"hello\":\"\\u2764\"}")
 
                 done();
               });
