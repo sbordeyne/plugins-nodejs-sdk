@@ -8,7 +8,7 @@ import { MyHandlebarsAdRenderer } from "../MyPluginImpl";
 import { badChars, escapeChar } from "./utils";
 
 // Creative stub
-const creative: core.ResponseData<core.DisplayAd> = {
+const creative: core.DataResponse<core.DisplayAd> = {
   status: "ok",
   data: {
     type: "DISPLAY_AD",    
@@ -118,8 +118,7 @@ const templateProperties: core.AdLayoutVersionResponse = {
     template: "mics://data_file/tenants/1126/ads_templates/250.276.template",
     ad_layout_id: "250",
     status: "DRAFT"
-  },
-  count: 1
+  }
 };
 
 // Recommendation stub

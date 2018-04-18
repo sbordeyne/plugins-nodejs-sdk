@@ -20,8 +20,7 @@ describe("Test Example Activity Analyzer", function() {
       visit_analyzer_plugin_id: 1001,
       group_id: "com.mediarithmics.visit-analyzer",
       artifact_id: "default"
-    },
-    count: 1
+    }
   };
 
   rpMockup
@@ -43,7 +42,8 @@ describe("Test Example Activity Analyzer", function() {
         technical_name: "analyzer_rules",
         value: {
           uri:
-            "mics://data_file/tenants/10001/plugins_conf/activity_analyzer.conf"
+            "mics://data_file/tenants/10001/plugins_conf/activity_analyzer.conf",
+          last_modified: 123456
         },
         property_type: "DATA_FILE",
         origin: "PLUGIN",

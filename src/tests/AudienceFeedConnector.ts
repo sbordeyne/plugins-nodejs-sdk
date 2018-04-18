@@ -5,6 +5,8 @@ import * as request from "supertest";
 import * as sinon from "sinon";
 import * as mockery from "mockery";
 import * as rp from "request-promise-native";
+import {AudienceSegmentExternalFeedResource} from '../mediarithmics/api/core/audiencesegment/AudienceSegmentInterface';
+import {DataListResponse} from '../mediarithmics/api/core/common/Response';
 
 class MyFakeAudienceFeedConnector extends core.AudienceFeedConnectorBasePlugin {
   protected onExternalSegmentCreation(
@@ -93,7 +95,7 @@ describe("External Audience Feed API test", function() {
   ) {
     const rpMockup: sinon.SinonStub = sinon.stub();
 
-    const audienceFeed: core.ResponseData<core.AudienceFeed> = {
+    const audienceFeed: core.DataResponse<core.AudienceSegmentExternalFeedResource> = {
       status: "ok",
       data: {
         id: "74",
@@ -119,7 +121,7 @@ describe("External Audience Feed API test", function() {
     )
     .returns(audienceFeed);
 
-    const properties: core.ResponseListOfData<core.PluginProperty> = {
+    const properties: core.DataListResponse<core.PluginProperty> = {
       status: "ok",
       count: 1,
       data: [

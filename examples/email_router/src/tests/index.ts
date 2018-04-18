@@ -13,7 +13,7 @@ describe("Test Example Email Router", function() {
 const rpMockup: sinon.SinonStub = sinon.stub();
 
   // Activity Analyzer stub
-  const emailRouterProperties: core.ResponseListOfData<core.PluginProperty> = {
+  const emailRouterProperties: core.DataListResponse<core.PluginProperty> = {
     status: "ok",
     data: [
       {
