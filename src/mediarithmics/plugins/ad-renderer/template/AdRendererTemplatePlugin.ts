@@ -11,13 +11,13 @@ extends AdRendererBaseInstanceContext {
   width: string;
   height: string;
   creative_click_url?: string;
-  compiled_click_url?: any;
+  render_click_url?: (...args: any[]) => string;
   // Raw template to be compiled
   template: any;
   // Compiled template
-  compiled_template?: any;
+  render_template?: (...args: any[]) => string;
   ias_client_id?: string;
-  compiled_additional_html?: any;
+  render_additional_html?: (...args: any[]) => string;
 }
 
 export interface TemplatingEngine<Opt, In, Out> {
@@ -149,10 +149,10 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       width: width,
       height: height,
       creative_click_url: creativeClickUrl,
-      compiled_click_url: compiledClickUrl,
+      render_click_url: compiledClickUrl,
       template: template,
-      compiled_template: compiledTemplate,
-      compiled_additional_html: additionalHTML,
+      render_template: compiledTemplate,
+      render_additional_html: additionalHTML,
       ias_client_id: IASClientId
     };
 
