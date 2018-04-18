@@ -191,7 +191,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const templateContent: string = `Hello World!`;
     const rpMockup = buildRpMockup(templateContent);
 
-    const plugin = new MySimpleAdRenderer(true);
+    const plugin = new MySimpleAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // Plugin init

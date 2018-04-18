@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.3.9 - 2018-04-05
+
+- Add an option to return a 429 HTTP code when the plugin is too busy
+
 # 0.3.8 - 2018-03-19
 
 - Fix invalid characters issues in the DisplayContext header

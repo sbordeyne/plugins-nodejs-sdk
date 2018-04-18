@@ -1,13 +1,15 @@
 {
   "name": "@mediarithmics/plugins-nodejs-sdk",
-  "version": "0.3.8",
+  "version": "0.4.0",
   "description": "This is the mediarithmics nodejs to help plugin developers bootstrapping their plugin without having to deal with most of the plugin boilerplate",
   "repository": "github:MEDIARITHMICS/plugins-nodejs-sdk",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "test": "./test_sdk_and_examples.sh",
-    "prepublishOnly": "tsc -p ./ --outDir build/",
+    "testOnly": "./testOnly.sh",
+    "prepublishOnly": "tsc",
+    "build": "tsc",
     "docs": "typedoc --out docs/ --mode modules --target es6 --module commonjs ./src"
   },
   "author": "",

@@ -27,7 +27,7 @@ describe("Fetch DisplayAd API", () => {
   }
 
   //All the magic is here
-  const plugin = new MyFakeAdRenderer(true);
+  const plugin = new MyFakeAdRenderer(false);
   const runner = new core.TestingPluginRunner(plugin, requestPromiseProx);
 
   it("Check that creativeId is passed correctly in fetchDisplayAd", function(
@@ -36,7 +36,7 @@ describe("Fetch DisplayAd API", () => {
     const fakeCreativeId = "422";
 
     // Creative stub
-    const creative: core.ResponseData<core.DisplayAd> = {
+    const creative: core.DataResponse<core.DisplayAd> = {
       status: "ok",
       data: {
         type: "DISPLAY_AD",
@@ -107,7 +107,7 @@ describe("Ad Contents API test", function() {
     }
   }
 
-  const plugin = new MyFakeAdRenderer2(true);
+  const plugin = new MyFakeAdRenderer2(false);
 
   it("Check that the plugin is giving good results with a simple adContents handler", function(
     done
@@ -115,7 +115,7 @@ describe("Ad Contents API test", function() {
     const rpMockup = sinon.stub();
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const pluginInfo: core.ResponseData<core.Creative> = {
+        const pluginInfo: core.DataResponse<core.Creative> = {
           status: "ok",
           data: {
             type: "DISPLAY_AD",
