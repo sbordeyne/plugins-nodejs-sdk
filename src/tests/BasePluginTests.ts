@@ -4,12 +4,13 @@ import { core } from "../";
 import * as request from "supertest";
 import * as sinon from "sinon";
 import * as rp from "request-promise-native";
+import * as toobusy from "toobusy-js";
 
 describe("Plugin Status API Tests", function() {
   class MyFakePlugin extends core.BasePlugin {}
 
   it("should return plugin status (200) if the plugin is OK", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin);
 
     request(runner.plugin.app)
@@ -30,7 +31,7 @@ describe("Plugin Status API Tests", function() {
   it("should return (503) if the plugin is not initialized yet", function(
     done
   ) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin);
 
     request(runner.plugin.app)
@@ -46,7 +47,7 @@ describe("Plugin log level API tests", function() {
   class MyFakePlugin extends core.BasePlugin {}
 
   it("Log Level update should return 200", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin);
 
     const requestBody = {
@@ -63,7 +64,7 @@ describe("Plugin log level API tests", function() {
   });
 
   it("Malformed Log level update should return 400", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin);
 
     // Bad input format
@@ -81,7 +82,7 @@ describe("Plugin log level API tests", function() {
   });
 
   it("Should return WARN when getting Log Level", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin);
 
     const requestBody = {
@@ -111,7 +112,7 @@ describe("Request Gateway helper API tests", function() {
   class MyFakePlugin extends core.BasePlugin {}
 
   it("Check that uri is passed correctly", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const fakeUri = "/v1/easter_eggs/";
@@ -128,7 +129,7 @@ describe("Request Gateway helper API tests", function() {
   it("Authentification token should be passed from values passed in /v1/init", function(
     done
   ) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const authenticationToken = "Manny";
@@ -153,7 +154,7 @@ describe("Request Gateway helper API tests", function() {
   });
 
   it("Check that body is passed correctly when set", function(done) {
-    const plugin = new MyFakePlugin();
+    const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     const fakeUri = "/v1/easter_eggs/";
@@ -180,7 +181,7 @@ describe("Data File helper Tests", function() {
 
   const rpMockup = sinon.stub().returns(Promise.resolve(fakeDataFile));
   
-      const plugin = new MyFakePlugin();
+      const plugin = new MyFakePlugin(false);
       const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("DataFile: Should call the proper gateway URL", function(done) {

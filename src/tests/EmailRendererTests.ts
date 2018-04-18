@@ -37,7 +37,7 @@ const rpMockup: sinon.SinonStub = sinon.stub().returns(
 
 describe("Fetch Email Renderer API", () => {
   // All the magic is here
-  const plugin = new MyFakeEmailRendererPlugin();
+  const plugin = new MyFakeEmailRendererPlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that email_renderer_id is passed correctly in fetchCreative & fetchCreativeProperties", function(
@@ -69,7 +69,7 @@ describe("Fetch Email Renderer API", () => {
 
 describe("Email Renderer API test", function() {
   // All the magic is here
-  const plugin = new MyFakeEmailRendererPlugin();
+  const plugin = new MyFakeEmailRendererPlugin(false);
 
   it("Check that the plugin is giving good results with a simple onEmailContents handler", function(
     done
@@ -78,7 +78,7 @@ describe("Email Renderer API test", function() {
 
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
-        const creative: core.ResponseData<core.Creative> = {
+        const creative: core.DataResponse<core.Creative> = {
           status: "ok",
           data: {
             type: "EMAIL_TEMPLATE",
@@ -134,46 +134,48 @@ describe("Email Renderer API test", function() {
       .send({ authentication_token: "Manny", worker_id: "Calavera" })
       .end((err, res) => {
         expect(res.status).to.equal(200);
+
+        const requestBody = JSON.parse(`{
+          "email_renderer_id": "1034",
+          "call_id": "8e20e0fc-acb5-4bf3-8e36-f85a9ff25150",
+          "context": "LIVE",
+          "creative_id": "6475",
+          "campaign_id": "1810",
+          "campaign_technical_name": null,
+          "user_identifiers": [
+            {
+              "type": "USER_POINT",
+              "user_point_id": "62ce5f30-191d-40fb-bd6b-8ea6f39c80eb"
+            },
+            {
+              "type": "USER_EMAIL",
+              "hash": "8865501e69c464f42a5ae7bada6d342a",
+              "email": "email_mics_152@yopmail.com",
+              "operator": null,
+              "creation_ts": 1489688728108,
+              "last_activity_ts": 1489688728108,
+              "providers": [
+              ]
+            }
+          ],
+          "user_data_bag": {
+          },
+          "click_urls": [
+          ],
+          "email_tracking_url": null
+        }`);
+    
+        request(runner.plugin.app)
+          .post("/v1/email_contents")
+          .send(requestBody)
+          .end(function(err, res) {
+            expect(res.status).to.equal(200);
+    
+            expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
+            done();
+          });
+          
       });
 
-    const requestBody = JSON.parse(`{
-      "email_renderer_id": "1034",
-      "call_id": "8e20e0fc-acb5-4bf3-8e36-f85a9ff25150",
-      "context": "LIVE",
-      "creative_id": "6475",
-      "campaign_id": "1810",
-      "campaign_technical_name": null,
-      "user_identifiers": [
-        {
-          "type": "USER_POINT",
-          "user_point_id": "62ce5f30-191d-40fb-bd6b-8ea6f39c80eb"
-        },
-        {
-          "type": "USER_EMAIL",
-          "hash": "8865501e69c464f42a5ae7bada6d342a",
-          "email": "email_mics_152@yopmail.com",
-          "operator": null,
-          "creation_ts": 1489688728108,
-          "last_activity_ts": 1489688728108,
-          "providers": [
-          ]
-        }
-      ],
-      "user_data_bag": {
-      },
-      "click_urls": [
-      ],
-      "email_tracking_url": null
-    }`);
-
-    request(runner.plugin.app)
-      .post("/v1/email_contents")
-      .send(requestBody)
-      .end(function(err, res) {
-        expect(res.status).to.equal(200);
-
-        expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
-        done();
-      });
   });
 });
