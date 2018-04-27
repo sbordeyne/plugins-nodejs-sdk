@@ -24,7 +24,6 @@ export interface AudienceFeedConnectorBaseInstanceContext {
 }
 
 export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
-    instanceContext: Promise<AudienceFeedConnectorBaseInstanceContext>;
 
     async fetchAudienceSegment(feedId: string): Promise<AudienceSegmentResource> {
         const response = await super.requestGatewayHelper(
@@ -107,7 +106,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
         }
     }
 
-    private async getInstanceContext(feedId: string): Promise<AudienceFeedConnectorBaseInstanceContext> {
+    protected async getInstanceContext(feedId: string): Promise<AudienceFeedConnectorBaseInstanceContext> {
         if (!this.pluginCache.get(feedId)) {
             this.pluginCache.put(
                 feedId,
