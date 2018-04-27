@@ -1,22 +1,9 @@
-import {
-    UserPointIdentifierInfo,
-    UserEmailIdentifierInfo,
-    UserAccountIdentifierInfo,
-    UserAgentIdentifierInfo
-} from "../../../api/reference/UserIdentifierInterface";
-import { DataResponse } from "../../../api/core/common/Response";
-import { Customizable } from "../../../api/core/common/Customizable";
+import { DataResponse } from "../../api/core/common/Response";
+import { Customizable } from "../../api/core/common/Customizable";
 
-export interface RecommenderRequest {
-  recommender_id: string;
-  datamart_id: string;
-  user_identifiers: (UserPointIdentifierInfo | UserEmailIdentifierInfo | UserAccountIdentifierInfo | UserAgentIdentifierInfo)[];
-  input_data: any;
-}
+export type RecommenderResponse = DataResponse<RecommendationsWrapper>;
 
-export type RecommenderResponse = DataResponse<RecommandationsWrapper>;
-
-export interface RecommandationsWrapper {
+export interface RecommendationsWrapper {
   ts: number;
   proposals: ItemProposal[];
   recommendation_log?: string;
@@ -33,7 +20,6 @@ export interface Proposal
   $type: ProposalType;
   $id?: string;
   $gid?: string;
-
 }
 
 export interface ProductProposal extends Proposal {

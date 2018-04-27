@@ -70,7 +70,7 @@ describe("Fetch recommender API", () => {
   });
 });
 
-describe("Activity Analysis API test", function() {
+describe("Recommender API test", function() {
   class MyFakeSimpleRecommenderPlugin extends core.RecommenderPlugin {
     protected onRecommendationRequest(
       request: core.RecommenderRequest,

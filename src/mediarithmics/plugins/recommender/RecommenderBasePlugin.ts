@@ -3,20 +3,25 @@ import * as _ from "lodash";
 import * as cache from "memory-cache";
 
 import {
-  BasePlugin,
+  BasePlugin
+} from "../common/BasePlugin";
+
+import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
+
+import {
   Catalog,
-  PluginProperty,
-  RecommenderBaseInstanceContext,
-  RecommenderRequest,
-  RecommandationsWrapper,
-  RecommenderPluginResponse
-} from "../../../index";
+  RecommendationsWrapper
+} from "../../api/datamart"
+
+import {
+  RecommenderRequest
+} from "../../api/plugin/recommender/RecommenderRequestInterface"
 
 export interface RecommenderBaseInstanceContext {
   recommenderProperties: PluginProperty[];
 }
 
-export interface RecommenderPluginResponse extends RecommandationsWrapper {}
+export interface RecommenderPluginResponse extends RecommendationsWrapper {}
 
 export abstract class RecommenderPlugin extends BasePlugin {
   instanceContext: Promise<RecommenderBaseInstanceContext>;
