@@ -1,7 +1,6 @@
 export interface CreativeResponse {
     status: string;
     data: Creative;
-    count: number;
 }
 
 export type CreativeType = 'DISPLAY_AD' | 'VIDEO_AD' | 'EMAIL_TEMPLATE';

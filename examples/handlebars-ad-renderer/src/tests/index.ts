@@ -321,18 +321,20 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .end((err, res) => {
                 expect(res.status).to.eq(200);
 
-                expect(rpMockup
-                  .withArgs(
+                expect(
+                  rpMockup.withArgs(
                     sinon.match.has(
                       "uri",
                       sinon.match(function(value: string) {
                         return (
-                          value.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/) !==
-                          null
+                          value.match(
+                            /\/v1\/recommenders\/(.){1,10}\/recommendations/
+                          ) !== null
                         );
                       })
                     )
-                  ).args[0][0].body.input_data.user_agent_id).to.be.eq(adRequest.user_agent_id);
+                  ).args[0][0].body.input_data.user_agent_id
+                ).to.be.eq(adRequest.user_agent_id);
 
                 done();
               });
@@ -616,7 +618,9 @@ describe("Test Example Handlebar Ad Renderer", function() {
       });
   });
 
-  it("Check that the plugin doesn't fail without any recommenderId provided", function(done) {
+  it("Check that the plugin doesn't fail without any recommenderId provided", function(
+    done
+  ) {
     // All the magic is here
 
     // Template File stub
@@ -701,18 +705,18 @@ describe("Test Example Handlebar Ad Renderer", function() {
     };
 
     rpMockup
-    .withArgs(
-      sinon.match.has(
-        "uri",
-        sinon.match(function(value: string) {
-          return (
-            value.match(/\/v1\/creatives\/(.){1,10}\/renderer_properties/) !==
-            null
-          );
-        })
+      .withArgs(
+        sinon.match.has(
+          "uri",
+          sinon.match(function(value: string) {
+            return (
+              value.match(/\/v1\/creatives\/(.){1,10}\/renderer_properties/) !==
+              null
+            );
+          })
+        )
       )
-    )
-    .returns(creativePropertiesResponse);
+      .returns(creativePropertiesResponse);
 
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
@@ -755,7 +759,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    const adRequest2 = Object.assign({}, adRequest); 
+    const adRequest2 = Object.assign({}, adRequest);
     adRequest2.user_agent_id = null;
 
     // Plugin init
@@ -779,23 +783,24 @@ describe("Test Example Handlebar Ad Renderer", function() {
               .end((err, res) => {
                 expect(res.status).to.eq(200);
 
-                expect(rpMockup
-                  .withArgs(
+                expect(
+                  rpMockup.withArgs(
                     sinon.match.has(
                       "uri",
                       sinon.match(function(value: string) {
                         return (
-                          value.match(/\/v1\/recommenders\/(.){1,10}\/recommendations/) !==
-                          null
+                          value.match(
+                            /\/v1\/recommenders\/(.){1,10}\/recommendations/
+                          ) !== null
                         );
                       })
                     )
-                  ).args[0][0].body.input_data.user_agent_id).to.be.eq(adRequest2.user_agent_id);
+                  ).args[0][0].body.input_data.user_agent_id
+                ).to.be.eq(adRequest2.user_agent_id);
 
                 done();
               });
           });
       });
   });
-
 });

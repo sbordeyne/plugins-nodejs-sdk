@@ -7,7 +7,7 @@ import * as rp from "request-promise-native";
 import { MySimpleAdRenderer } from '../MyPluginImpl'
 
 // Creative stub
-const creative: core.CreativeResponse = {
+const creative: core.DataResponse<core.Creative> = {
   status: "ok",
   data: {
     type: "DISPLAY_AD",    
@@ -28,11 +28,9 @@ const creative: core.CreativeResponse = {
     renderer_plugin_id: "1041",
     creation_date: 1492785056278,
     subtype: "BANNER"
-  },
-  count: 1
+  }
 };
 
-// Activity Analyzer properties stub
 const creativePropertiesResponse: core.PluginPropertyResponse = {
   status: "ok",
   data: [

@@ -1,5 +1,5 @@
 import { DataResponse } from "../../api/core/common/Response";
-import { UserActivity } from "../../index";
+import { UserActivity, UserVisitActivity } from "../../index";
 
 export type ActivityAnalyzerResponse = DataResponse<ActivityAnalyzer>;
 
@@ -16,6 +16,10 @@ export interface ActivityAnalyzerRequest {
     activity_analyzer_id: string;
     datamart_id: string;
     activity: UserActivity;
+}
+
+export interface VisitAnalyzerRequest extends ActivityAnalyzerRequest {
+    activity: UserVisitActivity;
 }
 
 export type ActivityAnalyzerPluginResponse = DataResponse<UserActivity>
