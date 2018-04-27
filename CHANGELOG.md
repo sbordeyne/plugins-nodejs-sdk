@@ -1,5 +1,23 @@
 # Changelog
 
+# 0.3.9 - 2018-04-05
+
+- Add an option to return a 429 HTTP code when the plugin is too busy
+
+# 0.3.8 - 2018-03-19
+
+- Fix invalid characters issues in the DisplayContext header
+
+# 0.3.7 - 2018-03-13
+
+- Add `creative_variant` on the `BidOptimizerPluginResponse` interface
+- Add `compartment_id` on the `UserAccountIdentifierInfo` interface
+
+# 0.3.6 - 2018-03-05
+
+- Add `blast_id` on the `EmailRoutingRequest` interface
+- Add `creative_variant` on the `AdRendererRequest` interface
+
 # 0.3.5 - 2018-01-11
 
 - Fix Audience Feed support (wrong initial integration which was not aligned with the API)

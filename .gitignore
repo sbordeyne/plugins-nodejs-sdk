@@ -4,6 +4,7 @@ npm-debug.log
 **/build/
 .idea/
 docs/
+lib/
 
 # Having package-lock.json is not working when using npm link for new release testing, hence we don't use them for examples
 # Don't try this at home

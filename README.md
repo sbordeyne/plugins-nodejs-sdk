@@ -142,6 +142,19 @@ The Plugin examples provided with the SDK are all tested and you can read their 
 
 Testing Plugins is highly recommended.
 
+## Migration from 0.3.x to 0.4.x
+
+* the type `Value` has been removed and replaced by a serie of specialized types. Following this change, `PluginProperty` has been transformed to a discriminated union (see the eponym section at https://www.typescriptlang.org/docs/handbook/advanced-types.html ).
+
+* in `EmailRendererBaseInstanceContext`, `EmailRouterBaseInstanceContext`, `ActivityAnalyzerBaseInstanceContext`, `BidOptimizerBaseInstanceContext`and `AdRendererBaseInstanceContext` the fields `creativeProperties`, `routerProperties`, `activityAnalyzerProperties`, `bidOptimizerProperties` and `displayAdProperties` have been rename `properties` which is now typed as a `PropertiesWrapper`.
+
+* `PropertiesWrapper` is a class with a constructor that takes as parameter an `Array<PluginProperty>`. The `PropertiesWrapper` normalize the array to give an access to these properties by their `technical_name` in O(1).
+
+* `BidOptimizerPluginResponse` has been replaced by `BidDecision`
+
+* `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
+
+
 ## Migration from 0.2.x to 0.3.x
 
 The 0.3.0 release of the Plugin SDK introduces some breaking changes in the AdRenderer support.
