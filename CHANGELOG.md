@@ -1,5 +1,12 @@
 # Changelog
 
+# 0.4.0 - 2018-04-30
+
+- Muti process support (new parameter to pass to the ProductionPluginRunner), disabled by default
+- Improve Audience External Feed support (`getInstanceContext` helper)
+- Better support of types with Instance properties fetching
+- Some naming changes (see the migration seciton in `README`)\
+
 # 0.3.9 - 2018-04-05
 
 - Add an option to return a 429 HTTP code when the plugin is too busy
