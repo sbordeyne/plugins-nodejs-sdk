@@ -4,13 +4,16 @@ import {
   AdRendererBaseInstanceContext,
   TemplatingEngine,
   AdRendererRequest,
-  ItemProposal,
   AdRendererTemplateInstanceContext
 } from "../../mediarithmics/plugins/ad-renderer";
 
 import {
   Creative
 } from "../../mediarithmics/api/core/creative";
+
+import {
+  ItemProposal
+} from "../../mediarithmics/api/datamart";
 
 const handlebars = require("handlebars");
 const numeral = require("numeral");

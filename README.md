@@ -154,6 +154,8 @@ Testing Plugins is highly recommended.
 
 * `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
 
+* `core.RecommandationsWrapper` have been renamed to `core.RecommendationsWrapper`
+
 
 ## Migration from 0.2.x to 0.3.x
 

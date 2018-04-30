@@ -88,7 +88,7 @@ describe("Fetch recommendation API", () => {
     }
   }
 
-  const fakeRecommenderResponse: core.DataResponse<core.RecommandationsWrapper> = {
+  const fakeRecommenderResponse: core.DataResponse<core.RecommendationsWrapper> = {
     status: "ok",
     data: {
       ts: 1496939189652,
