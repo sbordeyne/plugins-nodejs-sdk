@@ -8,9 +8,8 @@ It covers (as of v0.3.0):
 - Email Renderer
 - Email Router
 - Bid Optimizer
-
-Coming soon:
 - Recommender
+- External Audience Feed
 
 ## Installation
 
@@ -31,8 +30,8 @@ In order to implement your own logic while building your plugin, you have to ove
 
 This function to override depend on the Plugin type. Those are:
 
-- onAdContents for AdRenderer plugins
-- onActivityAnalysis for Activity Analyzer plugins
+- `onAdContents` for AdRenderer plugins
+- `onActivityAnalysis` for Activity Analyzer plugins
 
 If you need a custom Instance Context (see below), you can also override the 'instanceContextBuilder' function of the abstract class.
 
@@ -67,10 +66,17 @@ Note: The plugin instance configuration can be done through the mediarithmics co
 ### Runners
 
 The SDK provides 2 different runners:
-- ProductionPluginRunner: you have to use this runner in your main JS file. This runner is creating a web server to host your plugin so that it can be called by the mediarithmics platform
-- TestingPluginRunner: this is a Runner used to write tests for your plugins.
+- `ProductionPluginRunner(plugin: BasePlugin)`: you have to use this runner in your main JS file. This runner is creating a web server to host your plugin so that it can be called by the mediarithmics platform.
+- `TestingPluginRunner(plugin: BasePlugin, transport?: RequestPromiseMockup)`: this is a Runner used to write tests for your plugins. You can provide a mockup for RequestPromise as a parameter to help you writing your tests.
 
 For details on how to use those 2 runners, please refer the examples code snippets provided with the SDK.
+
+#### ProductionPluginRunner
+
+After the instantiation of ProductionPluginRunner, you'll need to call `.start(port?: number, multiProcessEnabled?: boolean)` on the instance to start the web server.
+
+- **port**: Tell on which port to start the webserver. When deployed on mediarithmics platform, the plugin need to listen to `8080` (which is the default value). When setuping local tests, it can be useful to change this port.
+- **multiProcessEnabled**: When set to `true`, it tell the SDK to spawn as many processes as there are CPUs on the host in order to ultimately dispatch the load on different cores of the Plugin host. Defaults to `false`.
 
 ## Quickstart - Typescript
 
@@ -183,21 +189,21 @@ The AdRenderer base class now only have `getDisplayAd(id)` and `getDisplayAdProp
 
 Previously, the Handlebars extension was providing an `HandleBarRootContext` interface (in `extra`) which was being used for all AdRenderers using Handlebars, whether they were using "Recommendations" or simply doing "basic" templating.
 
-In 0.3.0, there are 3 Handlebars contexts:
-- URLHandlebarsRootContext: to be used when replacing macros in URLs
-- HandlebarsRootContext: to be used when replacing macros in 'simple' templates without recommendations (e.g. when building a Plugin on top of AdRendererTemplatePlugin)
-- RecommendationsHandlebarsRootContext: to be used when replacing macros in a template used with "Rrcommendations (e.g. when building a Plugin on top of AdRendererRecoTemplatePlugin)
+In 0.3.0+, there are 3 Handlebars contexts:
+- `URLHandlebarsRootContext`: to be used when replacing macros in URLs
+- `HandlebarsRootContext`: to be used when replacing macros in 'simple' templates without recommendations (e.g. when building a Plugin on top of AdRendererTemplatePlugin)
+- `RecommendationsHandlebarsRootContext`: to be used when replacing macros in a template used with "Rrcommendations (e.g. when building a Plugin on top of AdRendererRecoTemplatePlugin)
 
 The Handlebars context themselves also changed. This is in order to build a set of standard macros in all AdRenderer Plugin available on mediarithmics platform => hence, you now have to propose values to be replaced in all the standard macros.
 
 ### Handlebars macros
 
-All macros are now in UPPER CASE. Some macros (request, creative, etc.) have to be changed before using them with an ad renderer based on the 0.3.0.
+All macros are now in UPPER CASE. Some macros (request, creative, etc.) have to be changed before using them with an ad renderer based on the 0.3.0+.
 
 ### Handlebar engines
 
 Prior to the v0.3.0, there was only one Handlebars engine provided in the extra package.
 
-With the 0.3.0, there are now 2 Handlebars engine:
+With the 0.3.0+, there are now 2 Handlebars engine:
 - HandlebarsEngine: to be used when building an AdRenderer without recommendations
 - RecommendationsHandlebarsEngine: to be used when building a 'recommendation' Ad Renderer

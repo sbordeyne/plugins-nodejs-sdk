@@ -159,46 +159,57 @@ export class ProductionPluginRunner {
    * Multi threading launch of the App, with socket communicaton to propagate token updates
    * @param port
    */
-  start(port?: number) {
+  start(port?: number, multiProcessEnabled = false) {
     const pluginPort = process.env.PLUGIN_PORT;
     this.pluginPort = pluginPort ? parseInt(pluginPort) : 8080;
 
     const serverPort = port ? port : this.pluginPort;
 
-    if (cluster.isMaster) {
-      this.plugin.logger.info(`Master ${process.pid} is running`);
+    if(multiProcessEnabled) {
 
-      // Fork workers.
-      for (let i = 0; i < this.numCPUs; i++) {
-        cluster.fork();
+      if (cluster.isMaster) {
+        this.plugin.logger.info(`Master ${process.pid} is running`);
+  
+        // Fork workers.
+        for (let i = 0; i < this.numCPUs; i++) {
+          cluster.fork();
+        }
+  
+        // Listener for when the Cluster is being called by a worker
+        cluster.on("message", this.masterListener);
+  
+        // Sometimes, workers dies
+        cluster.on("exit", (worker, code, signal) => {
+          this.plugin.logger.info(`worker ${worker.process.pid} died`);
+  
+          // We add a new worker, with the proper socket listener
+          const newWorker = cluster.fork();
+        });
+      } else {
+        // We pass the Plugin into MT mode
+        this.plugin.multiThread = true;
+  
+        // We attach a socket listener to get messages from master
+        process.on("message", this.workerListener);
+  
+        const serverPort = port ? port : this.pluginPort;
+  
+        this.server = this.plugin.app.listen(serverPort, () =>
+          this.plugin.logger.info(
+            `${process.pid} Plugin started, listening at ${serverPort}`
+          )
+        );
+  
+        this.plugin.logger.info(`Worker ${process.pid} started`);
       }
 
-      // Listener for when the Cluster is being called by a worker
-      cluster.on("message", this.masterListener);
-
-      // Sometimes, workers dies
-      cluster.on("exit", (worker, code, signal) => {
-        this.plugin.logger.info(`worker ${worker.process.pid} died`);
-
-        // We add a new worker, with the proper socket listener
-        const newWorker = cluster.fork();
-      });
     } else {
-      // We pass the Plugin into MT mode
-      this.plugin.multiThread = true;
-
-      // We attach a socket listener to get messages from master
-      process.on("message", this.workerListener);
-
-      const serverPort = port ? port : this.pluginPort;
-
       this.server = this.plugin.app.listen(serverPort, () =>
-        this.plugin.logger.info(
-          `${process.pid} Plugin started, listening at ${serverPort}`
-        )
-      );
-
-      this.plugin.logger.info(`Worker ${process.pid} started`);
+      this.plugin.logger.info(
+        `${process.pid} Plugin started, listening at ${serverPort}`
+      )
+    );
     }
+
   }
 }
