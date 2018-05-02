@@ -271,7 +271,7 @@ export abstract class BasePlugin {
           isJson !== undefined && !isJson ? body : JSON.stringify(body);
         throw new Error(
           `Error while calling ${method} '${uri}' with the request body '${bodyString ||
-            ""}': got a ${e.response.statusCode} ${
+            ""}' and the qs '${JSON.stringify(qs)}': got a ${e.response.statusCode} ${
             e.response.statusMessage
           } with the response body ${JSON.stringify(e.response.body)}`
         );

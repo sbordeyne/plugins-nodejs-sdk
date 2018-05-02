@@ -160,6 +160,9 @@ Testing Plugins is highly recommended.
 
 * `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
 
+* `core.RecommandationsWrapper` have been renamed to `core.RecommendationsWrapper`
+
+
 ## Migration from 0.2.x to 0.3.x
 
 The 0.3.0 release of the Plugin SDK introduces some breaking changes in the AdRenderer support.
