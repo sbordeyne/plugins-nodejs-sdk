@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.4.0 - 2018-04-30
+# 0.4.0 - 2018-05-03
 
 - Muti process support (new parameter to pass to the ProductionPluginRunner), disabled by default
 - Improve Audience External Feed support (`getInstanceContext` helper)
