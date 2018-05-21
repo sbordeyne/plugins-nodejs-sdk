@@ -87,7 +87,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       const adLayoutProperty = 
         baseInstanceContext.properties.findAdLayoutProperty();
 
-      if ( !adLayoutProperty ) {
+      if ( !adLayoutProperty || !adLayoutProperty.value || !adLayoutProperty.value.id || !adLayoutProperty.value.version ) {
         const msg = `crid: ${creativeId} - Ad layout undefined`;
         this.logger.error(msg);
         throw new Error(msg);
@@ -134,8 +134,12 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
     
     const additionalHTML = 
       map(additionalHTMLProperty,
-        p => this.engineBuilder.compile(p.value.value))
-  
+        p => p.value.value)
+
+    const compiledAdditionalHTML = 
+      map(additionalHTML,
+        html => this.engineBuilder.compile(html))
+
     const IASClientId = 
       map(IASProperty,
         p => p.value.value);
@@ -152,7 +156,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       render_click_url: compiledClickUrl,
       template: template,
       render_template: compiledTemplate,
-      render_additional_html: additionalHTML,
+      render_additional_html: compiledAdditionalHTML,
       ias_client_id: IASClientId
     };
 
