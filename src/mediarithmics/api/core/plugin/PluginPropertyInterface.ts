@@ -9,10 +9,13 @@ import {
   DoublePropertyResource,
   BooleanPropertyResource,
   IntPropertyResource,
-  RecommenderPropertyResource
+  RecommenderPropertyResource,
+  NativeDataPropertyResource,
+  NativeTitlePropertyResource,
+  NativeImagePropertyResource
 } from "./ValueInterface";
 
-import {Option} from '../../../utils/index';
+import { Option } from '../../../utils';
 
 export interface PluginPropertyResponse {
   status: string;
@@ -20,8 +23,8 @@ export interface PluginPropertyResponse {
   count: number;
 }
 
-export type PluginProperty  =
-    AssetFileProperty
+export type PluginProperty =
+  AssetFileProperty
   | DataFileProperty
   | UrlProperty
   | StringProperty
@@ -32,6 +35,9 @@ export type PluginProperty  =
   | BooleanProperty
   | IntProperty
   | RecommenderProperty
+  | NativeDataProperty
+  | NativeTitleProperty
+  | NativeImageProperty
   ;
 
 export type PropertyType =
@@ -45,7 +51,11 @@ export type PropertyType =
   | 'DOUBLE'
   | 'BOOLEAN'
   | 'INT'
-  | 'RECOMMENDER';
+  | 'RECOMMENDER'
+  | 'NATIVE_DATA'
+  | 'NATIVE_TITLE'
+  | 'NATIVE_IMAGE'
+  ;
 
 export type PropertyOrigin = 'PLUGIN_STATIC' | 'PLUGIN' | 'INSTANCE';
 
@@ -55,6 +65,7 @@ export interface AbstractProperty {
   writable: boolean;
   deletable: boolean;
 }
+
 export interface AssetFileProperty
   extends AbstractProperty {
   property_type: 'ASSET';
@@ -66,70 +77,111 @@ export interface DataFileProperty
   property_type: 'DATA_FILE';
   value: DataFilePropertyResource;
 }
+
 export interface UrlProperty
   extends AbstractProperty {
   property_type: 'URL';
   value: UrlPropertyResource;
 }
+
 export interface StringProperty
   extends AbstractProperty {
   property_type: 'STRING';
   value: StringPropertyResource;
 }
+
 export interface AdLayoutProperty
   extends AbstractProperty {
   property_type: 'AD_LAYOUT';
   value: AdLayoutPropertyResource;
 }
+
 export interface StyleSheetProperty
   extends AbstractProperty {
   property_type: 'STYLE_SHEET';
   value: StyleSheetPropertyResource;
 }
+
 export interface PixelTagProperty
   extends AbstractProperty {
   property_type: 'PIXEL_TAG';
   value: PixelTagPropertyResource;
 }
+
 export interface DoubleProperty
   extends AbstractProperty {
   property_type: 'DOUBLE';
   value: DoublePropertyResource;
 }
+
 export interface BooleanProperty
   extends AbstractProperty {
   property_type: 'BOOLEAN';
   value: BooleanPropertyResource;
 }
+
 export interface IntProperty
   extends AbstractProperty {
   property_type: 'INT';
   value: IntPropertyResource;
 }
+
 export interface RecommenderProperty
   extends AbstractProperty {
   property_type: 'RECOMMENDER';
   value: RecommenderPropertyResource;
 }
 
-export function asAssetFileProperty(p : PluginProperty): Option<AssetFileProperty> {
-    return p.property_type === 'ASSET' ? p : undefined;
+export interface NativeDataProperty
+  extends AbstractProperty {
+  property_type: 'NATIVE_DATA';
+  value: NativeDataPropertyResource;
 }
-export function asDataFileProperty(p : PluginProperty): Option<DataFileProperty> {
-    return p.property_type === 'DATA_FILE' ? p : undefined;
+
+export interface NativeTitleProperty
+  extends AbstractProperty {
+  property_type: 'NATIVE_TITLE';
+  value: NativeTitlePropertyResource;
 }
-export function asAdLayoutProperty(p : PluginProperty): Option<AdLayoutProperty> {
+
+export interface NativeImageProperty
+  extends AbstractProperty {
+  property_type: 'NATIVE_IMAGE';
+  value: NativeImagePropertyResource;
+}
+
+export function asAssetFileProperty(p: PluginProperty): Option<AssetFileProperty> {
+  return p.property_type === 'ASSET' ? p : undefined;
+}
+
+export function asDataFileProperty(p: PluginProperty): Option<DataFileProperty> {
+  return p.property_type === 'DATA_FILE' ? p : undefined;
+}
+
+export function asAdLayoutProperty(p: PluginProperty): Option<AdLayoutProperty> {
   return p.property_type === 'AD_LAYOUT' ? p : undefined;
 }
 
-export function asUrlProperty(p : PluginProperty): Option<UrlProperty> {
+export function asUrlProperty(p: PluginProperty): Option<UrlProperty> {
   return p.property_type === 'URL' ? p : undefined;
 }
 
-export function asRecommenderProperty(p : PluginProperty): Option<RecommenderProperty> {
+export function asRecommenderProperty(p: PluginProperty): Option<RecommenderProperty> {
   return p.property_type === 'RECOMMENDER' ? p : undefined;
 }
 
-export function asStringProperty(p : PluginProperty): Option<StringProperty> {
+export function asStringProperty(p: PluginProperty): Option<StringProperty> {
   return p.property_type === 'STRING' ? p : undefined;
+}
+
+export function asNativeDataProperty(p: PluginProperty): Option<NativeDataProperty> {
+  return p.property_type === 'NATIVE_DATA' ? p : undefined;
+}
+
+export function asNativeTitleProperty(p: PluginProperty): Option<NativeTitleProperty> {
+  return p.property_type === 'NATIVE_TITLE' ? p : undefined;
+}
+
+export function asNativeImageProperty(p: PluginProperty): Option<NativeImageProperty> {
+  return p.property_type === 'NATIVE_IMAGE' ? p : undefined;
 }
