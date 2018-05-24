@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.4.1 - 2018-05-24
+
+- Fix a regression on the property values (they can be null)
+- Fix a crash with handlebars when the template is null
+
 # 0.4.0 - 2018-05-03
 
 - Muti process support (new parameter to pass to the ProductionPluginRunner), disabled by default
