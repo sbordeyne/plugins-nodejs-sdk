@@ -13,7 +13,7 @@ import {
 import {
   ItemProposal
 } from "../../mediarithmics/api/datamart";
-import { TemplatingEngine, ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
+import { TemplatingEngine, ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater, ProfileDataProviderOpts } from "../../mediarithmics/plugins/common/TemplatingInterface";
 
 const handlebars = require("handlebars");
 const numeral = require("numeral");
@@ -135,6 +135,18 @@ export function buildURLHandlebarsRootContext(
 
 }
 
+export ProfileDataLayer {
+  [compartmentToken: string]: {
+
+  }
+}
+
+export interface ProfileDataHelperOptions {
+  name: string;
+  hash: ProfileDataProviderOpts;
+  data: ;
+}
+
 export class HandlebarsEngine
   implements ExploreableInternalsTemplatingEngine<void, string, HandlebarsTemplateDelegate<any>, hbs.AST.Program>, ProfileDataTemplater {
 
@@ -148,6 +160,17 @@ export class HandlebarsEngine
       JSON.stringify(object)
     );
   }
+
+  setProfileDataProvider(profileDataProvider: (fieldname: string, opts?: ProfileDataProviderOpts | undefined) => Promise<string>): void{
+
+    this.engine.registerHelper("profileData", function(fieldName: string, defaultValue: string, opts: ProfileDataHelperOptions) {
+      
+      const compartmentToken = opts.hash.compartmentToken;
+      const 
+
+    });
+
+  };
 
   parse(template: string): hbs.AST.Program {
     return Handlebars.parse(template)
