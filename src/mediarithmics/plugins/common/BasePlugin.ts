@@ -22,12 +22,17 @@ import {
   UrlProperty,
   asUrlProperty,
   StringProperty,
-  asStringProperty
+  asStringProperty,
+  asNativeDataProperty,
+  asNativeImageProperty,
+  asNativeTitleProperty,
+  NativeDataProperty,
+  NativeImageProperty,
+  NativeTitleProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
 
 import {Index, Option, flatMap, obfuscateString} from '../../utils';
 import {normalizeArray} from '../../utils/Normalizer';
-import {asNativeDataProperty, DataResponse, NativeDataProperty} from "../../";
 
 export interface InitUpdateResponse {
   status: ResponseStatusCode;
@@ -89,14 +94,14 @@ export class PropertiesWrapper {
     return flatMap(p, asNativeDataProperty);
   };
 
-  findNativeTitleProperty = (key?: string): Option<NativeDataProperty> => {
-    const p = key ? this.get(key) : this.ofType('NATIVE_DATA');
-    return flatMap(p, asNativeDataProperty);
+  findNativeTitleProperty = (key?: string): Option<NativeTitleProperty> => {
+    const p = key ? this.get(key) : this.ofType('NATIVE_TITLE');
+    return flatMap(p, asNativeTitleProperty);
   };
 
-  findNativeImageProperty = (key?: string): Option<NativeDataProperty> => {
-    const p = key ? this.get(key) : this.ofType('NATIVE_DATA');
-    return flatMap(p, asNativeDataProperty);
+  findNativeImageProperty = (key?: string): Option<NativeImageProperty> => {
+    const p = key ? this.get(key) : this.ofType('NATIVE_IMAGE');
+    return flatMap(p, asNativeImageProperty);
   };
 }
 
