@@ -2,7 +2,6 @@ import * as Handlebars from "handlebars";
 
 import {
   AdRendererBaseInstanceContext,
-  TemplatingEngine,
   AdRendererRequest,
   AdRendererTemplateInstanceContext
 } from "../../mediarithmics/plugins/ad-renderer";
@@ -14,6 +13,7 @@ import {
 import {
   ItemProposal
 } from "../../mediarithmics/api/datamart";
+import { TemplatingEngine, ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
 
 const handlebars = require("handlebars");
 const numeral = require("numeral");
@@ -136,8 +136,7 @@ export function buildURLHandlebarsRootContext(
 }
 
 export class HandlebarsEngine
-  implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {
-  engine: typeof Handlebars;
+  implements ExploreableInternalsTemplatingEngine<void, string, HandlebarsTemplateDelegate<any>, hbs.AST.Program>, ProfileDataTemplater {
 
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
   init(): void {
@@ -150,11 +149,43 @@ export class HandlebarsEngine
     );
   }
 
-  compile(template: string) {
+  parse(template: string): hbs.AST.Program {
+    return Handlebars.parse(template)
+  };
+
+  // TODO: Test this thing
+  getMacros(internals: hbs.AST.Program): TemplateMacro[] {
+
+    class MacroScanner extends Handlebars.Visitor {
+      macros = [];
+    }
+
+    // The Handlebars Compiler library is documented there: https://github.com/wycats/handlebars.js/blob/master/docs/compiler-api.md
+    MacroScanner.prototype.MustacheStatement = function (macro: hbs.AST.MustacheStatement) {
+      if (macro.type === "PathExpression") {
+        const pathExpression = macro.path as hbs.AST.PathExpression
+        this.macros.push(pathExpression.parts);
+      }
+
+      // We're just here to visit, we don't want to break anything, so let's call the "default function" to process MustacheStatement
+      Handlebars.Visitor.prototype.MustacheStatement.call(this, macro);
+    };
+
+    var scanner = new MacroScanner();
+    scanner.accept(internals);
+
+    return scanner.macros;
+    
+  };
+
+  engine: typeof Handlebars;
+
+  compile(template: string | hbs.AST.Program) {
+    // Handlebars.compile() can take a string or an AST
     return this.engine.compile(template);
   }
 
-  constructor() {}
+  constructor() { }
 }
 
 export class RecommendationsHandlebarsEngine extends HandlebarsEngine {

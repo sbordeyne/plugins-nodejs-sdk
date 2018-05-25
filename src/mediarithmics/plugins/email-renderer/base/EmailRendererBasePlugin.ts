@@ -1,21 +1,19 @@
 import * as express from "express";
 import * as _ from "lodash";
 import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../common";
-import {Creative} from "../../api/core/creative";
-import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
-import {EmailRenderRequest} from "../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface";
-import {EmailRendererPluginResponse} from "../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse";
-
+import {PropertiesWrapper, BasePlugin} from "../../common";
+import {Creative} from "../../../api/core/creative";
+import {PluginProperty} from "../../../api/core/plugin/PluginPropertyInterface";
+import {EmailRenderRequest} from "../../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface";
+import {EmailRendererPluginResponse} from "../../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse";
 
 export interface EmailRendererBaseInstanceContext {
   creative: Creative;
   properties: PropertiesWrapper;
 }
 
-
-export abstract class EmailRendererPlugin extends BasePlugin {
-  instanceContext: Promise<EmailRendererBaseInstanceContext>;
+export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceContext> extends BasePlugin {
+  instanceContext: Promise<T>;
 
   // Helper to fetch the creative resource with caching
   async fetchCreative(id: string): Promise<Creative> {
@@ -45,7 +43,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   // This is a default provided implementation
   protected async instanceContextBuilder(
     creativeId: string
-  ): Promise<EmailRendererBaseInstanceContext> {
+  ): Promise<T> {
     const creativeP = this.fetchCreative(creativeId);
     const creativePropsP = this.fetchCreativeProperties(creativeId);
 
@@ -54,10 +52,10 @@ export abstract class EmailRendererPlugin extends BasePlugin {
     const creative = results[0];
     const creativeProps = results[1];
 
-    const context: EmailRendererBaseInstanceContext = {
+    const context = {
       creative: creative,
       properties: new PropertiesWrapper(creativeProps)
-    };
+    } as T;
 
     return context;
   }
@@ -66,7 +64,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailContents(
     request: EmailRenderRequest,
-    instanceContext: EmailRendererBaseInstanceContext
+    instanceContext: T
   ): Promise<EmailRendererPluginResponse>;
 
   private initEmailContents(): void {
@@ -112,7 +110,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
 
             const response = await this.onEmailContents(
               emailRenderRequest,
-              instanceContext
+              instanceContext as T
             );
 
             this.logger.debug(`Returning: ${JSON.stringify(response)}`);
