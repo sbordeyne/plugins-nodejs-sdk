@@ -35,7 +35,7 @@ export abstract class EmailRendererPlugin extends BasePlugin {
       `${this.outboundPlatformUrl}/v1/creatives/${id}/renderer_properties`
     );
     this.logger.debug(
-      `Fetched Creative Properties: ${id} - ${JSON.stringify(response.data)}`
+      `Fetched Email Templates Properties: ${id} - ${JSON.stringify(response.data)}`
     );
     return response.data;
   }
