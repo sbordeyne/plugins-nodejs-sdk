@@ -25,7 +25,7 @@ import {
   asStringProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
 
-import {Index, Option, flatMap} from '../../utils';
+import {Index, Option, flatMap, obfuscateString} from '../../utils';
 import {normalizeArray} from '../../utils/Normalizer';
 import {DataResponse} from "../../";
 
@@ -271,7 +271,7 @@ export abstract class BasePlugin {
           isJson !== undefined && !isJson ? body : JSON.stringify(body);
         throw new Error(
           `Error while calling ${method} '${uri}' with the request body '${bodyString ||
-            ""}' and the qs '${JSON.stringify(qs)}': got a ${e.response.statusCode} ${
+          ""}', the qs '${JSON.stringify(qs) || ""}', the auth user '${obfuscateString(options.auth ? options.auth.user : undefined) || ""}', the auth password '${obfuscateString(options.auth ? options.auth.pass : undefined) || ""}': got a ${e.response.statusCode} ${
             e.response.statusMessage
           } with the response body ${JSON.stringify(e.response.body)}`
         );

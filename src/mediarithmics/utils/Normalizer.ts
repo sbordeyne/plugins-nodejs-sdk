@@ -8,7 +8,7 @@
  *
  * {
  *  x: {id:"x", other: "some value"}
- *  x: {id:"y", other: "some value"}
+ *  y: {id:"y", other: "some value"}
  * }
  * @param {*} arr input array of object to convert
  * @param {*} key object key to extract
