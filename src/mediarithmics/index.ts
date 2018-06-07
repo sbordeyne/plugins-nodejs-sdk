@@ -30,3 +30,4 @@ export * from './plugins/common';
 export * from './plugins/email-renderer/EmailRendererBasePlugin';
 export * from './plugins/email-router/EmailRouterBasePlugin';
 export * from "./plugins/recommender/RecommenderBasePlugin";
+export * from "./utils";
