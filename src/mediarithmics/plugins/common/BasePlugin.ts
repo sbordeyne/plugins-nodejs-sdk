@@ -246,7 +246,8 @@ export abstract class BasePlugin {
         user: this.credentials.worker_id,
         pass: this.credentials.authentication_token,
         sendImmediately: true
-      }
+      },
+      proxy: false
     };
 
     // Set the body if provided
