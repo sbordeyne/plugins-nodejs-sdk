@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.4.2 - 2018-06-07
+
+- Fix some typo in debug log text
+- `requestGatewayHelper()` is now logging the basic auth user&password used to authenticate on the Gateway
+
 # 0.4.1 - 2018-05-24
 
 - Fix a regression on the property values (they can be null)
