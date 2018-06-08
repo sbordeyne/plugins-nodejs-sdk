@@ -134,6 +134,7 @@ export type EventName =
     | '$email_complaint'
     | '$set_user_profile_properties'
     | '$content_corrections'
+    | string
     ;
 
 
@@ -162,7 +163,6 @@ export interface ConversionEvent {
     $properties: ConversionProperties
 }
 
-//TOFIX
 export interface GenericUserActivityEvent {
     $ts: number;
     $event_name: EventName;
