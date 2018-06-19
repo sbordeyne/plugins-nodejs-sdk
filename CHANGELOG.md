@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.4.4 - 2018-06-20
+
+- Support for EmailRenderer with Templating features
+- New Handlebar templating engine that list the macros used in the template
+
 # 0.4.3 - 2018-06-08
 
 - `requestGatewayHelper()` is now explicitely not using any proxy, even if one is configured in an environment variable (ex: `http_proxy` / `HTTP_PROXY` / `https_proxy` / `HTTPS_PROXY`)
