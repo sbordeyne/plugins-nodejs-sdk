@@ -54,7 +54,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
       }/properties`
     );
     this.logger.debug(
-      `Fetched Creative Properties: ${activityAnalyzerId} - ${JSON.stringify(
+      `Fetched Activity Analyzer Properties: ${activityAnalyzerId} - ${JSON.stringify(
         activityAnalyzerPropertyResponse.data
       )}`
     );

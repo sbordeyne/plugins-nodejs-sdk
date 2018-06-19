@@ -1,5 +1,19 @@
 # Changelog
 
+# 0.4.3 - 2018-06-08
+
+- `requestGatewayHelper()` is now explicitely not using any proxy, even if one is configured in an environment variable (ex: `http_proxy` / `HTTP_PROXY` / `https_proxy` / `HTTPS_PROXY`)
+
+# 0.4.2 - 2018-06-07
+
+- Fix some typo in debug log text
+- `requestGatewayHelper()` is now logging the basic auth user&password used to authenticate on the Gateway
+
+# 0.4.1 - 2018-05-24
+
+- Fix a regression on the property values (they can be null)
+- Fix a crash with handlebars when the template is null
+
 # 0.4.0 - 2018-05-03
 
 - Muti process support (new parameter to pass to the ProductionPluginRunner), disabled by default

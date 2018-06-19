@@ -346,7 +346,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     const defaultInstanceContext = await super.instanceContextBuilder(routerId);
     const authenticationToken = defaultInstanceContext.properties.findStringProperty("authentication_token");
 
-    if (authenticationToken) {
+    if (authenticationToken && authenticationToken.value.value) {
       return {
         ...defaultInstanceContext,
         authenticationToken: authenticationToken.value.value

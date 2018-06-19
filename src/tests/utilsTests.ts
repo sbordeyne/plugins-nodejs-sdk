@@ -1,8 +1,8 @@
-import {assert} from 'chai';
+import {assert, expect} from 'chai';
 
 import * as _ from 'lodash';
 import 'mocha';
-import {Index} from '../mediarithmics/utils';
+import {Index, obfuscateString} from '../mediarithmics/utils';
 import {denormalize} from '../mediarithmics/utils/Normalizer';
 
 
@@ -11,8 +11,7 @@ interface Kv {
     v: string
 }
 
-describe('denormalize', () => {
-
+describe('Denormalize', () => {
 
     const kv1 = {k: 'k1', v: 'v1'};
     const kv2 = {k: 'k2', v: 'v2'};
@@ -43,5 +42,18 @@ describe('denormalize', () => {
         done();
     });
 
+
+});
+
+describe('Obfuscate string', () => {
+
+    const secretString = "THE EARTH IS FLAT ..";
+
+    it('*', done => {
+
+        const obfuscated = obfuscateString(secretString);
+        expect(obfuscated).to.be.eq("THE EAXXXXXXXXXXXXXX");
+        done();
+    });
 
 });

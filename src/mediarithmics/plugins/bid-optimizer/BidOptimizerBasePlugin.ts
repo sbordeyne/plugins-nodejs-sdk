@@ -50,7 +50,7 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
       }/properties`
     );
     this.logger.debug(
-      `Fetched Creative Properties: ${bidOptimizerId} - ${JSON.stringify(
+      `Fetched BidOptimizer Properties: ${bidOptimizerId} - ${JSON.stringify(
         bidOptimizerPropertyResponse.data
       )}`
     );
