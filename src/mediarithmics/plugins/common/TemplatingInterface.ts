@@ -40,16 +40,8 @@ export interface ExploreableInternalsTemplatingEngine<Opt, In, Out, Internals> e
 }
 
 /**
- * Options that can be passed to the ProfileDataProvider
- */
-export interface ProfileDataProviderOpts {
-    compartmentToken?: string;
-    userAccountId?: string;
-}
-
-/**
  * Allow the Plugin Impl. to provide some Profile Data to the Templating engine through a Provider function
  */
 export interface ProfileDataTemplater {
-    setProfileDataProvider: (profileDataProvider: (fieldname: string, opts?: ProfileDataProviderOpts) => Promise<string>) => void
+    enableProfileDataLayer(): void
 }

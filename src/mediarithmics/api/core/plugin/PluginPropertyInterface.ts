@@ -115,11 +115,17 @@ export interface RecommenderProperty
 export function asAssetFileProperty(p : PluginProperty): Option<AssetFileProperty> {
     return p.property_type === 'ASSET' ? p : undefined;
 }
+
 export function asDataFileProperty(p : PluginProperty): Option<DataFileProperty> {
     return p.property_type === 'DATA_FILE' ? p : undefined;
 }
+
 export function asAdLayoutProperty(p : PluginProperty): Option<AdLayoutProperty> {
   return p.property_type === 'AD_LAYOUT' ? p : undefined;
+}
+
+export function asBooleanProperty(p : PluginProperty): Option<BooleanProperty> {
+  return p.property_type === 'BOOLEAN' ? p : undefined;
 }
 
 export function asUrlProperty(p : PluginProperty): Option<UrlProperty> {

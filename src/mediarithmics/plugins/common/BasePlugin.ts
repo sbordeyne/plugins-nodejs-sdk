@@ -22,12 +22,15 @@ import {
   UrlProperty,
   asUrlProperty,
   StringProperty,
-  asStringProperty
+  asStringProperty,
+  asBooleanProperty,
+  BooleanProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
 
 import {Index, Option, flatMap} from '../../utils';
 import {normalizeArray} from '../../utils/Normalizer';
-import {DataResponse} from "../../";
+import {DataResponse, DataListResponse, Compartment} from "../../";
+import { Datamart } from "../../api/core/datamart/Datamart";
 
 export interface InitUpdateResponse {
     status: ResponseStatusCode;
@@ -84,6 +87,10 @@ export class PropertiesWrapper {
       return flatMap(p, asAdLayoutProperty);
   };
 
+  findBooleanProperty = (key?: string): Option<BooleanProperty> => {
+    const p = key ? this.get(key) : this.ofType('BOOLEAN');
+    return flatMap(p, asBooleanProperty);
+};
 
 }
 export abstract class BasePlugin {
@@ -277,11 +284,61 @@ export abstract class BasePlugin {
         );
       } else {
         this.logger.error(
-          `Got an issue while doind a Gateway call: ${e.message} - ${e.stack}`
+          `Got an issue while doing a Gateway call: ${e.message} - ${e.stack}`
         );
         throw e;
       }
     }
+  }
+
+  async requestGetPublicApiHelper(apiToken: string, options: rp.OptionsWithUri) {
+
+    try {
+      return await this._transport(options)
+    } catch (e) {
+      if (e.name === "StatusCodeError") {
+
+        throw new Error(
+          `Error while calling ${options.method} '${options.uri}' with the header body '${JSON.stringify(options.headers)}': got a ${e.response.statusCode} ${
+          e.response.statusMessage
+          } with the response body ${JSON.stringify(e.response.body)}`
+        );
+
+      } else {
+        this.logger.error(
+          `Got an issue while doing a Gateway call: ${e.message} - ${e.stack}`
+        );
+        throw e;
+      }
+    }
+
+  }
+
+  async fetchDatamarts(apiToken: string): Promise<DataListResponse<Datamart>> {
+
+    const options = {
+      method: 'GET',
+      uri: 'https://api.mediarithmics.com/v1/datamarts',
+      qs: { organisation_id: '1125', allow_administrator: 'false' },
+      headers: { Authorization: apiToken },
+      json: true
+    };
+
+    return this.requestGetPublicApiHelper(apiToken, options);
+
+  }
+
+  async fetchDatamartCompartments(apiToken: string, datamartId: string): Promise<DataListResponse<Compartment>> {
+
+    const options = {
+      method: 'GET',
+      uri: `https://api.mediarithmics.com/v1/datamarts/${datamartId}/user_account_compartments`,
+      headers: { Authorization: apiToken },
+      json: true
+    };
+
+    return this.requestGetPublicApiHelper(apiToken, options);
+
   }
 
   onInitRequest(creds: Credentials) {

@@ -1,6 +1,6 @@
 {
   "name": "@mediarithmics/plugins-nodejs-sdk",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "This is the mediarithmics nodejs to help plugin developers bootstrapping their plugin without having to deal with most of the plugin boilerplate",
   "repository": "github:MEDIARITHMICS/plugins-nodejs-sdk",
   "main": "./lib/index.js",
@@ -41,6 +41,7 @@
     "@types/jsesc": "^0.4.29",
     "@types/mocha": "^2.2.48",
     "@types/mockery": "^1.4.29",
+    "@types/numeral": "0.0.22",
     "@types/sinon": "^4.3.1",
     "@types/supertest": "^2.0.4",
     "chai": "^4.1.2",

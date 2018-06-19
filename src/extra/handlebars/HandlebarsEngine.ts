@@ -1,7 +1,8 @@
 import * as Handlebars from "handlebars";
+import numeral = require("numeral");
+import _ = require("lodash");
 
 import {
-  AdRendererBaseInstanceContext,
   AdRendererRequest,
   AdRendererTemplateInstanceContext
 } from "../../mediarithmics/plugins/ad-renderer";
@@ -13,11 +14,7 @@ import {
 import {
   ItemProposal
 } from "../../mediarithmics/api/datamart";
-import { TemplatingEngine, ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater, ProfileDataProviderOpts } from "../../mediarithmics/plugins/common/TemplatingInterface";
-
-const handlebars = require("handlebars");
-const numeral = require("numeral");
-const _ = require("lodash");
+import { ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
 
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {
@@ -99,9 +96,9 @@ const encodeRecoClickUrlHelper = () => (
   // recommendation.url replace placeHolder by idx
   const filledRedirectUrls = rootContext.private.redirectUrls.map(
     (url: string) => {
-      const url1 = _.replace(url, placeHolder, idx);
-      const url2 = _.replace(url1, uriEncodePlaceHolder, idx);
-      return _.replace(url2, doubleEncodedUriPlaceHolder, idx);
+      const url1 = _.replace(url, placeHolder, idx.toString());
+      const url2 = _.replace(url1, uriEncodePlaceHolder, idx.toString());
+      return _.replace(url2, doubleEncodedUriPlaceHolder, idx.toString());
     }
   );
 
@@ -135,16 +132,25 @@ export function buildURLHandlebarsRootContext(
 
 }
 
-export ProfileDataLayer {
-  [compartmentToken: string]: {
-
+export interface ProfileEmailHandlebarsRootContext {
+  private: {
+    profileData: ProfileDataLayer
   }
+}
+
+export interface ProfileDataLayer {
+  [propsName: string]: string;
+}
+
+export interface ProfileDataArgs {
+  defaultValue: string;
+  fieldName: string;
 }
 
 export interface ProfileDataHelperOptions {
   name: string;
-  hash: ProfileDataProviderOpts;
-  data: ;
+  hash: ProfileDataArgs;
+  data: { root: ProfileEmailHandlebarsRootContext }
 }
 
 export class HandlebarsEngine
@@ -161,15 +167,20 @@ export class HandlebarsEngine
     );
   }
 
-  setProfileDataProvider(profileDataProvider: (fieldname: string, opts?: ProfileDataProviderOpts | undefined) => Promise<string>): void{
+  enableProfileDataLayer(): void {
 
-    this.engine.registerHelper("profileData", function(fieldName: string, defaultValue: string, opts: ProfileDataHelperOptions) {
-      
-      const compartmentToken = opts.hash.compartmentToken;
-      const 
+    this.engine.registerHelper("profileData", function (opts: ProfileDataHelperOptions) {
+
+      // See https://blog.osteele.com/2007/12/cheap-monads/
+      const $N = {};
+      // Check if we have the value in the DataLayer
+      if ((((((opts || $N).data || $N).root || $N).private || $N).profileData || $N)[opts.hash.fieldName]) {
+        return opts.data.root.private.profileData[opts.hash.fieldName];
+      } else {
+        return opts.hash.defaultValue;
+      }
 
     });
-
   };
 
   parse(template: string): hbs.AST.Program {
@@ -180,14 +191,15 @@ export class HandlebarsEngine
   getMacros(internals: hbs.AST.Program): TemplateMacro[] {
 
     class MacroScanner extends Handlebars.Visitor {
-      macros = [];
+      macros: TemplateMacro[] = [];
     }
 
     // The Handlebars Compiler library is documented there: https://github.com/wycats/handlebars.js/blob/master/docs/compiler-api.md
     MacroScanner.prototype.MustacheStatement = function (macro: hbs.AST.MustacheStatement) {
-      if (macro.type === "PathExpression") {
+      
+      if (macro.type === "MustacheStatement") {
         const pathExpression = macro.path as hbs.AST.PathExpression
-        this.macros.push(pathExpression.parts);
+        this.macros.push({parts: pathExpression.parts});
       }
 
       // We're just here to visit, we don't want to break anything, so let's call the "default function" to process MustacheStatement
@@ -198,7 +210,7 @@ export class HandlebarsEngine
     scanner.accept(internals);
 
     return scanner.macros;
-    
+
   };
 
   engine: typeof Handlebars;
