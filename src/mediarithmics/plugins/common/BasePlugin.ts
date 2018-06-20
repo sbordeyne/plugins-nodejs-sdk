@@ -292,10 +292,15 @@ export abstract class BasePlugin {
     }
   }
 
-  async requestGetPublicApiHelper(apiToken: string, options: rp.OptionsWithUri) {
+  async requestPublicMicsApiHelper(apiToken: string, options: rp.OptionsWithUri) {
+
+    const tweakedOptions = {
+      ...options,
+      proxy: false
+    }
 
     try {
-      return await this._transport(options)
+      return await this._transport(tweakedOptions)
     } catch (e) {
       if (e.name === "StatusCodeError") {
 
@@ -315,17 +320,17 @@ export abstract class BasePlugin {
 
   }
 
-  async fetchDatamarts(apiToken: string): Promise<DataListResponse<Datamart>> {
+  async fetchDatamarts(apiToken: string, organisationId: string): Promise<DataListResponse<Datamart>> {
 
     const options = {
       method: 'GET',
       uri: 'https://api.mediarithmics.com/v1/datamarts',
-      qs: { organisation_id: '1125', allow_administrator: 'false' },
+      qs: { organisation_id: organisationId, allow_administrator: 'false' },
       headers: { Authorization: apiToken },
       json: true
     };
 
-    return this.requestGetPublicApiHelper(apiToken, options);
+    return this.requestPublicMicsApiHelper(apiToken, options);
 
   }
 
@@ -338,7 +343,7 @@ export abstract class BasePlugin {
       json: true
     };
 
-    return this.requestGetPublicApiHelper(apiToken, options);
+    return this.requestPublicMicsApiHelper(apiToken, options);
 
   }
 
