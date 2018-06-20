@@ -150,6 +150,10 @@ export interface NativeImageProperty
   value: NativeImagePropertyResource;
 }
 
+export function asBooleanProperty(p : PluginProperty): Option<BooleanProperty> {
+  return p.property_type === 'BOOLEAN' ? p : undefined;
+}
+
 export function asAssetFileProperty(p: PluginProperty): Option<AssetFileProperty> {
   return p.property_type === 'ASSET' ? p : undefined;
 }

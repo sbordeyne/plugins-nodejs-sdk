@@ -1,8 +1,8 @@
 import * as Handlebars from "handlebars";
+import numeral = require("numeral");
+import _ = require("lodash");
 
 import {
-  AdRendererBaseInstanceContext,
-  TemplatingEngine,
   AdRendererRequest,
   AdRendererTemplateInstanceContext
 } from "../../mediarithmics/plugins/ad-renderer";
@@ -14,10 +14,7 @@ import {
 import {
   ItemProposal
 } from "../../mediarithmics/api/datamart";
-
-const handlebars = require("handlebars");
-const numeral = require("numeral");
-const _ = require("lodash");
+import { ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
 
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {
@@ -99,9 +96,9 @@ const encodeRecoClickUrlHelper = () => (
   // recommendation.url replace placeHolder by idx
   const filledRedirectUrls = rootContext.private.redirectUrls.map(
     (url: string) => {
-      const url1 = _.replace(url, placeHolder, idx);
-      const url2 = _.replace(url1, uriEncodePlaceHolder, idx);
-      return _.replace(url2, doubleEncodedUriPlaceHolder, idx);
+      const url1 = _.replace(url, placeHolder, idx.toString());
+      const url2 = _.replace(url1, uriEncodePlaceHolder, idx.toString());
+      return _.replace(url2, doubleEncodedUriPlaceHolder, idx.toString());
     }
   );
 
@@ -135,9 +132,29 @@ export function buildURLHandlebarsRootContext(
 
 }
 
+export interface ProfileEmailHandlebarsRootContext {
+  private: {
+    profileData: ProfileDataLayer
+  }
+}
+
+export interface ProfileDataLayer {
+  [propsName: string]: string;
+}
+
+export interface ProfileDataArgs {
+  defaultValue: string;
+  fieldName: string;
+}
+
+export interface ProfileDataHelperOptions {
+  name: string;
+  hash: ProfileDataArgs;
+  data: { root: ProfileEmailHandlebarsRootContext }
+}
+
 export class HandlebarsEngine
-  implements TemplatingEngine<void, string, HandlebarsTemplateDelegate<any>> {
-  engine: typeof Handlebars;
+  implements ExploreableInternalsTemplatingEngine<void, string, HandlebarsTemplateDelegate<any>, hbs.AST.Program>, ProfileDataTemplater {
 
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
   init(): void {
@@ -150,11 +167,60 @@ export class HandlebarsEngine
     );
   }
 
-  compile(template: string) {
+  enableProfileDataLayer(): void {
+
+    this.engine.registerHelper("profileData", function (opts: ProfileDataHelperOptions) {
+
+      // See https://blog.osteele.com/2007/12/cheap-monads/
+      const $N = {};
+      // Check if we have the value in the DataLayer
+      if ((((((opts || $N).data || $N).root || $N).private || $N).profileData || $N)[opts.hash.fieldName]) {
+        return opts.data.root.private.profileData[opts.hash.fieldName];
+      } else {
+        return opts.hash.defaultValue;
+      }
+
+    });
+  };
+
+  parse(template: string): hbs.AST.Program {
+    return Handlebars.parse(template)
+  };
+
+  // TODO: Test this thing
+  getMacros(internals: hbs.AST.Program): TemplateMacro[] {
+
+    class MacroScanner extends Handlebars.Visitor {
+      macros: TemplateMacro[] = [];
+    }
+
+    // The Handlebars Compiler library is documented there: https://github.com/wycats/handlebars.js/blob/master/docs/compiler-api.md
+    MacroScanner.prototype.MustacheStatement = function (macro: hbs.AST.MustacheStatement) {
+      
+      if (macro.type === "MustacheStatement") {
+        const pathExpression = macro.path as hbs.AST.PathExpression
+        this.macros.push({parts: pathExpression.parts});
+      }
+
+      // We're just here to visit, we don't want to break anything, so let's call the "default function" to process MustacheStatement
+      Handlebars.Visitor.prototype.MustacheStatement.call(this, macro);
+    };
+
+    var scanner = new MacroScanner();
+    scanner.accept(internals);
+
+    return scanner.macros;
+
+  };
+
+  engine: typeof Handlebars;
+
+  compile(template: string | hbs.AST.Program) {
+    // Handlebars.compile() can take a string or an AST
     return this.engine.compile(template);
   }
 
-  constructor() {}
+  constructor() { }
 }
 
 export class RecommendationsHandlebarsEngine extends HandlebarsEngine {

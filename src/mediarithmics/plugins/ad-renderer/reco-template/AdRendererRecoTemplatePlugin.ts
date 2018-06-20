@@ -12,11 +12,8 @@ import {
   UserCampaignResponse,
   UserCampaignResource,
   AdRendererBasePlugin,
-  RecommenderResponse,
-  TemplatingEngine  
+  RecommenderResponse
 } from "../../../index";
-
-
 
 export interface AdRendererRecoTemplateInstanceContext
   extends AdRendererTemplateInstanceContext {

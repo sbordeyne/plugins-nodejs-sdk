@@ -23,6 +23,8 @@ import {
   asUrlProperty,
   StringProperty,
   asStringProperty,
+  asBooleanProperty,
+  BooleanProperty,
   asNativeDataProperty,
   asNativeImageProperty,
   asNativeTitleProperty,
@@ -31,8 +33,10 @@ import {
   NativeTitleProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
 
-import {Index, Option, flatMap, obfuscateString} from '../../utils';
-import {normalizeArray} from '../../utils/Normalizer';
+import { Index, Option, flatMap, obfuscateString } from '../../utils';
+import { normalizeArray } from '../../utils/Normalizer';
+import { DataListResponse, Compartment } from "../../";
+import { Datamart } from "../../api/core/datamart/Datamart";
 
 export interface InitUpdateResponse {
   status: ResponseStatusCode;
@@ -87,6 +91,11 @@ export class PropertiesWrapper {
   findAdLayoutProperty = (key?: string): Option<AdLayoutProperty> => {
     const p = key ? this.get(key) : this.ofType('AD_LAYOUT');
     return flatMap(p, asAdLayoutProperty);
+  };
+
+  findBooleanProperty = (key?: string): Option<BooleanProperty> => {
+    const p = key ? this.get(key) : this.ofType('BOOLEAN');
+    return flatMap(p, asBooleanProperty);
   };
 
   findNativeDataProperty = (key?: string): Option<NativeDataProperty> => {
@@ -293,11 +302,68 @@ export abstract class BasePlugin {
         );
       } else {
         this.logger.error(
-          `Got an issue while doind a Gateway call: ${e.message} - ${e.stack}`
+          `Got an issue while doing a Gateway call: ${e.message} - ${e.stack}`
         );
         throw e;
       }
     }
+  }
+
+  async requestPublicMicsApiHelper(apiToken: string, options: rp.OptionsWithUri) {
+
+    const tweakedOptions = {
+      ...options,
+      headers: {
+        ...options.headers,
+        Authorization: apiToken
+      },
+      proxy: false
+    }
+
+    try {
+      return await this._transport(tweakedOptions)
+    } catch (e) {
+      if (e.name === "StatusCodeError") {
+
+        throw new Error(
+          `Error while calling ${options.method} '${options.uri}' with the header body '${JSON.stringify(options.headers)}': got a ${e.response.statusCode} ${
+          e.response.statusMessage
+          } with the response body ${JSON.stringify(e.response.body)}`
+        );
+
+      } else {
+        this.logger.error(
+          `Got an issue while doing a mediarithmics API call: ${e.message} - ${e.stack}`
+        );
+        throw e;
+      }
+    }
+
+  }
+
+  async fetchDatamarts(apiToken: string, organisationId: string): Promise<DataListResponse<Datamart>> {
+
+    const options = {
+      method: 'GET',
+      uri: 'https://api.mediarithmics.com/v1/datamarts',
+      qs: { organisation_id: organisationId, allow_administrator: 'false' },
+      json: true
+    };
+
+    return this.requestPublicMicsApiHelper(apiToken, options);
+
+  }
+
+  async fetchDatamartCompartments(apiToken: string, datamartId: string): Promise<DataListResponse<Compartment>> {
+
+    const options = {
+      method: 'GET',
+      uri: `https://api.mediarithmics.com/v1/datamarts/${datamartId}/user_account_compartments`,
+      json: true
+    };
+
+    return this.requestPublicMicsApiHelper(apiToken, options);
+
   }
 
   onInitRequest(creds: Credentials) {

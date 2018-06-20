@@ -5,6 +5,7 @@ import {
   AdRendererBaseInstanceContext, 
   AdRendererBasePlugin
 } from '../base/AdRendererBasePlugin';
+import { TemplatingEngine } from "../../common/TemplatingInterface";
 
 export interface AdRendererTemplateInstanceContext
 extends AdRendererBaseInstanceContext {
@@ -19,11 +20,6 @@ extends AdRendererBaseInstanceContext {
   ias_client_id?: string;
   render_additional_html?: (...args: any[]) => string;
 }
-
-export interface TemplatingEngine<Opt, In, Out> {
-      init: (opts?: Opt) => void;
-      compile: (template: In) => Out;
-  }
 
 export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
   AdRendererTemplateInstanceContext
@@ -99,7 +95,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
         adLayoutProperty.value.version
       );
 
-      this.logger.info(
+      this.logger.debug(
         `crid: ${creativeId} - Loaded template properties
         ${adLayoutProperty.value.id} ${adLayoutProperty.value.version} => 
         ${JSON.stringify(templateProperties)}`
@@ -112,7 +108,7 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
         "utf8"
       );
 
-      this.logger.info(
+      this.logger.debug(
         `crid: ${creativeId} - Loaded template content ${templatePath} =>
         ${JSON.stringify(template)}`
       );
