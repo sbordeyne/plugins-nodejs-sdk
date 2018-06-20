@@ -4,6 +4,13 @@
 
 - Support for EmailRenderer with Templating features
 - New Handlebar templating engine that list the macros used in the template
+- New Templating engine interface to implement if you want to let the Plugin Impl. have a look into the Templating macros
+- New `BasePlugin` helpers: 
+    - `requestPublicMicsApiHelper()` to do API requests on the mediarithmics API
+    - `fetchDatamarts()` to fetch the list of Datamarts inside an organisation
+    - `fetchDatamartCompartments()` to fetch the list of Compartments inside a Datamart
+- New types definition for `Datamart` and `Compartment`
+- New `PropertyWrapper` method `findBooleanProperty()`
 
 # 0.4.3 - 2018-06-08
 
