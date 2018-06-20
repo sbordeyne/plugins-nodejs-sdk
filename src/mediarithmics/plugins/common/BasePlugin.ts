@@ -296,6 +296,10 @@ export abstract class BasePlugin {
 
     const tweakedOptions = {
       ...options,
+      headers: {
+        ...options.headers,
+        Authorization: apiToken
+      },
       proxy: false
     }
 
@@ -326,7 +330,6 @@ export abstract class BasePlugin {
       method: 'GET',
       uri: 'https://api.mediarithmics.com/v1/datamarts',
       qs: { organisation_id: organisationId, allow_administrator: 'false' },
-      headers: { Authorization: apiToken },
       json: true
     };
 
@@ -339,7 +342,6 @@ export abstract class BasePlugin {
     const options = {
       method: 'GET',
       uri: `https://api.mediarithmics.com/v1/datamarts/${datamartId}/user_account_compartments`,
-      headers: { Authorization: apiToken },
       json: true
     };
 
