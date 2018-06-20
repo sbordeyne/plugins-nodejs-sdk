@@ -333,7 +333,7 @@ export abstract class BasePlugin {
 
       } else {
         this.logger.error(
-          `Got an issue while doing a Gateway call: ${e.message} - ${e.stack}`
+          `Got an issue while doing a mediarithmics API call: ${e.message} - ${e.stack}`
         );
         throw e;
       }
