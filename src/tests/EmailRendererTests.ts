@@ -3,8 +3,7 @@ import "mocha";
 import { core } from "../";
 import * as request from "supertest";
 import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
+import { EmailRendererBaseInstanceContext } from "../mediarithmics";
 
 class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
   protected onEmailContents(

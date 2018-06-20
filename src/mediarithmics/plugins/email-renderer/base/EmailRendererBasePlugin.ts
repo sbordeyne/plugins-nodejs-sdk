@@ -12,7 +12,7 @@ export interface EmailRendererBaseInstanceContext {
   properties: PropertiesWrapper;
 }
 
-export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceContext> extends BasePlugin {
+export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceContext = EmailRendererBaseInstanceContext> extends BasePlugin {
   instanceContext: Promise<T>;
 
   // Helper to fetch the creative resource with caching

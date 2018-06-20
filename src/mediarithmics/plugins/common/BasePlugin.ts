@@ -23,26 +23,20 @@ import {
   asUrlProperty,
   StringProperty,
   asStringProperty,
-<<<<<<< HEAD
   asBooleanProperty,
-  BooleanProperty
-=======
+  BooleanProperty,
   asNativeDataProperty,
   asNativeImageProperty,
   asNativeTitleProperty,
   NativeDataProperty,
   NativeImageProperty,
   NativeTitleProperty
->>>>>>> 189d6e8f4bdc730f75bcca8b421549c1e7a7ce61
 } from '../../api/core/plugin/PluginPropertyInterface';
 
-import {Index, Option, flatMap, obfuscateString} from '../../utils';
-import {normalizeArray} from '../../utils/Normalizer';
-<<<<<<< HEAD
-import {DataResponse, DataListResponse, Compartment} from "../../";
+import { Index, Option, flatMap, obfuscateString } from '../../utils';
+import { normalizeArray } from '../../utils/Normalizer';
+import { DataListResponse, Compartment } from "../../";
 import { Datamart } from "../../api/core/datamart/Datamart";
-=======
->>>>>>> 189d6e8f4bdc730f75bcca8b421549c1e7a7ce61
 
 export interface InitUpdateResponse {
   status: ResponseStatusCode;
@@ -103,7 +97,7 @@ export class PropertiesWrapper {
     const p = key ? this.get(key) : this.ofType('BOOLEAN');
     return flatMap(p, asBooleanProperty);
   };
-  
+
   findNativeDataProperty = (key?: string): Option<NativeDataProperty> => {
     const p = key ? this.get(key) : this.ofType('NATIVE_DATA');
     return flatMap(p, asNativeDataProperty);
