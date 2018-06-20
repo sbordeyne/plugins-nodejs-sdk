@@ -1,23 +1,25 @@
 {
-    "compilerOptions": {
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "moduleResolution": "node",
-        "module": "commonjs",
-        "outDir": "./lib",
-        "target": "es6",
-        "rootDir": "./src",
-        "typeRoots": ["node_modules/@types"],
-        "declaration": true,
-        "alwaysStrict": true
-    },
-    "include": [
-        "./src/**/*"
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "./lib",
+    "target": "es6",
+    "rootDir": "./src",
+    "typeRoots": [
+      "node_modules/@types"
     ],
-    "exclude": [
-        "./lib",
-        "./node_modules",
-        "./examples",
-        "./src/tests"
-    ]
+    "declaration": true,
+    "alwaysStrict": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "./lib",
+    "./node_modules",
+    "./examples",
+    "./src/tests"
+  ]
 }

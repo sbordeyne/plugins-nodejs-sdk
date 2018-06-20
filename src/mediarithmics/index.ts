@@ -32,5 +32,5 @@ export * from './plugins/common';
 export * from './plugins/email-renderer/base/EmailRendererBasePlugin';
 export * from './plugins/email-renderer/template/EmailRendererTemplatePlugin';
 export * from './plugins/email-router/EmailRouterBasePlugin';
-export * from "./plugins/recommender/RecommenderBasePlugin";
+export * from './plugins/recommender/RecommenderBasePlugin';
 export * from './utils';

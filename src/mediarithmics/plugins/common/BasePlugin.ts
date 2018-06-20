@@ -23,28 +23,40 @@ import {
   asUrlProperty,
   StringProperty,
   asStringProperty,
+<<<<<<< HEAD
   asBooleanProperty,
   BooleanProperty
+=======
+  asNativeDataProperty,
+  asNativeImageProperty,
+  asNativeTitleProperty,
+  NativeDataProperty,
+  NativeImageProperty,
+  NativeTitleProperty
+>>>>>>> 189d6e8f4bdc730f75bcca8b421549c1e7a7ce61
 } from '../../api/core/plugin/PluginPropertyInterface';
 
 import {Index, Option, flatMap, obfuscateString} from '../../utils';
 import {normalizeArray} from '../../utils/Normalizer';
+<<<<<<< HEAD
 import {DataResponse, DataListResponse, Compartment} from "../../";
 import { Datamart } from "../../api/core/datamart/Datamart";
+=======
+>>>>>>> 189d6e8f4bdc730f75bcca8b421549c1e7a7ce61
 
 export interface InitUpdateResponse {
-    status: ResponseStatusCode;
-    msg?: string;
+  status: ResponseStatusCode;
+  msg?: string;
 }
 
 export interface LogLevelUpdateResponse {
-    status: ResponseStatusCode;
-    msg?: string;
+  status: ResponseStatusCode;
+  msg?: string;
 }
 
 export interface Credentials {
-    authentication_token: string;
-    worker_id: string;
+  authentication_token: string;
+  worker_id: string;
 }
 
 export type ResponseStatusCode = "ok" | "error";
@@ -54,45 +66,60 @@ export class PropertiesWrapper {
   readonly normalized: Index<PluginProperty>;
 
   constructor(readonly values: Array<PluginProperty>) {
-      this.normalized = normalizeArray(values, 'technical_name');
+    this.normalized = normalizeArray(values, 'technical_name');
   }
 
   get = (key: string): Option<PluginProperty> => this.normalized[key];
 
   ofType = (typeName: PropertyType): Option<PluginProperty> =>
-      _.find(this.values, p => p.property_type === typeName);
+    _.find(this.values, p => p.property_type === typeName);
 
   findAssetFileProperty = (key?: string): Option<AssetFileProperty> => {
-      const p = key ? this.get(key) : this.ofType('ASSET');
-      return flatMap(p, asAssetFileProperty);
+    const p = key ? this.get(key) : this.ofType('ASSET');
+    return flatMap(p, asAssetFileProperty);
   };
 
   findDataFileProperty = (key?: string): Option<DataFileProperty> => {
-      const p = key ? this.get(key) : this.ofType('DATA_FILE');
-      return flatMap(p, asDataFileProperty);
+    const p = key ? this.get(key) : this.ofType('DATA_FILE');
+    return flatMap(p, asDataFileProperty);
   };
 
   findUrlProperty = (key?: string): Option<UrlProperty> => {
-      const p = key ? this.get(key) : this.ofType('URL');
-      return flatMap(p, asUrlProperty);
+    const p = key ? this.get(key) : this.ofType('URL');
+    return flatMap(p, asUrlProperty);
   };
 
   findStringProperty = (key?: string): Option<StringProperty> => {
-      const p = key ? this.get(key) : this.ofType('STRING');
-      return flatMap(p, asStringProperty);
+    const p = key ? this.get(key) : this.ofType('STRING');
+    return flatMap(p, asStringProperty);
   };
 
   findAdLayoutProperty = (key?: string): Option<AdLayoutProperty> => {
-      const p = key ? this.get(key) : this.ofType('AD_LAYOUT');
-      return flatMap(p, asAdLayoutProperty);
+    const p = key ? this.get(key) : this.ofType('AD_LAYOUT');
+    return flatMap(p, asAdLayoutProperty);
   };
 
   findBooleanProperty = (key?: string): Option<BooleanProperty> => {
     const p = key ? this.get(key) : this.ofType('BOOLEAN');
     return flatMap(p, asBooleanProperty);
-};
+  };
+  
+  findNativeDataProperty = (key?: string): Option<NativeDataProperty> => {
+    const p = key ? this.get(key) : this.ofType('NATIVE_DATA');
+    return flatMap(p, asNativeDataProperty);
+  };
 
+  findNativeTitleProperty = (key?: string): Option<NativeTitleProperty> => {
+    const p = key ? this.get(key) : this.ofType('NATIVE_TITLE');
+    return flatMap(p, asNativeTitleProperty);
+  };
+
+  findNativeImageProperty = (key?: string): Option<NativeImageProperty> => {
+    const p = key ? this.get(key) : this.ofType('NATIVE_IMAGE');
+    return flatMap(p, asNativeImageProperty);
+  };
 }
+
 export abstract class BasePlugin {
   multiThread: boolean = false;
 
@@ -120,10 +147,8 @@ export abstract class BasePlugin {
 
   // Log level update implementation
   // This method can be overridden by any subclass
-  protected onLogLevelUpdateHandler(
-    req: express.Request,
-    res: express.Response
-  ) {
+  protected onLogLevelUpdateHandler(req: express.Request,
+                                    res: express.Response) {
     if (req.body && req.body.level) {
       const level = req.body.level;
 
@@ -136,7 +161,7 @@ export abstract class BasePlugin {
         this.logger.debug(
           `Sending DEBUG_LEVEL_UPDATE_FROM_WORKER from worker ${
             process.pid
-          } to master with value: ${msg.value}`
+            } to master with value: ${msg.value}`
         );
 
         if (typeof process.send === "function") {
@@ -176,7 +201,7 @@ export abstract class BasePlugin {
   // Log level update implementation
   // This method can be overridden by any subclass
   protected onLogLevelRequest(req: express.Request, res: express.Response) {
-    res.send({ level: this.logger.level.toUpperCase() });
+    res.send({level: this.logger.level.toUpperCase()});
   }
 
   private initLogLevelGetRoute() {
@@ -221,7 +246,7 @@ export abstract class BasePlugin {
       "GET",
       `${this.outboundPlatformUrl}/v1/data_file/data`,
       undefined,
-      { uri: uri },
+      {uri: uri},
       false,
       true
     );
@@ -238,14 +263,12 @@ export abstract class BasePlugin {
     );
   }
 
-  async requestGatewayHelper(
-    method: string,
-    uri: string,
-    body?: any,
-    qs?: any,
-    isJson?: boolean,
-    isBinary?: boolean
-  ) : Promise<any> {
+  async requestGatewayHelper(method: string,
+                             uri: string,
+                             body?: any,
+                             qs?: any,
+                             isJson?: boolean,
+                             isBinary?: boolean): Promise<any> {
     let options: request.OptionsWithUri = {
       method: method,
       uri: uri,
@@ -281,7 +304,7 @@ export abstract class BasePlugin {
           `Error while calling ${method} '${uri}' with the request body '${bodyString ||
           ""}', the qs '${JSON.stringify(qs) || ""}', the auth user '${obfuscateString(options.auth ? options.auth.user : undefined) || ""}', the auth password '${obfuscateString(options.auth ? options.auth.pass : undefined) || ""}': got a ${e.response.statusCode} ${
             e.response.statusMessage
-          } with the response body ${JSON.stringify(e.response.body)}`
+            } with the response body ${JSON.stringify(e.response.body)}`
         );
       } else {
         this.logger.error(
@@ -378,7 +401,7 @@ export abstract class BasePlugin {
         this.logger.debug(
           `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${
             process.pid
-          } to master with value: ${msg.value}`
+            } to master with value: ${msg.value}`
         );
 
         if (typeof process.send === "function") {
@@ -419,28 +442,20 @@ export abstract class BasePlugin {
     );
   }
 
-  protected asyncMiddleware = (
-    fn: (
-      req: express.Request,
-      res: express.Response,
-      next: express.NextFunction
-    ) => any
-  ) => (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
+  protected asyncMiddleware = (fn: (req: express.Request,
+                                    res: express.Response,
+                                    next: express.NextFunction) => any) => (req: express.Request,
+                                                                            res: express.Response,
+                                                                            next: express.NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
   protected setErrorHandler() {
     this.app.use(
-      (
-        err: any,
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
+      (err: any,
+       req: express.Request,
+       res: express.Response,
+       next: express.NextFunction) => {
         this.logger.error(
           `Something bad happened : ${err.message} - ${err.stack}`
         );
@@ -450,11 +465,14 @@ export abstract class BasePlugin {
   }
 
   // Method to start the plugin
-  start() {}
+  start() {
+  }
 
   constructor(enableThrottling = false) {
 
-    if(enableThrottling) { this.enableThrottling = enableThrottling }
+    if (enableThrottling) {
+      this.enableThrottling = enableThrottling
+    }
     const gatewayHost = process.env.GATEWAY_HOST;
     if (gatewayHost) {
       this.gatewayHost = gatewayHost;
@@ -483,7 +501,7 @@ export abstract class BasePlugin {
       });
     }
 
-    this.app.use(bodyParser.json({ type: "*/*", limit: "5mb" }));
+    this.app.use(bodyParser.json({type: "*/*", limit: "5mb"}));
 
     this.logger = new winston.Logger({
       transports: [new winston.transports.Console()],

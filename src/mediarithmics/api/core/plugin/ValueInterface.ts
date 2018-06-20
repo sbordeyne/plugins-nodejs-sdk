@@ -1,4 +1,3 @@
-
 export interface AssetFilePropertyResource {
   original_file_name?: string;
   asset_id?: string;
@@ -46,4 +45,25 @@ export interface IntPropertyResource {
 
 export interface RecommenderPropertyResource {
   recommender_id?: string;
+}
+
+export interface NativeDataPropertyResource {
+  required_display?: boolean;
+  type?: number;
+  value?: string;
+}
+
+export interface NativeTitlePropertyResource {
+  required_display?: boolean;
+  value?: string;
+}
+
+export interface NativeImagePropertyResource {
+  required_display?: boolean;
+  width?: number;
+  height?: number;
+  type?: number;
+  original_file_name?: string;
+  asset_id?: string;
+  file_path?: string;
 }
