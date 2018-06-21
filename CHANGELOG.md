@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.4.5 - 2018-06-21
+
+- Fix Email Renderer bug (wrong Id to store the InstanceContext)
+
 # 0.4.4 - 2018-06-20
 
 - Support for EmailRenderer with Templating features
