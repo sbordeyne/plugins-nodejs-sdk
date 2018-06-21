@@ -94,18 +94,18 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
               return res.status(500).send({ error: errMsg });
             }
 
-            if (!this.pluginCache.get(emailRenderRequest.email_renderer_id)) {
+            if (!this.pluginCache.get(emailRenderRequest.creative_id)) {
               this.pluginCache.put(
-                emailRenderRequest.email_renderer_id,
+                emailRenderRequest.creative_id,
                 this.instanceContextBuilder(
-                  emailRenderRequest.email_renderer_id
+                  emailRenderRequest.creative_id
                 ),
                 this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
             }
 
             const instanceContext = await this.pluginCache.get(
-              emailRenderRequest.email_renderer_id
+              emailRenderRequest.creative_id
             );
 
             const response = await this.onEmailContents(
