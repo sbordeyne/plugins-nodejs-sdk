@@ -162,6 +162,8 @@ Testing Plugins is highly recommended.
 
 * `core.RecommandationsWrapper` have been renamed to `core.RecommendationsWrapper`
 
+* `core.UserActivityEvent` is now a `type`. If you were using it as a Class (ex: by extending it), you should now use `core.GenericUserActivityEvent` instead.
+
 
 ## Migration from 0.2.x to 0.3.x
 

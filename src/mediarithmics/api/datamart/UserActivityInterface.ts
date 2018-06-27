@@ -111,7 +111,7 @@ export interface ConversionProperties
     $goal_technical_name?: string;
 }
 
-export type EventName =
+export type PlatformEventName =
     '$ad_click'
     | '$ad_view'
     | '$conversion'
@@ -133,8 +133,11 @@ export type EventName =
     | '$email_unsubscribe'
     | '$email_complaint'
     | '$set_user_profile_properties'
-    | '$content_corrections'
-    ;
+    | '$content_corrections';
+
+export type EventName =
+    PlatformEventName
+    | string;
 
 
 export type UserActivityEvent =
@@ -162,7 +165,6 @@ export interface ConversionEvent {
     $properties: ConversionProperties
 }
 
-//TOFIX
 export interface GenericUserActivityEvent {
     $ts: number;
     $event_name: EventName;
