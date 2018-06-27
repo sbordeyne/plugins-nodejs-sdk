@@ -111,7 +111,7 @@ export interface ConversionProperties
     $goal_technical_name?: string;
 }
 
-export type EventName =
+export type PlatformName =
     '$ad_click'
     | '$ad_view'
     | '$conversion'
@@ -133,9 +133,11 @@ export type EventName =
     | '$email_unsubscribe'
     | '$email_complaint'
     | '$set_user_profile_properties'
-    | '$content_corrections'
-    | string
-    ;
+    | '$content_corrections';
+
+export type EventName =
+    PlatformName
+    | string;
 
 
 export type UserActivityEvent =
