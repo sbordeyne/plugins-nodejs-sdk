@@ -111,7 +111,7 @@ export interface ConversionProperties
     $goal_technical_name?: string;
 }
 
-export type PlatformName =
+export type PlatformEventName =
     '$ad_click'
     | '$ad_view'
     | '$conversion'
@@ -136,7 +136,7 @@ export type PlatformName =
     | '$content_corrections';
 
 export type EventName =
-    PlatformName
+    PlatformEventName
     | string;
 
 
