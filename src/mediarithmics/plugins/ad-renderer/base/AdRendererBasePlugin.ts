@@ -22,7 +22,6 @@ export class AdRendererBaseInstanceContext {
 export abstract class AdRendererBasePlugin<
   T extends AdRendererBaseInstanceContext
 > extends BasePlugin {
-  instanceContext: Promise<T>;
 
   displayContextHeader = "x-mics-display-context";
 
