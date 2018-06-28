@@ -18,9 +18,10 @@ describe("Fetch recommendation API", () => {
       };
     }
 
+    engineBuilder = new extra.HandlebarsEngine();
+
     constructor(enableThrottling = false) {
       super(false);
-      this.engineBuilder = new extra.HandlebarsEngine();
     }
   }
 
