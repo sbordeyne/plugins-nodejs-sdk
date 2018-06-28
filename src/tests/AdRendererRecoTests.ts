@@ -7,70 +7,6 @@ import * as mockery from "mockery";
 import * as rp from "request-promise-native";
 import { PropertiesWrapper } from "../mediarithmics/index";
 
-describe("Fetch template API", () => {
-  class MyDummyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
-    protected async onAdContents(
-      adRenderRequest: core.AdRendererRequest,
-      instanceContext: core.AdRendererRecoTemplateInstanceContext
-    ): Promise<core.AdRendererPluginResponse> {
-      return {
-        html: `This is Spart.... Oups, HTML I mean`
-      };
-    }
-
-    constructor(enableThrottling = false) {
-      super(enableThrottling);
-      this.engineBuilder = new extra.HandlebarsEngine();
-    }
-  }
-
-  const rpMockup: sinon.SinonStub = sinon
-    .stub()
-    .returns(Promise.resolve("Fake answer"));
-
-  it("Check that templateURI is passed correctly in fetchTemplateContent", function(
-    done
-  ) {
-    const plugin = new MyDummyHandlebarsAdRenderer(false);
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    const faketemplatePath = "mics://yolo";
-
-    // We try a call to the Gateway
-    (runner.plugin as MyDummyHandlebarsAdRenderer)
-      .fetchTemplateContent(faketemplatePath)
-      .then(() => {
-        expect(rpMockup.args[0][0].uri).to.be.eq(
-          `${runner.plugin.outboundPlatformUrl}/v1/data_file/data`
-        );
-        expect(rpMockup.args[0][0].qs.uri).to.be.eq(faketemplatePath);
-        done();
-      });
-  });
-
-  it("Check that orgId / adLayoutId / versionId are passed correctly in fetchTemplateProperties", function(
-    done
-  ) {
-    const plugin = new MyDummyHandlebarsAdRenderer(false);
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    const fakeOrgId = "1";
-    const fakeAdLayoutId = "23";
-    const fakeVersionId = "456";
-
-    // We try a call to the Gateway
-    (runner.plugin as MyDummyHandlebarsAdRenderer)
-      .fetchTemplateProperties(fakeOrgId, fakeAdLayoutId, fakeVersionId)
-      .then(() => {
-        expect(rpMockup.args[1][0].uri).to.be.eq(
-          `${runner.plugin
-            .outboundPlatformUrl}/v1/ad_layouts/${fakeAdLayoutId}/versions/${fakeVersionId}?organisation_id=${fakeOrgId}`
-        );
-        done();
-      });
-  });
-});
-
 describe("Fetch recommendation API", () => {
   class MyDummyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     protected async onAdContents(
@@ -191,7 +127,6 @@ describe("Fetch recommendation API", () => {
     width: "300",
     height: "250",
     creative_click_url: "http://yolo.com",
-    template: "toto",
     displayAd: fakeCreative,
     properties: new PropertiesWrapper([fakeCreativeProperty])
   };

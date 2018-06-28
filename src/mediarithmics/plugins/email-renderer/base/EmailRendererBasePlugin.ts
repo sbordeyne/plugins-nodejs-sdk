@@ -16,10 +16,12 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
   instanceContext: Promise<T>;
 
   // Helper to fetch the creative resource with caching
-  async fetchCreative(id: string): Promise<Creative> {
+  async fetchCreative(id: string, forceReload = false): Promise<Creative> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/creatives/${id}`
+      `${this.outboundPlatformUrl}/v1/creatives/${id}`,
+      undefined,
+      {"force-reload": forceReload}
     );
     this.logger.debug(
       `Fetched Creative: ${id} - ${JSON.stringify(response.data)}`
@@ -27,10 +29,12 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
     return response.data;
   }
 
-  async fetchCreativeProperties(id: string): Promise<PluginProperty[]> {
+  async fetchCreativeProperties(id: string, forceReload = false): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/creatives/${id}/renderer_properties`
+      `${this.outboundPlatformUrl}/v1/creatives/${id}/renderer_properties`,
+      undefined,
+      {"force-reload": forceReload}
     );
     this.logger.debug(
       `Fetched Email Templates Properties: ${id} - ${JSON.stringify(response.data)}`
@@ -42,10 +46,11 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
   // To be overriden to get a cutom behavior
   // This is a default provided implementation
   protected async instanceContextBuilder(
-    creativeId: string
+    creativeId: string,
+    forceReload = false
   ): Promise<T> {
-    const creativeP = this.fetchCreative(creativeId);
-    const creativePropsP = this.fetchCreativeProperties(creativeId);
+    const creativeP = this.fetchCreative(creativeId, forceReload);
+    const creativePropsP = this.fetchCreativeProperties(creativeId, forceReload);
 
     const results = await Promise.all([creativeP, creativePropsP]);
 
@@ -94,11 +99,15 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
               return res.status(500).send({ error: errMsg });
             }
 
-            if (!this.pluginCache.get(emailRenderRequest.creative_id)) {
+            // We flush the Plugin Gateway cache during previews
+            const forceReload = (emailRenderRequest.context === "PREVIEW" || emailRenderRequest.context === "STAGE")
+
+            if (!this.pluginCache.get(emailRenderRequest.creative_id) || forceReload) {
               this.pluginCache.put(
                 emailRenderRequest.creative_id,
                 this.instanceContextBuilder(
-                  emailRenderRequest.creative_id
+                  emailRenderRequest.creative_id,
+                  forceReload
                 ),
                 this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );

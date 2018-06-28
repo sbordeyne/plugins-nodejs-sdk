@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.5.0
+
+- Change the Template design (for AdRenderer and EmailRenderer). See `README.md`
+- Add the `forceReload=true` support for AdRenderer & EmailRenderer InstanceContext build to enhance the preview UX on mediarithmics platform
+
 # 0.4.5 - 2018-06-21
 
 - Fix Email Renderer bug (wrong Id to store the InstanceContext)

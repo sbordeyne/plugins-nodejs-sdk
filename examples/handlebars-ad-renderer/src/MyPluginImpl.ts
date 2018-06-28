@@ -1,10 +1,37 @@
 import { core, extra } from "@mediarithmics/plugins-nodejs-sdk";
 
+export interface MyInstanceContext extends core.AdRendererRecoTemplateInstanceContext {
+  render_template?: (...args: any[]) => string;
+}
+
 export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
+
+  protected async instanceContextBuilder(creativeId: string, forceReload = false): Promise<MyInstanceContext> {
+
+    const baseInstanceContext = await super.instanceContextBuilder(creativeId);
+
+    const templateProp = baseInstanceContext.properties.findDataFileProperty("template");
+    const templateURI = core.map(templateProp, prop => core.map(prop.value, value => value.uri))
+
+    if(!templateURI) {
+      throw Error("No template URI found in properties")
+    }
+
+    const template = (await this.fetchDataFile(templateURI)).toString("utf8")
+
+    const compiledTemplate = this.engineBuilder.compile(template);
+
+    return {
+      ...baseInstanceContext,
+      render_template: compiledTemplate
+    }
+  }
+
   protected async onAdContents(
     adRenderRequest: core.AdRendererRequest,
-    instanceContext: core.AdRendererRecoTemplateInstanceContext
+    instanceContext: MyInstanceContext
   ): Promise<core.AdRendererPluginResponse> {
+
     const recommendations: Array<
       core.ItemProposal
     > = await this.fetchRecommendations(
@@ -68,8 +95,9 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     };
   }
 
+  engineBuilder = new extra.RecommendationsHandlebarsEngine();
+
   constructor(enableThrottling = false) {
     super(enableThrottling);
-    this.engineBuilder = new extra.RecommendationsHandlebarsEngine();
   }
 }

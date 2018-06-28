@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import {map} from '../../../utils'
 
 import {
@@ -13,45 +12,11 @@ extends AdRendererBaseInstanceContext {
   height: string;
   creative_click_url?: string;
   render_click_url?: (...args: any[]) => string;
-  // Raw template to be compiled
-  template: any;
-  // Compiled template
-  render_template?: (...args: any[]) => string;
   ias_client_id?: string;
   render_additional_html?: (...args: any[]) => string;
 }
 
-export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
-  AdRendererTemplateInstanceContext
-> {
-  /**
- * Helper to fetch the content of a template
- * @param templatePath  The raw (e.g. non URL encoded) mics URI to the template file as a string.
- * @returns       A Buffer with the file content in it. This have to be decoded with the proper encoding.
- */
-  async fetchTemplateContent(templatePath: string): Promise<Buffer> {
-    const templateContent = await super.fetchDataFile(templatePath);
-
-    this.logger.debug(`Fetched template : ${templateContent}`);
-    return templateContent;
-  }
-
-  /**
- * Helper to fetch the properties of a template
- */
-  async fetchTemplateProperties(
-    organisationId: string,
-    adLayoutId: string,
-    versionId: string
-  ): Promise<any> {
-    const templateProperties = await super.requestGatewayHelper(
-      "GET",
-      `${this
-        .outboundPlatformUrl}/v1/ad_layouts/${adLayoutId}/versions/${versionId}?organisation_id=${organisationId}`
-    );
-
-    return templateProperties;
-  }
+export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<AdRendererBaseInstanceContext> {
 
   /**
  * The engineBuilder that can be used to compile the template
@@ -59,13 +24,37 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
  * 
  * Have to be overriden (see examples)
  */
-  protected engineBuilder: TemplatingEngine<any, any, any>;
+  protected abstract engineBuilder: TemplatingEngine<any, any, any>;
 
+  /**
+   * Build a basic InstanceContext for "template" aware AdRenderer.
+   * This method can be overriden by your implementation (and you can then still call it with `super.instanceContextBuilder(creativeId, forceReload)`)
+   * 
+   * This instanceContext takes the hypothesis that:
+   * - You have exactly one "URL" Plugin property on your instance
+   * - You have one "STRING" Plugin property on your instance called "additional_html" that contains 'templateable' HTML
+   * - You have one "STRING" Plugin property on your instance called "ias_client_id" that contains an IAS Client Id as a String
+   * 
+   * If your Plugin instance don't respect those hypothesis, the returned InstanceContext will have `undefined` values in some/all fields.
+   * 
+   * If you want to do Templating but you don't want to validate the above hypothesis, you're encouraged to build your Plugin Impl. by extending `AdRendererBasePlugin<AdRendererBaseInstanceContext>`
+   * instead of this class. This class should then only be used as an example.
+   * 
+   * @param creativeId 
+   * @param forceReload 
+   */
   protected async instanceContextBuilder(
     creativeId: string,
-    template?: string
+    forceReload = false
   ): Promise<AdRendererTemplateInstanceContext> {
-    const baseInstanceContext = await super.instanceContextBuilder(creativeId);
+    const baseInstanceContext = await super.instanceContextBuilder(creativeId, forceReload);
+
+    if (!this.engineBuilder) {
+      throw new Error(`No engine builder have been added to the plugin
+            An engine builder is mandatory to extend this plugin class`);
+    }
+
+    this.engineBuilder.init();
 
     const urlProperty = baseInstanceContext.properties.findUrlProperty();
 
@@ -74,67 +63,23 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       this.logger.warn(msg);
     }
 
-    const IASProperty = baseInstanceContext.properties.findStringProperty("ias_client_id")
-
-    const additionalHTMLProperty = baseInstanceContext.properties.findStringProperty("additional_html");
-
-    // If no 'predefined' template was provided, we retrieve it from the platform
-    if (!template) {
-      const adLayoutProperty = 
-        baseInstanceContext.properties.findAdLayoutProperty();
-
-      if ( !adLayoutProperty || !adLayoutProperty.value || !adLayoutProperty.value.id || !adLayoutProperty.value.version ) {
-        const msg = `crid: ${creativeId} - Ad layout undefined`;
-        this.logger.error(msg);
-        throw new Error(msg);
-      }
-
-      const templateProperties = await this.fetchTemplateProperties(
-        baseInstanceContext.displayAd.organisation_id,
-        adLayoutProperty.value.id,
-        adLayoutProperty.value.version
-      );
-
-      this.logger.debug(
-        `crid: ${creativeId} - Loaded template properties
-        ${adLayoutProperty.value.id} ${adLayoutProperty.value.version} => 
-        ${JSON.stringify(templateProperties)}`
-      );
-
-      const templatePath = templateProperties.data.template;
-
-      // We assume that the template is in UTF-8
-      template = (await this.fetchTemplateContent(templatePath)).toString(
-        "utf8"
-      );
-
-      this.logger.debug(
-        `crid: ${creativeId} - Loaded template content ${templatePath} =>
-        ${JSON.stringify(template)}`
-      );
-    }
-
-    if (!this.engineBuilder) {
-      throw new Error(`No engine builder have been added to the plugin
-            An engine builder is mandatory to extend this plugin class`);
-    }
-
-    this.engineBuilder.init();
-    const compiledTemplate = this.engineBuilder.compile(template);
-
     const creativeClickUrl = map(urlProperty, p => p.value.url)
       
     const compiledClickUrl = 
       map(creativeClickUrl, 
-        url => this.engineBuilder.compile(url))
+        url => this.engineBuilder.compile(url));
     
+    const additionalHTMLProperty = baseInstanceContext.properties.findStringProperty("additional_html");
+
     const additionalHTML = 
       map(additionalHTMLProperty,
         p => p.value.value)
 
     const compiledAdditionalHTML = 
       map(additionalHTML,
-        html => this.engineBuilder.compile(html))
+        html => this.engineBuilder.compile(html));
+
+    const IASProperty = baseInstanceContext.properties.findStringProperty("ias_client_id")
 
     const IASClientId = 
       map(IASProperty,
@@ -150,8 +95,6 @@ export abstract class AdRendererTemplatePlugin extends AdRendererBasePlugin<
       height: height,
       creative_click_url: creativeClickUrl,
       render_click_url: compiledClickUrl,
-      template: template,
-      render_template: compiledTemplate,
       render_additional_html: compiledAdditionalHTML,
       ias_client_id: IASClientId
     };
