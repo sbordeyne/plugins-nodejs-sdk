@@ -137,48 +137,52 @@ describe("Activity Analysis API test", function() {
       .send({ authentication_token: "Manny", worker_id: "Calavera" })
       .end((err, res) => {
         expect(res.status).to.equal(200);
-      });
 
-    const requestBody = JSON.parse(`{
-      "activity_analyzer_id": 1923,
-      "datamart_id": 1034,
-      "channel_id": "1268",
-      "activity": {
-        "$email_hash": null,
-        "$events": [
-          {
-            "$event_name": "page HP",
-            "$properties": {
-              "$referrer": "https://www.google.fr/",
-              "$url": "https://estcequecestbientotlapero.fr/",
-              "produit": "SANTE",
-              "session id": "tQ6GQojf"
-            },
-            "$ts": 1479820606900
+        const requestBody = JSON.parse(`{
+          "activity_analyzer_id": 1923,
+          "datamart_id": 1034,
+          "channel_id": "1268",
+          "activity": {
+            "$email_hash": null,
+            "$events": [
+              {
+                "$event_name": "page HP",
+                "$properties": {
+                  "$referrer": "https://www.google.fr/",
+                  "$url": "https://estcequecestbientotlapero.fr/",
+                  "produit": "SANTE",
+                  "session id": "tQ6GQojf"
+                },
+                "$ts": 1479820606900
+              }
+            ],
+            "$location": null,
+            "$session_duration": 302,
+            "$session_status": "CLOSED_SESSION",
+            "$site_id": "1268",
+            "$topics": {},
+            "$ts": 1479820606901,
+            "$ttl": 0,
+            "$type": "SITE_VISIT",
+            "$user_account_id": null,
+            "$user_agent_id": "vec:289388396"
           }
-        ],
-        "$location": null,
-        "$session_duration": 302,
-        "$session_status": "CLOSED_SESSION",
-        "$site_id": "1268",
-        "$topics": {},
-        "$ts": 1479820606901,
-        "$ttl": 0,
-        "$type": "SITE_VISIT",
-        "$user_account_id": null,
-        "$user_agent_id": "vec:289388396"
-      }
-    }`);
+        }`);
+    
+        request(runner.plugin.app)
+          .post("/v1/activity_analysis")
+          .send(requestBody)
+          .end(function(err, res) {
+            expect(res.status).to.equal(200);
+    
+            expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
+            
+            // We clear the cache so that we don't have any processing still running in the background
+            runner.plugin.pluginCache.clear();
+            done();
+          });
 
-    request(runner.plugin.app)
-      .post("/v1/activity_analysis")
-      .send(requestBody)
-      .end(function(err, res) {
-        expect(res.status).to.equal(200);
-
-        expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
-
-        done();
       });
+
   });
 });

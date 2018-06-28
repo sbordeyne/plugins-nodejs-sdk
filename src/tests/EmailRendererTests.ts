@@ -171,6 +171,9 @@ describe("Email Renderer API test", function() {
             expect(res.status).to.equal(200);
     
             expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
+
+            // We clear the cache so that we don't have any processing still running in the background
+            runner.plugin.pluginCache.clear();
             done();
           });
           

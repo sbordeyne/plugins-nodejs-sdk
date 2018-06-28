@@ -244,6 +244,8 @@ describe("External Audience Feed API test", function() {
     
             expect(JSON.parse(res.text).status).to.be.eq("ok");
     
+            // We clear the cache so that we don't have any processing still running in the background
+            runner.plugin.pluginCache.clear();
             done();
           });
 
