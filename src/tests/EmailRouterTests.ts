@@ -180,8 +180,6 @@ describe("Email Router API test", function() {
 
         expect(JSON.parse(res.text).result).to.be.true;
 
-        // We clear the cache so that we don't have any processing still running in the background
-        runner.plugin.pluginCache.clear();
         done();
       });
 

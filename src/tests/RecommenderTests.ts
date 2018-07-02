@@ -148,8 +148,6 @@ describe("Recommender API test", function() {
       .end(function(err, res) {
         expect(res.status).to.equal(200);
 
-        // We clear the cache so that we don't have any processing still running in the background
-        runner.plugin.pluginCache.clear();
         done();
       });
   });
