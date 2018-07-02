@@ -66,9 +66,16 @@ describe("Fetch analyzer API", () => {
       done();
     });
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
 });
 
 describe("Activity Analysis API test", function() {
+
+let runner: core.TestingPluginRunner
 
   class MyFakeSimpleActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
     protected onActivityAnalysis(
@@ -129,7 +136,7 @@ describe("Activity Analysis API test", function() {
       })
     );
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);    
+    runner = new core.TestingPluginRunner(plugin, rpMockup);    
 
     // We init the plugin
     request(runner.plugin.app)
@@ -177,12 +184,16 @@ describe("Activity Analysis API test", function() {
     
             expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
             
-            // We clear the cache so that we don't have any processing still running in the background
-            runner.plugin.pluginCache.clear();
             done();
           });
 
       });
 
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });

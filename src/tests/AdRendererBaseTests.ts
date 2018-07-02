@@ -89,6 +89,12 @@ describe("Fetch DisplayAd API", () => {
       done();
     });
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });
 
 describe("Ad Contents API test", function() {
@@ -108,7 +114,8 @@ describe("Ad Contents API test", function() {
   }
 
   const plugin = new MyFakeAdRenderer2(false);
-
+  let runner: core.TestingPluginRunner;
+  
   it("Check that the plugin is giving good results with a simple adContents handler", function(
     done
   ) {
@@ -163,7 +170,7 @@ describe("Ad Contents API test", function() {
       })
     );
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     request(runner.plugin.app)
       .post("/v1/init")
@@ -196,13 +203,16 @@ describe("Ad Contents API test", function() {
           expect(res.status).to.equal(200);
           expect(res.text).to.be.eq(requestBody.call_id);
   
-          // We clear the cache so that we don't have any processing still running in the background
-          runner.plugin.pluginCache.clear();
           done();
         });
         
       });
 
-
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+  
 });

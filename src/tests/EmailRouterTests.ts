@@ -65,6 +65,7 @@ describe("Email Router API test", function() {
 
   // All the magic is here
   const plugin = new MyFakeEmailRouterPlugin(false);
+  let runner: core.TestingPluginRunner;
 
   it("Check that the plugin is giving good results with a simple onEmailRouting handler", function(
     done
@@ -93,7 +94,7 @@ describe("Email Router API test", function() {
       })
     );
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
@@ -187,4 +188,10 @@ describe("Email Router API test", function() {
     });
 
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });
