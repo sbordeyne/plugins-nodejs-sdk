@@ -69,6 +69,7 @@ describe("Fetch Email Renderer API", () => {
 describe("Email Renderer API test", function() {
   // All the magic is here
   const plugin = new MyFakeEmailRendererPlugin(false);
+  let runner: core.TestingPluginRunner;
 
   it("Check that the plugin is giving good results with a simple onEmailContents handler", function(
     done
@@ -125,7 +126,7 @@ describe("Email Renderer API test", function() {
       })
     );
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
@@ -171,10 +172,17 @@ describe("Email Renderer API test", function() {
             expect(res.status).to.equal(200);
     
             expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
+
             done();
           });
           
       });
 
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });

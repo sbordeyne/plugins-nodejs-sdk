@@ -89,7 +89,8 @@ describe("Fetch Audience Feed Gateway API", () => {
 describe("External Audience Feed API test", function() {
   // All the magic is here
   const plugin = new MyFakeAudienceFeedConnector(false);
-
+  let runner: core.TestingPluginRunner;
+  
   it("Check that the plugin is giving good results with a simple handler", function(
     done
   ) {
@@ -152,7 +153,7 @@ describe("External Audience Feed API test", function() {
       )
       .returns(properties);
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
@@ -252,4 +253,10 @@ describe("External Audience Feed API test", function() {
       });
 
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });

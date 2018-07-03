@@ -148,6 +148,39 @@ The Plugin examples provided with the SDK are all tested and you can read their 
 
 Testing Plugins is highly recommended.
 
+## Migration from 0.4.x to 0.5.x
+
+The 0.5.x release of the Plugin SDK is mainly aiming at simplifying the use of the "Templating" API.
+
+* `engineBuilder` property of `EmailRendererTemplate` and `AdRendererTemplatePlugin` is now declared `abstract` in the SDK and should no longer be instanciated in the Plugin Impl. `constructor` but directly in the class itself.
+
+```js
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+    this.engineBuilder = new extra.RecommendationsHandlebarsEngine();
+  }
+```
+
+should become
+
+```js
+  engineBuilder = new extra.RecommendationsHandlebarsEngine();
+
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+  }
+```
+
+* the `EmailRendererTemplate.fetchTemplateContent()` and `AdRendererTemplatePlugin.fetchTemplateContent()` methods have been deleted. They should be replaced by: `BasePlugin.fetchDataFile()` method which is equivalent.
+
+* the `AdRendererTemplatePlugin.fetchTemplateContentProperties()` method have been deleted because it was using the AdLayout mediarithmics API which is being deprecated in favor of DataFile API. If you were using it, you should migrate your template files to a DataFile Plugin property instead of an AdLayout one. `AdRendererBasePlugin.fetchDisplayAdProperties()` will then give you all the details about how to fetch the template content with `BasePlugin.fetchDataFile()`.
+
+* `AdRendererTemplatePlugin.instanceContextBuilder()` method is no longer taking a `template?: string` parameter. The template compilation should now be done in the Plugin Impl. and no longer in the SDK. The returned `AdRendererTemplateInstanceContext` interface have been updated and is no longer containing the `template` and `render_template` properties as well as the SDK is no longer managing this part.
+
+* `instanceContextBuilder()` method of `AdRenderer` & `EmailRenderer` classes now take a `forceReload` parameter. This parameter should be set at `true` for `PREVIEW`/`STAGE` context so that Users can see in real time the output of their changes on the instance properties.
+
+* `AdRendererBasePlugin.fetchDisplayAd`/`AdRendererBasePlugin.fetchDisplayAdProperties` are also taking a `forceReload` boolean parameter. When set to `true`, it will ask to the platform to bypass all caches and give the last known values for the creative / its properties. This should only be used for `PREVIEW`/`STAGE` context (e.g. when `forceReload` parameter passed to the `instanceContextBuilder()` is set at `true`).
+
 ## Migration from 0.3.x to 0.4.x
 
 * the type `Value` has been removed and replaced by a serie of specialized types. Following this change, `PluginProperty` has been transformed to a discriminated union (see the eponym section at https://www.typescriptlang.org/docs/handbook/advanced-types.html ).

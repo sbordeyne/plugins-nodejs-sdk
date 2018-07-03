@@ -16,7 +16,7 @@ for ex in examples/*; do
         rm -rf node_modules
         npm link @mediarithmics/plugins-nodejs-sdk
         npm i --no-package-lock
-        npm link @mediarithmics/plugins-nodejs-sdk #yes twice, needed for install but install remove link >_<
+        #npm link @mediarithmics/plugins-nodejs-sdk #yes twice, needed for install but install remove link >_<
         npm run test
     fi
     cd -

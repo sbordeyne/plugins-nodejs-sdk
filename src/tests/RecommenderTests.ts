@@ -87,6 +87,7 @@ describe("Recommender API test", function() {
 
   // All the magic is here
   const plugin = new MyFakeSimpleRecommenderPlugin();
+  let runner: core.TestingPluginRunner;
 
   it("Check that the plugin is giving good results with a simple onRecommendationRequest handler", function(done) {
     const rpMockup = sinon.stub();
@@ -122,7 +123,7 @@ describe("Recommender API test", function() {
     )
     .returns(fakeRecommenderProperties);
 
-    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
@@ -150,4 +151,10 @@ describe("Recommender API test", function() {
         done();
       });
   });
+
+  afterEach(() => {
+    // We clear the cache so that we don't have any processing still running in the background
+    runner.plugin.pluginCache.clear();
+  });
+
 });

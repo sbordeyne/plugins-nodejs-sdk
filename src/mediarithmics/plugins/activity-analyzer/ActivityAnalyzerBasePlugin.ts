@@ -25,7 +25,6 @@ export interface ActivityAnalyzerBaseInstanceContext{
 }
 
 export abstract class ActivityAnalyzerPlugin extends BasePlugin {
-  instanceContext: Promise<ActivityAnalyzerBaseInstanceContext>;
 
   // Helper to fetch the activity analyzer resource with caching
   async fetchActivityAnalyzer(
