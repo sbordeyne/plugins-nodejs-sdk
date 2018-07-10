@@ -1,5 +1,11 @@
 # Changelog
 
+# 0.5.0 - 2018-07-03
+
+- Change the Template design (for AdRenderer and EmailRenderer). See `README.md`
+- Add the `forceReload=true` support for AdRenderer & EmailRenderer InstanceContext build to make sure the creative displayed on navigator is always up to date with the configuration of the plugin instance on mediarithmics platform
+- Remove unused `instanceContext` property in `ActivityAnalyzerBasePlugin` & `AdRendererBasePlugin`
+
 # 0.4.5 - 2018-06-21
 
 - Fix Email Renderer bug (wrong Id to store the InstanceContext)

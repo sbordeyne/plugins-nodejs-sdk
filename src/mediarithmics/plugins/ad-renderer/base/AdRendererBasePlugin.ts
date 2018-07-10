@@ -22,15 +22,16 @@ export class AdRendererBaseInstanceContext {
 export abstract class AdRendererBasePlugin<
   T extends AdRendererBaseInstanceContext
 > extends BasePlugin {
-  instanceContext: Promise<T>;
 
   displayContextHeader = "x-mics-display-context";
 
   // Helper to fetch the Display Ad resource with caching
-  async fetchDisplayAd(displayAdId: string): Promise<DisplayAd> {
+  async fetchDisplayAd(displayAdId: string, forceReload = false): Promise<DisplayAd> {
     const response = await super.requestGatewayHelper(
       "GET",
-      `${this.outboundPlatformUrl}/v1/creatives/${displayAdId}`
+      `${this.outboundPlatformUrl}/v1/creatives/${displayAdId}`,
+      undefined,
+      {"force-reload": forceReload}
     );
 
     this.logger.debug(
@@ -50,13 +51,16 @@ export abstract class AdRendererBasePlugin<
 
   // Helper to fetch the Display Ad properties resource with caching
   async fetchDisplayAdProperties(
-    displayAdId: string
+    displayAdId: string,
+    forceReload = false
   ): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
       "GET",
       `${this.outboundPlatformUrl}/v1/creatives/${
         displayAdId
-      }/renderer_properties`
+      }/renderer_properties`,
+      undefined,
+      {"force-reload": forceReload}
     );
 
     this.logger.debug(
@@ -78,10 +82,10 @@ export abstract class AdRendererBasePlugin<
 
   // Method to build an instance context
   // To be overriden to get a custom behavior
-  protected async instanceContextBuilder(creativeId: string): Promise<T> {
+  protected async instanceContextBuilder(creativeId: string, forceReload = false): Promise<T> {
 
-    const displayAdP = this.fetchDisplayAd(creativeId);
-    const displayAdPropsP = this.fetchDisplayAdProperties(creativeId);
+    const displayAdP = this.fetchDisplayAd(creativeId, forceReload);
+    const displayAdPropsP = this.fetchDisplayAdProperties(creativeId, forceReload);
 
     const results = await Promise.all([displayAdP, displayAdPropsP]);
 
@@ -129,14 +133,16 @@ export abstract class AdRendererBasePlugin<
               return res.status(500).json(msg);
             }
 
+            // We flush the Plugin Gateway cache during previews
+            const forceReload = (adRendererRequest.context === "PREVIEW" || adRendererRequest.context === "STAGE")
+
             if (
               !this.pluginCache.get(adRendererRequest.creative_id) ||
-              adRendererRequest.context === "PREVIEW" ||
-              adRendererRequest.context === "STAGE"
+              forceReload
             ) {
               this.pluginCache.put(
                 adRendererRequest.creative_id,
-                this.instanceContextBuilder(adRendererRequest.creative_id),
+                this.instanceContextBuilder(adRendererRequest.creative_id, forceReload),
                 this.INSTANCE_CONTEXT_CACHE_EXPIRATION
               );
             }

@@ -48,9 +48,12 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
       deletable: false
     },
     {
-      technical_name: "ad_layout",
-      value: { id: "144", version: "145" },
-      property_type: "AD_LAYOUT",
+      technical_name: "template",
+      value: {
+        uri: "mics://over_the_rainbow",
+        last_modified: undefined
+      },
+      property_type: "DATA_FILE",
       origin: "PLUGIN",
       writable: true,
       deletable: false
@@ -80,14 +83,6 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
       deletable: false
     },
     {
-      technical_name: "style_sheet",
-      value: { id: null, version: null },
-      property_type: "STYLE_SHEET",
-      origin: "PLUGIN",
-      writable: true,
-      deletable: false
-    },
-    {
       technical_name: "recommender_id",
       value: { value: "1" },
       property_type: "STRING",
@@ -105,20 +100,6 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
     }
   ],
   count: 8
-};
-
-// Template properties stub
-const templateProperties: core.AdLayoutVersionResponse = {
-  status: "ok",
-  data: {
-    id: "276",
-    version_id: "1",
-    creation_date: 1492784898140,
-    filename: "multi_annonceur_trololo_300x250_v1.ssp",
-    template: "mics://data_file/tenants/1126/ads_templates/250.276.template",
-    ad_layout_id: "250",
-    status: "DRAFT"
-  }
 };
 
 // Recommendation stub
@@ -223,20 +204,6 @@ function buildRpMockup(templateContent: string): sinon.SinonStub {
       )
     )
     .returns(creativePropertiesResponse);
-
-  rpMockup
-    .withArgs(
-      sinon.match.has(
-        "uri",
-        sinon.match(function(value: string) {
-          return (
-            value.match(/\/v1\/ad_layouts\/(.){1,10}\/versions\/(.){1,10}/) !==
-            null
-          );
-        })
-      )
-    )
-    .returns(templateProperties);
 
   rpMockup
     .withArgs(
@@ -645,9 +612,12 @@ describe("Test Example Handlebar Ad Renderer", function() {
           deletable: false
         },
         {
-          technical_name: "ad_layout",
-          value: { id: "144", version: "145" },
-          property_type: "AD_LAYOUT",
+          technical_name: "template",
+          value: {
+            uri: "mics://over_the_rainbow",
+            last_modified: undefined
+          },
+          property_type: "DATA_FILE",
           origin: "PLUGIN",
           writable: true,
           deletable: false
@@ -672,14 +642,6 @@ describe("Test Example Handlebar Ad Renderer", function() {
           technical_name: "default_items",
           value: { value: null },
           property_type: "STRING",
-          origin: "PLUGIN",
-          writable: true,
-          deletable: false
-        },
-        {
-          technical_name: "style_sheet",
-          value: { id: null, version: null },
-          property_type: "STYLE_SHEET",
           origin: "PLUGIN",
           writable: true,
           deletable: false
