@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.6.0
+
+- Rename the `recommenderProperties` field to `properties` for Recommender support
+- Change the type of `properties` in the Instance Context of Audience Feed & Recommender from `PluginProperty[]` to `PropertiesWrapper`
+
 # 0.5.0 - 2018-07-03
 
 - Change the Template design (for AdRenderer and EmailRenderer). See `README.md`

@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import * as cache from "memory-cache";
 
 import {
-  BasePlugin
+  BasePlugin, PropertiesWrapper
 } from "../common/BasePlugin";
 
 import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
@@ -18,7 +18,7 @@ import {
 } from "../../api/plugin/recommender/RecommenderRequestInterface"
 
 export interface RecommenderBaseInstanceContext {
-  recommenderProperties: PluginProperty[];
+  properties: PropertiesWrapper;
 }
 
 export interface RecommenderPluginResponse extends RecommendationsWrapper {}
@@ -74,7 +74,7 @@ export abstract class RecommenderPlugin extends BasePlugin {
       );
 
     const context: RecommenderBaseInstanceContext = {
-      recommenderProperties: recommenderProps
+      properties: new PropertiesWrapper(recommenderProps)
     };
 
     return context;

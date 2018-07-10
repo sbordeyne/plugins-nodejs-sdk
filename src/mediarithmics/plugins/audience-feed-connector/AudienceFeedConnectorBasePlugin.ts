@@ -6,7 +6,7 @@ import {
     AudienceSegmentResource
 } from '../../api/core/audiencesegment/AudienceSegmentInterface';
 import {PluginProperty} from '../../';
-import {BasePlugin} from '../common';
+import {BasePlugin, PropertiesWrapper} from '../common';
 import {
     ExternalSegmentConnectionRequest,
     ExternalSegmentCreationRequest, UserSegmentUpdateRequest
@@ -20,7 +20,7 @@ import {
 
 export interface AudienceFeedConnectorBaseInstanceContext {
     feed: AudienceSegmentExternalFeedResource;
-    feedProperties: PluginProperty[];
+    feedProperties: PropertiesWrapper;
 }
 
 export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
@@ -74,7 +74,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
 
         const context: AudienceFeedConnectorBaseInstanceContext = {
             feed: audienceFeed,
-            feedProperties: audienceFeedProps
+            feedProperties: new PropertiesWrapper(audienceFeedProps)
         };
 
         return context;
