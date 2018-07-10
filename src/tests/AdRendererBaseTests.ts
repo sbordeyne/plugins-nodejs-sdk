@@ -228,7 +228,7 @@ describe("Instance Context check", () => {
             id: "7168",
             organisation_id: "1126",
             name: "Toto",
-            technical_name: null,
+            technical_name: undefined,
             archived: false,
             editor_version_id: "5",
             editor_version_value: "1.0.0",
@@ -275,10 +275,10 @@ describe("Instance Context check", () => {
         form_factor: "PERSONAL_COMPUTER",
         os_family: "WINDOWS",
         browser_family: "IE",
-        brand: null,
-        model: null,
-        os_version: null,
-        carrier: null
+        brand: undefined,
+        model: undefined,
+        os_version: undefined,
+        carrier: undefined
       },
       placeholder_id: "mics_ed54e0e",
       user_campaign_id: "toto",
@@ -288,8 +288,8 @@ describe("Instance Context check", () => {
       ],
       display_tracking_url:
         "https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=imp&vid=4080&cb=ef3933a2-591b-4b1e-8fe2-4d9fd75980c4",
-      latitude: null,
-      longitude: null,
+      latitude: undefined,
+      longitude: undefined,
       restrictions: { animation_max_duration: 25 }
     };
 
