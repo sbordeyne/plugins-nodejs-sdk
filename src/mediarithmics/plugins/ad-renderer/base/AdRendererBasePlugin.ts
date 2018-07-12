@@ -10,9 +10,10 @@ import {DisplayAd} from '../../../api/core/creative/index';
 import {PluginProperty} from '../../../api/core/plugin/PluginPropertyInterface';
 import {
   AdRendererPluginResponse,
-  AdRendererRequest 
-} from './AdRendererInterface'
-import {Option} from '../../../utils/index';
+  AdRendererRequest, ClickUrlInfo
+} from "./AdRendererInterface";
+import { Option } from "../../../utils/index";
+import { generateEncodedClickUrl } from "../utils/index";
 
 export class AdRendererBaseInstanceContext {
   properties: PropertiesWrapper;
@@ -72,12 +73,8 @@ export abstract class AdRendererBasePlugin<
     return creativePropertyResponse.data;
   }
 
-  getEncodedClickUrl(redirectUrls: string[]): string {
-    let urls = redirectUrls.slice(0);
-    return urls.reduceRight(
-      (acc, current) => current + encodeURIComponent(acc),
-      ""
-    );
+  getEncodedClickUrl(redirectUrls: ClickUrlInfo[]) {
+    return generateEncodedClickUrl(redirectUrls);
   }
 
   // Method to build an instance context

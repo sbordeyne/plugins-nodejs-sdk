@@ -39,9 +39,12 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
       adRenderRequest.user_agent_id
     );
 
-    const redirectUrls = adRenderRequest.click_urls;
+    const redirectUrls = adRenderRequest.click_urls_info;
     if (instanceContext.creative_click_url) {
-      redirectUrls.push(instanceContext.creative_click_url);
+      redirectUrls.push({
+        url: instanceContext.creative_click_url,
+        escapes: 0
+      });
     }
 
     const clickUrl = this.getEncodedClickUrl(redirectUrls);
@@ -55,7 +58,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
       RECOMMENDATIONS: recommendations,
       private: {
         clickableContents: [],
-        redirectUrls: adRenderRequest.click_urls
+        redirectUrls: adRenderRequest.click_urls_info
       },
       REQUEST: adRenderRequest,
       ORGANISATION_ID: instanceContext.displayAd.organisation_id, // Hack, it should come from the AdRendererRequest
