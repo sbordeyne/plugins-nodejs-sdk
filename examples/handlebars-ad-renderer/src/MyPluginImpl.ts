@@ -43,7 +43,7 @@ export class MyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     if (instanceContext.creative_click_url) {
       redirectUrls.push({
         url: instanceContext.creative_click_url,
-        encoding_count: 0
+        redirect_count: 0
       });
     }
 

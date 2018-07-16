@@ -35,5 +35,5 @@ export interface AdRendererPluginResponse {
 
 export interface ClickUrlInfo {
   url: string;
-  encoding_count: number;
+  redirect_count: number;
 }
