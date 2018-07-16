@@ -4,6 +4,7 @@
 
 - Rename the `recommenderProperties` field to `properties` for Recommender support
 - Change the type of `properties` in the Instance Context of Audience Feed & Recommender from `PluginProperty[]` to `PropertiesWrapper`
+- Replace `click_url` field with `click_urls_info` in AdRendererRequest, which contains the property `redirect_count` in addition to `url` for each entry.
 
 # 0.5.0 - 2018-07-03
 
