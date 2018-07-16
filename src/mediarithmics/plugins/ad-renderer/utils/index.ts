@@ -7,16 +7,16 @@ export function generateEncodedClickUrl(redirectUrls: ClickUrlInfo[]) {
     (acc, current, index) => {
       if (index == urls.length - 1)
         return current.url;
-      return current.url + encodeUrlInfo(acc, current.escapes);
+      return current.url + encodeUrlInfo(acc, current.encoding_count);
     },
     ''
   );
 }
 
-function encodeUrlInfo(url: string, escapes: number) {
-  while (escapes > 0) {
+function encodeUrlInfo(url: string, encodingCount: number) {
+  while (encodingCount > 0) {
     url = encodeURIComponent(url);
-    escapes--;
+    encodingCount--;
   }
   return url;
 }

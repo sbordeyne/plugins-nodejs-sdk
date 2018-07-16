@@ -73,7 +73,7 @@ const encodeClickUrl = () => (redirectUrls: ClickUrlInfo[], clickUrl: string) =>
   let urls = redirectUrls.slice(0);
   urls.push({
     url: clickUrl,
-    escapes: 0
+    encoding_count: 0
   });
 
   return generateEncodedClickUrl(urls);
