@@ -244,7 +244,7 @@ With the 0.3.0+, there are now 2 Handlebars engine:
 - RecommendationsHandlebarsEngine: to be used when building a 'recommendation' Ad Renderer
 
 ## Migration from 0.5.x to 0.6.x
-* `click_url` property of `AdRendererRequest` is replaced with `click_urls_info`.
+* `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
 ```js
 AdRendererBasePlugin.getEncodedClickUrl(redirectUrls: string[])
 ```
