@@ -15,6 +15,8 @@ import {
   ItemProposal
 } from "../../mediarithmics/api/datamart";
 import { ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
+import {ClickUrlInfo} from "../../mediarithmics/plugins/ad-renderer/base/AdRendererInterface";
+import {generateEncodedClickUrl} from "../../mediarithmics/plugins/ad-renderer/utils/index";
 
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {
@@ -44,7 +46,7 @@ export interface HandlebarsRootContext extends URLHandlebarsRootContext {
 export interface RecommendationsHandlebarsRootContext
   extends HandlebarsRootContext {
   private: {
-    redirectUrls: string[];
+    redirectUrls: ClickUrlInfo[];
     clickableContents: ClickableContent[];
   };
   RECOMMENDATIONS: ItemProposal[];
@@ -67,13 +69,14 @@ function formatPrice(price: string, pattern: string) {
   return number.format(pattern);
 }
 
-const encodeClickUrl = () => (redirectUrls: string[], clickUrl: string) => {
+const encodeClickUrl = () => (redirectUrls: ClickUrlInfo[], clickUrl: string) => {
   let urls = redirectUrls.slice(0);
-  urls.push(clickUrl);
+  urls.push({
+    url: clickUrl,
+    redirect_count: 0
+  });
 
-  return urls.reduceRight((acc: string, current: string) => {
-    return current + encodeURIComponent(acc);
-  }, "");
+  return generateEncodedClickUrl(urls);
 };
 
 const placeHolder = "{{MICS_AD_CONTENT_ID}}";
@@ -94,11 +97,13 @@ const encodeRecoClickUrlHelper = () => (
   });
 
   // recommendation.url replace placeHolder by idx
-  const filledRedirectUrls = rootContext.private.redirectUrls.map(
-    (url: string) => {
-      const url1 = _.replace(url, placeHolder, idx.toString());
+  const filledRedirectUrls: ClickUrlInfo[] = rootContext.private.redirectUrls.map(
+    (clickUrlInfo: ClickUrlInfo) => {
+      const cloned = _.clone(clickUrlInfo);
+      const url1 = _.replace(cloned.url, placeHolder, idx.toString());
       const url2 = _.replace(url1, uriEncodePlaceHolder, idx.toString());
-      return _.replace(url2, doubleEncodedUriPlaceHolder, idx.toString());
+      cloned.url = _.replace(url2, doubleEncodedUriPlaceHolder, idx.toString());
+      return cloned;
     }
   );
 
