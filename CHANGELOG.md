@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.6.0
+# 0.6.0 - 2018-07-19
 
 - Rename the `recommenderProperties` field to `properties` for Recommender support
 - Change the type of `properties` in the Instance Context of Audience Feed & Recommender from `PluginProperty[]` to `PropertiesWrapper`
