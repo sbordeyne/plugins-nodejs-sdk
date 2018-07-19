@@ -148,6 +148,36 @@ The Plugin examples provided with the SDK are all tested and you can read their 
 
 Testing Plugins is highly recommended.
 
+## Migration from 0.5.x to 0.6.x
+* `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
+```js
+AdRendererBasePlugin.getEncodedClickUrl(redirectUrls: string[])
+```
+is now 
+```js
+AdRendererBasePlugin.getEncodedClickUrl(clickUrlInfos: ClickUrlInfo[])
+```
+To push a url in the redirect chain and build an encoded url, for example
+```js
+  if (instanceContext.creative_click_url) {
+      adRenderRequest.click_urls.push(instanceContext.creative_click_url);
+   }
+   
+  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls);
+```
+
+should become
+
+```js
+ if (instanceContext.creative_click_url) {
+    adRenderRequest.click_urls_info.push({
+    	url: instanceContext.creative_click_url,
+    	redirect_count: 0
+    });
+ }
+  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls_info);
+```
+
 ## Migration from 0.4.x to 0.5.x
 
 The 0.5.x release of the Plugin SDK is mainly aiming at simplifying the use of the "Templating" API.
@@ -243,32 +273,3 @@ With the 0.3.0+, there are now 2 Handlebars engine:
 - HandlebarsEngine: to be used when building an AdRenderer without recommendations
 - RecommendationsHandlebarsEngine: to be used when building a 'recommendation' Ad Renderer
 
-## Migration from 0.5.x to 0.6.x
-* `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
-```js
-AdRendererBasePlugin.getEncodedClickUrl(redirectUrls: string[])
-```
-is now 
-```js
-AdRendererBasePlugin.getEncodedClickUrl(clickUrlInfos: ClickUrlInfo[])
-```
-To push a url in the redirect chain and build an encoded url, for example
-```js
-  if (instanceContext.creative_click_url) {
-      adRenderRequest.click_urls.push(instanceContext.creative_click_url);
-   }
-   
-  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls);
-```
-
-should become
-
-```js
- if (instanceContext.creative_click_url) {
-    adRenderRequest.click_urls_info.push({
-    	url: instanceContext.creative_click_url,
-    	redirect_count: 0
-    });
- }
-  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls_info);
-```
