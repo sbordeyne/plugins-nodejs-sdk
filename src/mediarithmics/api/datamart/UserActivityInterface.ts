@@ -16,8 +16,8 @@ export type UserActivitySessionStatusEnum =
 export type LocationSourceEnum = 'GPS' | 'IP' | 'OTHER';
 
 export interface EmailHash {
-    hash: string;
-    email?: string;
+    $hash: string;
+    $email?: string;
 }
 
 export interface UserActivity

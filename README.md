@@ -1,8 +1,21 @@
+
+#### Note about 0.6.0 -> 0.6.1
+
+*Warning:* We introduced a change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.6.1` version of the SDK.
+
+If you are using the Typescript associated types for an `Activity Analyzer`, this is a breaking change. 
+However, if you were using this SDK:
+- for other plugin type
+- as pure JS (e.g. without using the Typescript definition)
+then you're not impacted at all.
+
+Breaking changes released through a minor version is not a best practise, but due to how hard the bug associated with this change is to spot by users, we prefered to deliver the fix ASAP.
+
 # Plugin SDK
 
 This is the mediarithmics SDK for building plugins in Typescript or raw Node.js easily. As this package includes Typescript interfaces, we recommend that you use it with Typescript to ease your development.
 
-It covers (as of v0.3.0):
+It covers (as of v0.6.0):
 - AdRenderer (incl. Templating systems + recommendations)
 - Activity Analyzer
 - Email Renderer
@@ -147,6 +160,32 @@ This SDK provides you a 'TestingPluginRunner' that you can use to mock the trans
 The Plugin examples provided with the SDK are all tested and you can read their tests in order to build your own tests.
 
 Testing Plugins is highly recommended.
+
+## Migration from 0.6.0 to 0.6.1+
+
+We introduced a non retrocompatible change between 0.6.0 and 0.6.1 SDK version to fix a bug. 
+
+We preferred to break our API quickly even if it would mean breaking user implementation based on the SDK in order to propagate the fix as quickly as possible (the bug is hard to spot, and we prefer to reveal it even if it's painful for our users rather than hiding it).
+
+The `UserActivity.$email_hash` interface (`EmailHash`) was updated from:
+
+```js
+export interface EmailHash {
+    hash: string;
+    email?: string;
+}
+```
+
+to
+
+```js
+export interface EmailHash {
+    $hash: string;
+    $email?: string;
+}
+```
+
+Hence, the fields name were updated; if you were referencing them in your code, you have to refactor it by prepending a `$`.
 
 ## Migration from 0.5.x to 0.6.x
 * `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
