@@ -1,15 +1,9 @@
 
-#### Note about 0.6.0 -> 0.6.1
+#### Note about 0.6.0
 
-*Warning:* We introduced a change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.6.1` version of the SDK.
+*Warning:* We introduced a breaking change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.7.0.` version of the SDK. This change is fixing a bug that was, in the end, ignoring all the Email hash related processing (User matching, user deduplication, etc.) on mediarithmics platform.
 
-If you are using the Typescript associated types for an `Activity Analyzer`, this is a breaking change. 
-However, if you were using this SDK:
-- for other plugin type
-- as pure JS (e.g. without using the Typescript definition)
-then you're not impacted at all.
-
-Breaking changes released through a minor version is not a best practise, but due to how hard the bug associated with this change is to spot by users, we prefered to deliver the fix ASAP.
+If you are using the Typescript associated types for an `Activity Analyzer`, we recommend you to upgrade to `v0.7.0+` ASAP. The `v0.6.0` was deprecated on NPM repository.
 
 # Plugin SDK
 
@@ -161,11 +155,9 @@ The Plugin examples provided with the SDK are all tested and you can read their 
 
 Testing Plugins is highly recommended.
 
-## Migration from 0.6.0 to 0.6.1+
+## Migration from 0.6.0 to 0.7.0+
 
-We introduced a non retrocompatible change between 0.6.0 and 0.6.1 SDK version to fix a bug. 
-
-We preferred to break our API quickly even if it would mean breaking user implementation based on the SDK in order to propagate the fix as quickly as possible (the bug is hard to spot, and we prefer to reveal it even if it's painful for our users rather than hiding it).
+We introduced a non retrocompatible change between 0.6.0 and 0.7.0 SDK version to fix a bug. 
 
 The `UserActivity.$email_hash` interface (`EmailHash`) was updated from:
 
