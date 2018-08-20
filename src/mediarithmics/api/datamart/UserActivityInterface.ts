@@ -29,7 +29,7 @@ export interface UserActivity
     $ttl?: number;
     $user_agent_id?: string;
     $user_account_id?: string;
-    $compartment_id?: number;
+    $compartment_id?: string;
     $email_hash?: EmailHash;
     $origin?: UserActivityOrigin;
     $location?: UserActivityLocation;
