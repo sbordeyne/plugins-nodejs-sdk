@@ -1,8 +1,15 @@
+
+#### Note about 0.6.0
+
+*Warning:* We introduced a breaking change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.7.0.` version of the SDK. This change is fixing a bug that was, in the end, ignoring all the Email hash related processing (User matching, user deduplication, etc.) on mediarithmics platform.
+
+If you are using the Typescript associated types for an `Activity Analyzer`, we recommend you to upgrade to `v0.7.0+` ASAP. The `v0.6.0` was deprecated on NPM repository.
+
 # Plugin SDK
 
 This is the mediarithmics SDK for building plugins in Typescript or raw Node.js easily. As this package includes Typescript interfaces, we recommend that you use it with Typescript to ease your development.
 
-It covers (as of v0.3.0):
+It covers (as of v0.6.0):
 - AdRenderer (incl. Templating systems + recommendations)
 - Activity Analyzer
 - Email Renderer
@@ -147,6 +154,30 @@ This SDK provides you a 'TestingPluginRunner' that you can use to mock the trans
 The Plugin examples provided with the SDK are all tested and you can read their tests in order to build your own tests.
 
 Testing Plugins is highly recommended.
+
+## Migration from 0.6.0 to 0.7.0+
+
+We introduced a non retrocompatible change between 0.6.0 and 0.7.0 SDK version to fix a bug. 
+
+The `UserActivity.$email_hash` interface (`EmailHash`) was updated from:
+
+```js
+export interface EmailHash {
+    hash: string;
+    email?: string;
+}
+```
+
+to
+
+```js
+export interface EmailHash {
+    $hash: string;
+    $email?: string;
+}
+```
+
+Hence, the fields name were updated; if you were referencing them in your code, you have to refactor it by prepending a `$`.
 
 ## Migration from 0.5.x to 0.6.x
 * `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
