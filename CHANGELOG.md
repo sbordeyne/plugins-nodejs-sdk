@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.7.0 - 2018-08-21
+
+- Update compartment_id type from number to string
+- Fix interface UserActivity.EmailHash
+
 # 0.6.0 - 2018-07-19
 
 - Rename the `recommenderProperties` field to `properties` for Recommender support
