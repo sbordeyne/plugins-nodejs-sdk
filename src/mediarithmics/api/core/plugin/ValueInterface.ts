@@ -4,6 +4,14 @@ export interface AssetFilePropertyResource {
   file_path?: string;
 }
 
+export interface AssetFolderPropertyResource {
+  original_name?: string;
+  asset_id?: string;
+  root_folder_id?: string;
+  parent_id?: string;
+  path?: string;
+}
+
 export interface DataFilePropertyResource {
   uri?: string;
   last_modified?: number;

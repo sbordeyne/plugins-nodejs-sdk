@@ -1,5 +1,6 @@
 import {
   AssetFilePropertyResource,
+  AssetFolderPropertyResource,
   DataFilePropertyResource,
   UrlPropertyResource,
   StringPropertyResource,
@@ -23,8 +24,9 @@ export interface PluginPropertyResponse {
   count: number;
 }
 
-export type PluginProperty =
-  AssetFileProperty
+export type PluginProperty  =
+    AssetFileProperty
+  | AssetFolderProperty
   | DataFileProperty
   | UrlProperty
   | StringProperty
@@ -42,6 +44,7 @@ export type PluginProperty =
 
 export type PropertyType =
   'ASSET'
+  | 'ASSET_FOLDER'
   | 'DATA_FILE'
   | 'URL'
   | 'STRING'
@@ -70,6 +73,12 @@ export interface AssetFileProperty
   extends AbstractProperty {
   property_type: 'ASSET';
   value: AssetFilePropertyResource;
+}
+
+export interface AssetFolderProperty
+extends AbstractProperty {
+property_type: 'ASSET_FOLDER';
+value: AssetFolderPropertyResource;
 }
 
 export interface DataFileProperty
