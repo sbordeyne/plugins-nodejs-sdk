@@ -10,7 +10,7 @@ export interface Creative {
     id: string;
     organisation_id: string;
     name: string;
-    technical_name: string;
+    technical_name?: string;
     archived: boolean;
     editor_version_id: string;
     editor_version_value: string;

@@ -105,19 +105,8 @@ const creativePropertiesResponse: core.PluginPropertyResponse = {
   count: 8
 };
 
-function buildRpMockup(templateContent: string): sinon.SinonStub {
+function buildRpMockup(): sinon.SinonStub {
   const rpMockup: sinon.SinonStub = sinon.stub();
-
-  rpMockup
-    .withArgs(
-      sinon.match.has(
-        "uri",
-        sinon.match(function(value: string) {
-          return value.match(/\/v1\/data_file\/data/) !== null;
-        })
-      )
-    )
-    .returns(templateContent);
 
   rpMockup
     .withArgs(
@@ -185,9 +174,7 @@ describe("Test Example Handlebar Ad Renderer", function() {
   it("Check overall execution of dummy handlebar adRenderer", function(done) {
     // All the magic is here
 
-    // Template File stub
-    const templateContent: string = `Hello World!`;
-    const rpMockup = buildRpMockup(templateContent);
+    const rpMockup = buildRpMockup();
 
     const plugin = new MySimpleAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
