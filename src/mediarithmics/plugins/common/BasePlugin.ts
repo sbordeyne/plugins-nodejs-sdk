@@ -14,6 +14,7 @@ import {
   PluginProperty,
   PropertyType,
   AssetFileProperty,
+  AssetFolderProperty,
   asAssetFileProperty,
   DataFileProperty,
   asDataFileProperty,
@@ -35,7 +36,7 @@ import {
 
 import { Index, Option, flatMap, obfuscateString } from '../../utils';
 import { normalizeArray } from '../../utils/Normalizer';
-import { DataListResponse, Compartment } from "../../";
+import { DataListResponse, Compartment, asAssetFolderProperty } from "../../";
 import { Datamart } from "../../api/core/datamart/Datamart";
 
 export interface InitUpdateResponse {
@@ -69,8 +70,13 @@ export class PropertiesWrapper {
     _.find(this.values, p => p.property_type === typeName);
 
   findAssetFileProperty = (key?: string): Option<AssetFileProperty> => {
-    const p = key ? this.get(key) : this.ofType('ASSET');
+    const p = key ? this.get(key) : this.ofType('ASSET') || this.ofType('ASSET_FILE');
     return flatMap(p, asAssetFileProperty);
+  };
+
+  findAssetFolderProperty = (key?: string): Option<AssetFolderProperty> => {
+    const p = key ? this.get(key) : this.ofType('ASSET_FOLDER');
+    return flatMap(p, asAssetFolderProperty);
   };
 
   findDataFileProperty = (key?: string): Option<DataFileProperty> => {

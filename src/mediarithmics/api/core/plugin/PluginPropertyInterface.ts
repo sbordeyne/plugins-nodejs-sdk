@@ -69,7 +69,7 @@ export interface AbstractProperty {
 }
 
 export interface AssetFileProperty extends AbstractProperty {
-  property_type: "ASSET_FILE";
+  property_type: "ASSET_FILE" | "ASSET";
   value: AssetFilePropertyResource;
 }
 
@@ -150,7 +150,7 @@ export function asBooleanProperty(p: PluginProperty): Option<BooleanProperty> {
 export function asAssetFileProperty(
   p: PluginProperty
 ): Option<AssetFileProperty> {
-  return (p.property_type === "ASSET_FILE" || p.property_type === "ASSET")  ? p : undefined;
+  return ( (p.property_type === "ASSET_FILE") || (p.property_type === "ASSET") )  ? p : undefined;
 }
 
 export function asAssetFolderProperty(
