@@ -14,6 +14,7 @@ import {
   PluginProperty,
   PropertyType,
   AssetFileProperty,
+  asAssetFileProperty,
   AssetFolderProperty,
   asAssetFolderProperty,
   DataFileProperty,
