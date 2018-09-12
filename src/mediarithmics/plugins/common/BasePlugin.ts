@@ -15,6 +15,7 @@ import {
   PropertyType,
   AssetFileProperty,
   AssetFolderProperty,
+  asAssetFolderProperty,
   DataFileProperty,
   asDataFileProperty,
   AdLayoutProperty,
@@ -35,7 +36,7 @@ import {
 
 import { Index, Option, flatMap, obfuscateString } from '../../utils';
 import { normalizeArray } from '../../utils/Normalizer';
-import { DataListResponse, Compartment, asAssetFolderProperty } from "../../";
+import { DataListResponse, Compartment } from "../../";
 import { Datamart } from "../../api/core/datamart/Datamart";
 
 export interface InitUpdateResponse {
