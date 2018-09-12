@@ -15,7 +15,6 @@ import {
   PropertyType,
   AssetFileProperty,
   AssetFolderProperty,
-  asAssetFileProperty,
   DataFileProperty,
   asDataFileProperty,
   AdLayoutProperty,
