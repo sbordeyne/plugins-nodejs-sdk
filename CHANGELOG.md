@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.1 - 2018-10-04
+
+- Support of new Plugin Properties types: `ASSET_FILE` & `ASSET_FOLDER`
+
 # 0.7.0 - 2018-08-21
 
 - Update compartment_id type from number to string
