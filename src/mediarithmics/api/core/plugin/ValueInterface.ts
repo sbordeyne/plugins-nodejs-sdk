@@ -1,7 +1,15 @@
 export interface AssetFilePropertyResource {
   original_file_name?: string;
+  original_name?: string;
   asset_id?: string;
   file_path?: string;
+  file?: string;
+}
+
+export interface AssetFolderPropertyResource {
+  original_name?: string;
+  asset_id?: string;
+  path?: string;
 }
 
 export interface DataFilePropertyResource {

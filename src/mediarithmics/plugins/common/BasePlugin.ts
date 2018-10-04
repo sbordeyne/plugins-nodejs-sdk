@@ -15,6 +15,8 @@ import {
   PropertyType,
   AssetFileProperty,
   asAssetFileProperty,
+  AssetFolderProperty,
+  asAssetFolderProperty,
   DataFileProperty,
   asDataFileProperty,
   AdLayoutProperty,
@@ -69,8 +71,13 @@ export class PropertiesWrapper {
     _.find(this.values, p => p.property_type === typeName);
 
   findAssetFileProperty = (key?: string): Option<AssetFileProperty> => {
-    const p = key ? this.get(key) : this.ofType('ASSET');
+    const p = key ? this.get(key) : this.ofType('ASSET') || this.ofType('ASSET_FILE');
     return flatMap(p, asAssetFileProperty);
+  };
+
+  findAssetFolderProperty = (key?: string): Option<AssetFolderProperty> => {
+    const p = key ? this.get(key) : this.ofType('ASSET_FOLDER');
+    return flatMap(p, asAssetFolderProperty);
   };
 
   findDataFileProperty = (key?: string): Option<DataFileProperty> => {
