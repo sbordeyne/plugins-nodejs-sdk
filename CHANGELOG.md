@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.2 - 2018-10-16
+
+- Fix a bug concerning Audience Feed support: we were improperly returning `statusCode: 200` even when the Plugin implementation was returning `status: error` in its response.
+
 # 0.7.1 - 2018-10-04
 
 - Support of new Plugin Properties types: `ASSET_FILE` & `ASSET_FOLDER`

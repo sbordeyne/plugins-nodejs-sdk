@@ -273,7 +273,19 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
                         pluginResponse.message = response.message;
                     }
 
-                    return res.status(200).send(JSON.stringify(pluginResponse));
+                    let statusCode: number;
+                    switch (response.status) {
+                        case 'ok':
+                            statusCode = 200;
+                            break;
+                        case 'error':
+                            statusCode = 500;
+                            break;
+                        default:
+                            statusCode = 500;
+                    }
+
+                    return res.status(statusCode).send(JSON.stringify(pluginResponse));
                 } catch (error) {
                     this.logger.error(
                         `Something bad happened : ${error.message} - ${error.stack}`
