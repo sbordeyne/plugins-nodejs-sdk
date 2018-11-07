@@ -494,14 +494,14 @@ export abstract class BasePlugin {
 
     this.outboundPlatformUrl = `http://${this.gatewayHost}:${this.gatewayPort}`;
 
-    const proxyHost = process.env.EXTERNAL_SERVICE_PROXY;
+    const proxyHost = process.env.EXTERNAL_SERVICE_PROXY_HOST;
     if (proxyHost) {
       this.proxyHost = proxyHost;
     } else {
       this.proxyHost = "plugin-proxy.platform";
     }
 
-    const proxyPort = process.env.EXTERNAL_SERVICE_PROXY;
+    const proxyPort = process.env.EXTERNAL_SERVICE_PROXY_PORT;
     if (proxyPort) {
       this.proxyPort = parseInt(proxyPort);
     } else {
