@@ -160,7 +160,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
                     this.logger.error(
                         `Something bad happened : ${error.message} - ${error.stack}`
                     );
-                    return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
+                    return res.status(500).send({status: 'error', message: `${error.message}`});
                 }
             }
         );
@@ -225,7 +225,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
                     this.logger.error(
                         `Something bad happened : ${error.message} - ${error.stack}`
                     );
-                    return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
+                    return res.status(500).send({status: 'error', message: `${error.message}`});
                 }
             }
         );
@@ -290,7 +290,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
                     this.logger.error(
                         `Something bad happened : ${error.message} - ${error.stack}`
                     );
-                    return res.status(500).send({status: 'error', message: `${error.message}\n ${error.stack}`});
+                    return res.status(500).send({status: 'error', message: `${error.message}`});
                 }
             }
         );
