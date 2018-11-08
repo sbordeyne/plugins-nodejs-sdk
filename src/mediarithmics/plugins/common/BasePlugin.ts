@@ -498,7 +498,7 @@ export abstract class BasePlugin {
     if (proxyHost) {
       this.proxyHost = proxyHost;
     } else {
-      this.proxyHost = "plugin-proxy.platform";
+      this.proxyHost = "plugin-gateway.platform";
     }
 
     const proxyPort = process.env.EXTERNAL_SERVICE_PROXY_PORT;
