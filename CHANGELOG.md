@@ -1,5 +1,10 @@
 # Changelog
 
+# 0.7.3 - Unreleased
+
+- Remove stack trace from messages when returning an error in `AudienceFeedConnectorBasePlugin`
+- Add proxy url configuration with environment variables, by default it use `http://plugin-gateway.platform:8081`
+
 # 0.7.2 - 2018-10-17
 
 - Fix a bug concerning Audience Feed support: we were improperly returning `statusCode: 200` even when the Plugin implementation was returning `status: error` in its response.
