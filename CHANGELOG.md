@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.3 - Unreleased
+# 0.7.3 - 2018-11-09
 
 - Remove stack trace from messages when returning an error in `AudienceFeedConnectorBasePlugin`
 - Add proxy url configuration with environment variables, by default it use `http://plugin-gateway.platform:8081`
