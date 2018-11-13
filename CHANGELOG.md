@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.4 - Unreleased
+# 0.7.4 - 2018-11-13
 
 - Fix undefined port proxy url
 
