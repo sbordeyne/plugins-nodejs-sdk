@@ -508,7 +508,7 @@ export abstract class BasePlugin {
       this.proxyPort = 8081;
     }
 
-    this.proxyUrl = `http://${this.proxyHost}:${this.proxyUrl}`;
+    this.proxyUrl = `http://${this.proxyHost}:${this.proxyPort}`;
 
     this.app = express();
 
