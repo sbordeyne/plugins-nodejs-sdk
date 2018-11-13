@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.4 - Unreleased
+
+- Fix undefined port proxy url
+
 # 0.7.3 - 2018-11-09
 
 - Remove stack trace from messages when returning an error in `AudienceFeedConnectorBasePlugin`
