@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.5 - 2019-XX-XX
+
+- Fix Handlebars typescript declaration conflicts
+
 # 0.7.4 - 2018-11-13
 
 - Fix undefined port proxy url
