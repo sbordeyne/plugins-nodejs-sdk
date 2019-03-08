@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.5 - 2019-XX-XX
+# 0.7.5 - 2019-03-08
 
 - Fix Handlebars typescript declaration conflicts
 
