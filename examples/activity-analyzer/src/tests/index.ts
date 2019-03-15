@@ -22,11 +22,11 @@ describe("Test Example Activity Analyzer", function () {
         status: "ok"
     };
 
-    const itFactory = helpers.itFactory(new MyActivityAnalyzerPlugin(), activityAnalyzerProperties);
-
-    itFactory(
-        "Check behavior of dummy activity analyzer",
-        require(`${process.cwd()}/src/tests/activity_input`),
-        require(`${process.cwd()}/src/tests/activity_output`),
-    );
+    helpers.itFactory({
+        name: "Check behavior of dummy activity analyzer",
+        plugin: new MyActivityAnalyzerPlugin(),
+        property: activityAnalyzerProperties,
+        input: require(`${process.cwd()}/src/tests/activity_input`),
+        output: require(`${process.cwd()}/src/tests/activity_output`)
+    });
 });
