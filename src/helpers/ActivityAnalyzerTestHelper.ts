@@ -23,9 +23,9 @@ const activityAnalyzer: core.ActivityAnalyzerResponse = {
 
 const rpMockupGlobal: sinon.SinonStub = sinon.stub();
 
-const mockApi = (uriPattern: RegExp): SinonStub => {
+const mockApi = (urlPatterrn: RegExp): SinonStub => {
     return rpMockupGlobal
-        .withArgs(sinon.match.has('uri', sinon.match((value: string) => value.match(uriPattern) !== null)))
+        .withArgs(sinon.match.has('uri', sinon.match((value: string) => value.match(urlPatterrn) !== null)))
 };
 
 mockApi(/\/v1\/activity_analyzers\/(.){1,10}/).returns(activityAnalyzer);
@@ -39,6 +39,7 @@ const itFactory = (
         const rpPostStub = sinon.stub(rp, 'post').returns({});
         mockApi(/\/v1\/activity_analyzers\/(.){1,10}\/properties/).returns(property);
 
+        // All the magic is here
         const runner = new core.TestingPluginRunner(plugin, rpMockupGlobal);
 
         request(runner.plugin.app)
