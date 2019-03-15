@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.6 - 2019-XX-XX
+
+- Expose new helper method `itFactory` used to test an Activity Analyzer plugin.
+
 # 0.7.5 - 2019-03-08
 
 - Fix Handlebars typescript declaration conflicts
