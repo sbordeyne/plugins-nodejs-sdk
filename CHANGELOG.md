@@ -2,6 +2,10 @@
 
 # 0.7.6 - 2019-XX-XX
 
+- Expose new helper method `itFactory` used to test an Activity Analyzer plugin.
+
+# 0.7.6 - 2019-XX-XX
+
 - Add variability in the instance context refresh interval to avoid 'burst' on the Gateway API
 - Change the default refresh interval from 2 minutes to 10 minutes
 
