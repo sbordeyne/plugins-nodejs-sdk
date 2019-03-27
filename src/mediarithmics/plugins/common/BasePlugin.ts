@@ -124,7 +124,8 @@ export class PropertiesWrapper {
 export abstract class BasePlugin {
   multiThread: boolean = false;
 
-  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 120000;
+  // Default cache is now 10 min to give some breathing to the Gateway
+  INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 600000;
 
   pluginCache: any;
 
@@ -143,6 +144,12 @@ export abstract class BasePlugin {
   _transport: any = rp;
 
   enableThrottling: boolean = false;// Log level update implementation
+
+  // The idea here is to add a random part in the instance cache expiration -> we add +0-10% variablity
+  // The objective is to stop having 'synchronized' instance context re-build that are putting some stress on the gateway due to burst of API calls
+  getInstanceContextCacheExpiration() {
+    return this.INSTANCE_CONTEXT_CACHE_EXPIRATION * (1 + 0.1 * Math.random());
+  }
 
   onLogLevelUpdate(level: string) {
     const logLevel = level.toLowerCase();

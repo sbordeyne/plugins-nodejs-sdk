@@ -174,7 +174,7 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
                 this.instanceContextBuilder(
                   bidOptimizerRequest.campaign_info.bid_optimizer_id
                 ),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
               );
             } // We init the specific route to listen for bid decisions requests
 

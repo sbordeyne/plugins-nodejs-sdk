@@ -65,7 +65,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
       this.pluginCache.put(
         emailRouterId,
         this.instanceContextBuilder(emailRouterId),
-        this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+        this.getInstanceContextCacheExpiration()
       );
     }
 
@@ -149,7 +149,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             this.pluginCache.put(
               emailCheckRequest.email_router_id,
               this.instanceContextBuilder(emailCheckRequest.email_router_id),
-              this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+              this.getInstanceContextCacheExpiration()
             );
           }
 

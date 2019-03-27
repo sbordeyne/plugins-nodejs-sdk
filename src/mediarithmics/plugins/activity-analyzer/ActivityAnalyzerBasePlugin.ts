@@ -130,7 +130,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
                 this.instanceContextBuilder(
                   activityAnalyzerRequest.activity_analyzer_id
                 ),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
               );
             }
 

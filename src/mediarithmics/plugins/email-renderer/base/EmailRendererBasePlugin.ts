@@ -109,7 +109,7 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
                   emailRenderRequest.creative_id,
                   forceReload
                 ),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
               );
             }
 

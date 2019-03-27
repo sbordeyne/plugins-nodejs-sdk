@@ -124,7 +124,7 @@ export abstract class RecommenderPlugin extends BasePlugin {
                 this.instanceContextBuilder(
                   recommenderRequest.recommender_id
                 ),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
               );
             }
 

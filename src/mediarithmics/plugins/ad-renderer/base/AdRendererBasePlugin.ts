@@ -140,7 +140,7 @@ export abstract class AdRendererBasePlugin<
               this.pluginCache.put(
                 adRendererRequest.creative_id,
                 this.instanceContextBuilder(adRendererRequest.creative_id, forceReload),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
               );
             }
 
