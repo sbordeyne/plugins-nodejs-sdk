@@ -125,6 +125,9 @@ export abstract class BasePlugin {
   multiThread: boolean = false;
 
   // Default cache is now 10 min to give some breathing to the Gateway
+  // Note: This will be private or completly remove in the next major release as a breaking change
+  // TODO: in 0.8.x+, make this private or remove it completly (this should no longer be overriden in plugin impl., 
+  // or we should implement a minimum threshold pattern)
   INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 600000;
 
   pluginCache: any;
