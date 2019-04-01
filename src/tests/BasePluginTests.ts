@@ -229,4 +229,24 @@ describe("Data File helper Tests", function() {
     });
 
   });
+
+});
+
+describe("Instance Context Expiration Tests", function() {
+
+  class MyFakePlugin extends core.BasePlugin {}
+
+  it("InstanceContextExpiration: Check Instance Context variability: should be less than 10%", function(
+    done
+  ) {
+
+    const plugin = new MyFakePlugin(false);
+
+    const refreshInterval = plugin.getInstanceContextCacheExpiration();
+
+    expect(refreshInterval).to.be.gte(plugin.INSTANCE_CONTEXT_CACHE_EXPIRATION);
+    expect(refreshInterval).to.be.lte(plugin.INSTANCE_CONTEXT_CACHE_EXPIRATION * 1.1);
+    done();
+  });
+
 });

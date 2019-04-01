@@ -111,7 +111,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             this.pluginCache.put(
                 feedId,
                 this.instanceContextBuilder(feedId),
-                this.INSTANCE_CONTEXT_CACHE_EXPIRATION
+                this.getInstanceContextCacheExpiration()
             );
         }
 
