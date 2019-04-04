@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.6 - 2019-XX-XX
+# 0.7.6 - 2019-04-04
 
 - Add variability in the instance context refresh interval to avoid 'burst' on the Gateway API
 - Change the default refresh interval from 2 minutes to 10 minutes
