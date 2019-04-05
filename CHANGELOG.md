@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.7 - 2019-XX-XX
+# 0.7.7 - 2019-04-05
 
 - Fix handlebars dependency issue
 
