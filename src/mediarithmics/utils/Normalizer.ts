@@ -18,7 +18,7 @@ import {Index} from './index';
 export function normalizeArray<T, K extends keyof T>(arr: Array<T>, key: K): Index<T> {
   if (!Array.isArray(arr)) throw new Error(`${arr} is not an array`);
   return arr.reduce((acc, object) => {
-      const keyValue = object[key].toString();
+      const keyValue = String(object[key]);
       return {
         ...acc,
         [keyValue]: object,

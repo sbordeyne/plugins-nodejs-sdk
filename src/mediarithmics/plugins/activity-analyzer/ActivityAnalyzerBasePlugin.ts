@@ -1,15 +1,10 @@
 import * as express from "express";
 import * as _ from "lodash";
-import * as cache from "memory-cache";
 
 import {
   BasePlugin,
   PropertiesWrapper
 } from '../common/BasePlugin';
-
-import { DataResponse } from '../../api/core/common/Response';
-
-import { UserActivity } from '../../api/datamart/UserActivityInterface';
 
 import { PluginProperty } from '../../api/core/plugin/PluginPropertyInterface'
 
