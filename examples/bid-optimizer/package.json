@@ -5,31 +5,31 @@
   "main": "build/index.js",
   "scripts": {
     "pretest": "npm run build",
-    "test": "mocha build/tests/*.js",
+    "test": "mocha build/tests/*.js --exit",
     "build": "tsc"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@mediarithmics/plugins-nodejs-sdk": "^0.7.5",
-    "@types/express": "^4.0.36",
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "lodash": "^4.17.4",
-    "winston": "^2.3.1"
+    "@mediarithmics/plugins-nodejs-sdk": "^0.7.7",
+    "@types/express": "^4.17.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "lodash": "^4.17.11",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.3",
+    "@types/chai": "^4.1.7",
     "@types/escape-html": "0.0.20",
-    "@types/mocha": "^2.2.41",
-    "@types/sinon": "^2.3.3",
-    "@types/supertest": "^2.0.3",
-    "@types/node": "^8.0.0",
-    "chai": "^4.1.1",
+    "@types/mocha": "^5.2.7",
+    "@types/sinon": "^7.0.13",
+    "@types/supertest": "^2.0.7",
+    "@types/node": "^12.0.10",
+    "chai": "^4.2.0",
     "escape-html": "^1.0.3",
-    "mocha": "^3.5.0",
-    "sinon": "^3.2.1",
-    "supertest": "^3.0.0",
-    "typescript": "^2.9.2"
+    "mocha": "^6.1.4",
+    "sinon": "^7.3.2",
+    "supertest": "^4.0.2",
+    "typescript": "^3.5.2"
   }
 }
