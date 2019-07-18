@@ -3,7 +3,6 @@ import * as request from "request";
 import * as rp from "request-promise-native";
 import * as winston from "winston";
 import * as bodyParser from "body-parser";
-import { Server } from "http";
 import * as cache from "memory-cache";
 import * as toobusy from "toobusy-js";
 import * as _ from "lodash";
@@ -141,7 +140,7 @@ export abstract class BasePlugin {
   proxyUrl: string;
 
   app: express.Application;
-  logger: winston.LoggerInstance;
+  logger: winston.Logger;
   credentials: Credentials;
 
   _transport: any = rp;
@@ -533,11 +532,9 @@ export abstract class BasePlugin {
     }
 
     this.app.use(bodyParser.json({type: "*/*", limit: "5mb"}));
-
-    this.logger = new winston.Logger({
-      transports: [new winston.transports.Console()],
-      level: "info"
-    });
+    
+    this.logger = winston.createLogger();
+    this.logger.add(new winston.transports.Console({level:"info"}));
 
     this.pluginCache = cache;
     this.pluginCache.clear();
