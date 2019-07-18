@@ -36,7 +36,6 @@ const itFactory = (
     logLevel: LogLevel = 'info'
 ) => (name: string, input: string, output: string) => {
     it(name, function (done) {
-        const rpPostStub = sinon.stub(rp, 'post').returns({});
         mockApi(/\/v1\/activity_analyzers\/(.){1,10}\/properties/).returns(property);
 
         const runner = new core.TestingPluginRunner(plugin, rpMockupGlobal);
@@ -66,7 +65,6 @@ const itFactory = (
 
         afterEach(function () {
             runner.plugin.pluginCache.clear();
-            rpPostStub.restore();
         });
     });
 };
