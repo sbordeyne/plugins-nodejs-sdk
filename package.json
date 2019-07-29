@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "handlebars": "^4.1.2",
     "jsesc": "^2.5.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "memory-cache": "^0.2.0",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
