@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.7.8 - 2019-XX-XX
+# 0.7.8 - 2019-07-29
 
 - Expose new helper method `itFactory` used to test an Activity Analyzer plugin.
 
