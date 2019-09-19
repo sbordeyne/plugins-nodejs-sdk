@@ -1,5 +1,9 @@
 # Changelog
 
+# Next 
+
+- Fix this.logger and /log_level routes that were broken since winston 3.x upgrade.
+
 # 0.7.8 - 2019-07-29
 
 - Expose new helper method `itFactory` used to test an Activity Analyzer plugin.
