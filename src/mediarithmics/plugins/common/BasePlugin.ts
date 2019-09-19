@@ -534,7 +534,7 @@ export abstract class BasePlugin {
     this.app.use(bodyParser.json({type: "*/*", limit: "5mb"}));
     
     this.logger = winston.createLogger();
-    this.logger.add(new winston.transports.Console({level:"info"}));
+    this.logger.add(new winston.transports.Console());
 
     this.pluginCache = cache;
     this.pluginCache.clear();
