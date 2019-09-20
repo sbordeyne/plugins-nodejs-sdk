@@ -1,6 +1,6 @@
 # Changelog
 
-# Next 
+# 0.7.9 - 2019-09-20
 
 - Fix this.logger and /log_level routes that were broken since winston 3.x upgrade.
 
