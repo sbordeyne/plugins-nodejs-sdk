@@ -1,8 +1,6 @@
 import 'mocha';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
-import {SinonStub} from 'sinon';
-import * as rp from 'request-promise-native';
 import {expect} from 'chai';
 import {ActivityAnalyzerPlugin} from '../mediarithmics';
 import {core} from '../index';
@@ -22,8 +20,7 @@ const activityAnalyzer: core.ActivityAnalyzerResponse = {
 };
 
 const rpMockupGlobal: sinon.SinonStub = sinon.stub();
-
-const mockApi = (uriPattern: RegExp): SinonStub => {
+const mockApi = (uriPattern: RegExp): sinon.SinonStub => {
     return rpMockupGlobal
         .withArgs(sinon.match.has('uri', sinon.match((value: string) => value.match(uriPattern) !== null)))
 };

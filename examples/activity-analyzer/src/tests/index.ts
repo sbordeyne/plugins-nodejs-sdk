@@ -3,6 +3,7 @@ import {core, helpers} from "@mediarithmics/plugins-nodejs-sdk";
 import {MyActivityAnalyzerPlugin} from "../MyPluginImpl";
 
 describe("Test Example Activity Analyzer", function () {
+
     const activityAnalyzerProperties: core.PluginPropertyResponse = {
         count: 1,
         data: [
@@ -23,6 +24,7 @@ describe("Test Example Activity Analyzer", function () {
     };
 
     const itFactory = helpers.itFactory(new MyActivityAnalyzerPlugin(), activityAnalyzerProperties);
+    helpers.mockApi(/\/v1\/activity_analyzers\/(.){1,10}\/properties/).returns(activityAnalyzerProperties);
 
     itFactory(
         "Check behavior of dummy activity analyzer",
