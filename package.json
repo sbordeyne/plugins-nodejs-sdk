@@ -1,6 +1,6 @@
 {
   "name": "@mediarithmics/plugins-nodejs-sdk",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "description": "This is the mediarithmics nodejs to help plugin developers bootstrapping their plugin without having to deal with most of the plugin boilerplate",
   "repository": "github:MEDIARITHMICS/plugins-nodejs-sdk",
   "main": "./lib/index.js",
@@ -51,6 +51,6 @@
     "supertest": "^4.0.2",
     "ts-node": "^8.5.4",
     "typedoc": "^0.15.3",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.3"
   }
 }
