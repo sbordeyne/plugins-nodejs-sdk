@@ -4,7 +4,7 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
-describe("Fetch analyzer API", () => {
+describe('Fetch analyzer API', () => {
   class MyFakeActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
     protected onActivityAnalysis(
       request: core.ActivityAnalyzerRequest,
@@ -19,7 +19,7 @@ describe("Fetch analyzer API", () => {
         .visit_analyzer_plugin_id}`;
 
       const response: core.ActivityAnalyzerPluginResponse = {
-        status: "ok",
+        status: 'ok',
         data: updatedActivity
       };
 
@@ -29,7 +29,7 @@ describe("Fetch analyzer API", () => {
 
   const rpMockup: sinon.SinonStub = sinon.stub().returns(
     new Promise((resolve, reject) => {
-      resolve("Yolo");
+      resolve('Yolo');
     })
   );
 
@@ -37,10 +37,10 @@ describe("Fetch analyzer API", () => {
   const plugin = new MyFakeActivityAnalyzerPlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that ActivityAnalyzerId is passed correctly in FetchActivityAnalyzer", function(
+  it('Check that ActivityAnalyzerId is passed correctly in FetchActivityAnalyzer', function (
     done
   ) {
-    const fakeActivityAnalyzerId = "42000000";
+    const fakeActivityAnalyzerId = '42000000';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeActivityAnalyzerPlugin).fetchActivityAnalyzer(fakeActivityAnalyzerId).then(() => {
@@ -51,10 +51,10 @@ describe("Fetch analyzer API", () => {
     });
   });
 
-  it("Check that ActivityAnalyzerId is passed correctly in FetchActivityAnalyzerProperties", function(
+  it('Check that ActivityAnalyzerId is passed correctly in FetchActivityAnalyzerProperties', function (
     done
   ) {
-    const fakeActivityAnalyzerId = "4255";
+    const fakeActivityAnalyzerId = '4255';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeActivityAnalyzerPlugin).fetchActivityAnalyzerProperties(fakeActivityAnalyzerId).then(() => {
@@ -71,9 +71,9 @@ describe("Fetch analyzer API", () => {
   });
 });
 
-describe("Activity Analysis API test", function() {
+describe('Activity Analysis API test', function () {
 
-let runner: core.TestingPluginRunner
+  let runner: core.TestingPluginRunner;
 
   class MyFakeSimpleActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
     protected onActivityAnalysis(
@@ -81,7 +81,7 @@ let runner: core.TestingPluginRunner
       instanceContext: core.ActivityAnalyzerBaseInstanceContext
     ) {
       const response: core.ActivityAnalyzerPluginResponse = {
-        status: "ok",
+        status: 'ok',
         data: request.activity
       };
       return Promise.resolve(response);
@@ -91,7 +91,7 @@ let runner: core.TestingPluginRunner
   // All the magic is here
   const plugin = new MyFakeSimpleActivityAnalyzerPlugin(false);
 
-  it("Check that the plugin is giving good results with a simple activityAnalysis handler", function(
+  it('Check that the plugin is giving good results with a simple activityAnalysis handler', function (
     done
   ) {
     const rpMockup = sinon.stub();
@@ -99,13 +99,13 @@ let runner: core.TestingPluginRunner
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
         const pluginInfo: core.DataResponse<core.ActivityAnalyzer> = {
-          status: "ok",
+          status: 'ok',
           data: {
-            id: "42",
-            organisation_id: "1001",
-            name: "Yolo",
-            group_id: "5445",
-            artifact_id: "5441",
+            id: '42',
+            organisation_id: '1001',
+            name: 'Yolo',
+            group_id: '5445',
+            artifact_id: '5441',
             visit_analyzer_plugin_id: 555777
           }
         };
@@ -115,16 +115,16 @@ let runner: core.TestingPluginRunner
     rpMockup.onCall(1).returns(
       new Promise((resolve, reject) => {
         const pluginInfo: core.PluginPropertyResponse = {
-          status: "ok",
+          status: 'ok',
           count: 45,
           data: [
             {
-              technical_name: "hello_world",
+              technical_name: 'hello_world',
               value: {
-                value: "Yay"
+                value: 'Yay'
               },
-              property_type: "STRING",
-              origin: "PLUGIN",
+              property_type: 'STRING',
+              origin: 'PLUGIN',
               writable: true,
               deletable: false
             }
@@ -134,12 +134,12 @@ let runner: core.TestingPluginRunner
       })
     );
 
-    runner = new core.TestingPluginRunner(plugin, rpMockup);    
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .post('/v1/init')
+      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
@@ -173,15 +173,15 @@ let runner: core.TestingPluginRunner
             "$user_agent_id": "vec:289388396"
           }
         }`);
-    
+
         request(runner.plugin.app)
-          .post("/v1/activity_analysis")
+          .post('/v1/activity_analysis')
           .send(requestBody)
-          .end(function(err, res) {
+          .end(function (err, res) {
             expect(res.status).to.equal(200);
-    
+
             expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
-            
+
             done();
           });
 

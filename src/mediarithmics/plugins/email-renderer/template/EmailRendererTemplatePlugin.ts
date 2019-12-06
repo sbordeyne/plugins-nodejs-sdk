@@ -14,7 +14,7 @@ export abstract class EmailRendererTemplatePlugin extends EmailRendererPlugin<Em
   /**
    * The engineBuilder that can be used to compile the template
    * during the InstanceContext building
-   * 
+   *
    * Have to be overriden (see examples)
    */
   protected abstract engineBuilder: ExploreableInternalsTemplatingEngine<any, any, any, any> & ProfileDataTemplater;

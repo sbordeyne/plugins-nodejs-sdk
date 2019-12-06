@@ -13,35 +13,47 @@ export interface RecommenderBaseInstanceContext {
   properties: PropertiesWrapper;
 }
 
-export interface RecommenderPluginResponse extends RecommendationsWrapper {}
+export interface RecommenderPluginResponse extends RecommendationsWrapper {
+}
 
 export abstract class RecommenderPlugin extends BasePlugin {
   instanceContext: Promise<RecommenderBaseInstanceContext>;
 
-    // Helper to fetch the activity analyzer resource with caching
-    async fetchRecommenderCatalogs(
-        recommenderId: string
-      ): Promise<Catalog[]> {
-        const recommenderCatalogsResponse = await super.requestGatewayHelper(
-          "GET",
-          `${this.outboundPlatformUrl}/v1/recommenders/${
-            recommenderId
-          }/catalogs`
-        );
-        this.logger.debug(
-          `Fetched recommender catalogs: ${recommenderId} - ${JSON.stringify(
-            recommenderCatalogsResponse.data
-          )}`
-        );
-        return recommenderCatalogsResponse.data;
-      }
+  constructor() {
+    super();
+
+    // We init the specific route to listen for activity analysis requests
+    this.initRecommendationRequest();
+    this.setErrorHandler();
+  }
+
+  // Helper to fetch the activity analyzer resource with caching
+  async fetchRecommenderCatalogs(
+    recommenderId: string
+  ): Promise<Catalog[]> {
+    const recommenderCatalogsResponse = await super.requestGatewayHelper(
+      'GET',
+      `${this.outboundPlatformUrl}/v1/recommenders/${
+        recommenderId
+      }/catalogs`
+    );
+    this.logger.debug(
+      `Fetched recommender catalogs: ${recommenderId} - ${JSON.stringify(
+        recommenderCatalogsResponse.data
+      )}`
+    );
+    return recommenderCatalogsResponse.data;
+  }
+
+  // Method to build an instance context
+  // To be overriden to get a cutom behavior
 
   // Helper to fetch the activity analyzer resource with caching
   async fetchRecommenderProperties(
     recommenderId: string
   ): Promise<PluginProperty[]> {
     const recommenderPropertyResponse = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/recommenders/${
         recommenderId
       }/properties`
@@ -54,16 +66,16 @@ export abstract class RecommenderPlugin extends BasePlugin {
     return recommenderPropertyResponse.data;
   }
 
-  // Method to build an instance context
-  // To be overriden to get a cutom behavior
+  // Method to process an Activity Analysis
+
   // This is a default provided implementation
   protected async instanceContextBuilder(
     recommenderId: string
   ): Promise<RecommenderBaseInstanceContext> {
 
     const recommenderProps = await this.fetchRecommenderProperties(
-        recommenderId
-      );
+      recommenderId
+    );
 
     const context: RecommenderBaseInstanceContext = {
       properties: new PropertiesWrapper(recommenderProps)
@@ -72,7 +84,6 @@ export abstract class RecommenderPlugin extends BasePlugin {
     return context;
   }
 
-  // Method to process an Activity Analysis
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onRecommendationRequest(
     request: RecommenderRequest,
@@ -81,15 +92,15 @@ export abstract class RecommenderPlugin extends BasePlugin {
 
   private initRecommendationRequest(): void {
     this.app.post(
-      "/v1/recommendations",
+      '/v1/recommendations',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "Missing request body"
+              error: 'Missing request body'
             };
             this.logger.error(
-              "POST /v1/recommendations : %s",
+              'POST /v1/recommendations : %s',
               JSON.stringify(msg)
             );
             return res.status(500).json(msg);
@@ -101,9 +112,9 @@ export abstract class RecommenderPlugin extends BasePlugin {
             const recommenderRequest = req.body as RecommenderRequest;
 
             if (!this.onRecommendationRequest) {
-              const errMsg = "No Recommendation request listener registered!";
+              const errMsg = 'No Recommendation request listener registered!';
               this.logger.error(errMsg);
-              return res.status(500).json({ error: errMsg });
+              return res.status(500).json({error: errMsg});
             }
 
             if (
@@ -135,13 +146,5 @@ export abstract class RecommenderPlugin extends BasePlugin {
         }
       )
     );
-  }
-
-  constructor() {
-    super();
-
-    // We init the specific route to listen for activity analysis requests
-    this.initRecommendationRequest();
-    this.setErrorHandler();
   }
 }

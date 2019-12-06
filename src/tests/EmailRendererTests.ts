@@ -14,12 +14,12 @@ class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
         html: request.call_id
       },
       meta: {
-        from_email: "hello@hello.com",
-        from_name: "Hello",
-        to_email: "hello@destination.com",
-        to_name: "Destination",
-        reply_to: "hello@hello.com",
-        subject_line: "Hello You!"
+        from_email: 'hello@hello.com',
+        from_name: 'Hello',
+        to_email: 'hello@destination.com',
+        to_name: 'Destination',
+        reply_to: 'hello@hello.com',
+        subject_line: 'Hello You!'
       }
     };
 
@@ -29,19 +29,19 @@ class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
 
 const rpMockup: sinon.SinonStub = sinon.stub().returns(
   new Promise((resolve, reject) => {
-    resolve("Yolo");
+    resolve('Yolo');
   })
 );
 
-describe("Fetch Email Renderer API", () => {
+describe('Fetch Email Renderer API', () => {
   // All the magic is here
   const plugin = new MyFakeEmailRendererPlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that email_renderer_id is passed correctly in fetchCreative & fetchCreativeProperties", function(
+  it('Check that email_renderer_id is passed correctly in fetchCreative & fetchCreativeProperties', function (
     done
   ) {
-    const fakeId = "42000000";
+    const fakeId = '42000000';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeEmailRendererPlugin)
@@ -65,12 +65,12 @@ describe("Fetch Email Renderer API", () => {
   });
 });
 
-describe("Email Renderer API test", function() {
+describe('Email Renderer API test', function () {
   // All the magic is here
   const plugin = new MyFakeEmailRendererPlugin(false);
   let runner: core.TestingPluginRunner;
 
-  it("Check that the plugin is giving good results with a simple onEmailContents handler", function(
+  it('Check that the plugin is giving good results with a simple onEmailContents handler', function (
     done
   ) {
     const rpMockup = sinon.stub();
@@ -78,26 +78,26 @@ describe("Email Renderer API test", function() {
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
         const creative: core.DataResponse<core.Creative> = {
-          status: "ok",
+          status: 'ok',
           data: {
-            type: "EMAIL_TEMPLATE",
-            id: "8592",
-            organisation_id: "1135",
-            name: "Market Box",
-            technical_name: "hello",
+            type: 'EMAIL_TEMPLATE',
+            id: '8592',
+            organisation_id: '1135',
+            name: 'Market Box',
+            technical_name: 'hello',
             archived: false,
-            editor_version_id: "1020",
-            editor_version_value: "1.0.0",
-            editor_group_id: "com.mediarithmics.template.email",
-            editor_artifact_id: "default-editor",
-            editor_plugin_id: "1015",
-            renderer_version_id: "1047",
-            renderer_version_value: "1.0.1",
-            renderer_group_id: "com.mediarithmics.email-renderer",
-            renderer_artifact_id: "email-handlebars-template",
-            renderer_plugin_id: "1034",
+            editor_version_id: '1020',
+            editor_version_value: '1.0.0',
+            editor_group_id: 'com.mediarithmics.template.email',
+            editor_artifact_id: 'default-editor',
+            editor_plugin_id: '1015',
+            renderer_version_id: '1047',
+            renderer_version_value: '1.0.1',
+            renderer_group_id: 'com.mediarithmics.email-renderer',
+            renderer_artifact_id: 'email-handlebars-template',
+            renderer_plugin_id: '1034',
             creation_date: 1504533940679,
-            subtype: "EMAIL_TEMPLATE"
+            subtype: 'EMAIL_TEMPLATE'
           }
         };
         resolve(creative);
@@ -106,16 +106,16 @@ describe("Email Renderer API test", function() {
     rpMockup.onCall(1).returns(
       new Promise((resolve, reject) => {
         const pluginInfo: core.PluginPropertyResponse = {
-          status: "ok",
+          status: 'ok',
           count: 45,
           data: [
             {
-              technical_name: "hello_world",
+              technical_name: 'hello_world',
               value: {
-                value: "Yay"
+                value: 'Yay'
               },
-              property_type: "STRING",
-              origin: "PLUGIN",
+              property_type: 'STRING',
+              origin: 'PLUGIN',
               writable: true,
               deletable: false
             }
@@ -129,8 +129,8 @@ describe("Email Renderer API test", function() {
 
     // We init the plugin
     request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .post('/v1/init')
+      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
@@ -163,18 +163,18 @@ describe("Email Renderer API test", function() {
           ],
           "email_tracking_url": null
         }`);
-    
+
         request(runner.plugin.app)
-          .post("/v1/email_contents")
+          .post('/v1/email_contents')
           .send(requestBody)
-          .end(function(err, res) {
+          .end(function (err, res) {
             expect(res.status).to.equal(200);
-    
+
             expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
 
             done();
           });
-          
+
       });
 
   });

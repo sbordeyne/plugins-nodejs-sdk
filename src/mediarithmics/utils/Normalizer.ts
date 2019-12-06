@@ -18,14 +18,14 @@ import {Index} from './index';
 export function normalizeArray<T, K extends keyof T>(arr: Array<T>, key: K): Index<T> {
   if (!Array.isArray(arr)) throw new Error(`${arr} is not an array`);
   return arr.reduce((acc, object) => {
-      const keyValue = String(object[key]);
-      return {
-        ...acc,
-        [keyValue]: object,
-      };
+    const keyValue = String(object[key]);
+    return {
+      ...acc,
+      [keyValue]: object,
+    };
   }, {});
 }
 
-export function denormalize<T>(index: Index<T>) : Array<[string, T]>{
-    return Object.keys(index).map(k => [k, index[k]] as [string, T]);
+export function denormalize<T>(index: Index<T>): Array<[string, T]> {
+  return Object.keys(index).map(k => [k, index[k]] as [string, T]);
 }

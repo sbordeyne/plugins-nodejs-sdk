@@ -17,16 +17,20 @@ export interface SocketMsg {
 }
 
 export class ProductionPluginRunner {
-  numCPUs = require("os").cpus().length;
+  numCPUs = require('os').cpus().length;
 
   pluginPort: number;
 
   plugin: BasePlugin;
   server: Server;
 
+  constructor(plugin: BasePlugin) {
+    this.plugin = plugin;
+  }
+
   updatePluginCredentials = (jsonValue: string) => {
     this.plugin.credentials = JSON.parse(jsonValue);
-  }
+  };
 
   broadcastCredentialsToWorkers = () => {
     if (
@@ -45,11 +49,11 @@ export class ProductionPluginRunner {
         }
       }
     }
-  }
+  };
 
   updatePluginLogLevel = (value: string) => {
     this.plugin.logger.level = value;
-  }
+  };
 
   broadcastLogLevelToWorkers = () => {
     const msg = {
@@ -63,7 +67,7 @@ export class ProductionPluginRunner {
         worker.send(msg);
       }
     }
-  }
+  };
 
   /**
    * Socker Listener for master process. It has 4 jobs:
@@ -88,7 +92,7 @@ export class ProductionPluginRunner {
         this.broadcastCredentialsToWorkers();
       } else {
         throw new Error(
-          "We received a CREDENTIAL_UPDATE_FROM_WORKER msg without credentials in the value field of the msg."
+          'We received a CREDENTIAL_UPDATE_FROM_WORKER msg without credentials in the value field of the msg.'
         );
       }
     }
@@ -101,7 +105,7 @@ export class ProductionPluginRunner {
         this.broadcastLogLevelToWorkers();
       } else {
         throw new Error(
-          "We received a LOG_LEVEL_UPDATE_FROM_WORKER msg without logLevel in the value field of the msg."
+          'We received a LOG_LEVEL_UPDATE_FROM_WORKER msg without logLevel in the value field of the msg.'
         );
       }
     }
@@ -123,7 +127,7 @@ export class ProductionPluginRunner {
     if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER) {
       if (!recMsg.value) {
         throw new Error(
-          "We received a CREDENTIAL_UPDATE_FROM_MASTER msg without credentials in the value field of the msg."
+          'We received a CREDENTIAL_UPDATE_FROM_MASTER msg without credentials in the value field of the msg.'
         );
       }
       const creds: Credentials = JSON.parse(recMsg.value);
@@ -136,7 +140,7 @@ export class ProductionPluginRunner {
     } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
       if (!recMsg.value) {
         throw new Error(
-          "We received a LOG_LEVEL_UPDATE_FROM_MASTER msg without logLevel in the value field of the msg."
+          'We received a LOG_LEVEL_UPDATE_FROM_MASTER msg without logLevel in the value field of the msg.'
         );
       }
       const level = recMsg.value.toLocaleLowerCase();
@@ -151,10 +155,6 @@ export class ProductionPluginRunner {
     }
   };
 
-  constructor(plugin: BasePlugin) {
-    this.plugin = plugin;
-  }
-
   /**
    * Multi threading launch of the App, with socket communicaton to propagate token updates
    * @param port
@@ -165,50 +165,50 @@ export class ProductionPluginRunner {
 
     const serverPort = port ? port : this.pluginPort;
 
-    if(multiProcessEnabled) {
+    if (multiProcessEnabled) {
 
       if (cluster.isMaster) {
         this.plugin.logger.info(`Master ${process.pid} is running`);
-  
+
         // Fork workers.
         for (let i = 0; i < this.numCPUs; i++) {
           cluster.fork();
         }
-  
+
         // Listener for when the Cluster is being called by a worker
-        cluster.on("message", this.masterListener);
-  
+        cluster.on('message', this.masterListener);
+
         // Sometimes, workers dies
-        cluster.on("exit", (worker, code, signal) => {
+        cluster.on('exit', (worker, code, signal) => {
           this.plugin.logger.info(`worker ${worker.process.pid} died`);
-  
+
           // We add a new worker, with the proper socket listener
           const newWorker = cluster.fork();
         });
       } else {
         // We pass the Plugin into MT mode
         this.plugin.multiThread = true;
-  
+
         // We attach a socket listener to get messages from master
-        process.on("message", this.workerListener);
-  
+        process.on('message', this.workerListener);
+
         const serverPort = port ? port : this.pluginPort;
-  
+
         this.server = this.plugin.app.listen(serverPort, () =>
           this.plugin.logger.info(
             `${process.pid} Plugin started, listening at ${serverPort}`
           )
         );
-  
+
         this.plugin.logger.info(`Worker ${process.pid} started`);
       }
 
     } else {
       this.server = this.plugin.app.listen(serverPort, () =>
-      this.plugin.logger.info(
-        `${process.pid} Plugin started, listening at ${serverPort}`
-      )
-    );
+        this.plugin.logger.info(
+          `${process.pid} Plugin started, listening at ${serverPort}`
+        )
+      );
     }
 
   }

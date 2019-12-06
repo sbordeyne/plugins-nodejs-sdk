@@ -1,13 +1,13 @@
 // Sourced from Handlebars
 
 export const escape: any = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#x27;",
-  "`": "&#x60;",
-  "=": "&#x3D;"
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#x27;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
 };
 
 export const badChars = /[&<>"'`=]/g;

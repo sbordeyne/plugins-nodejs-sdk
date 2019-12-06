@@ -5,68 +5,68 @@ import * as request from 'supertest';
 import * as sinon from 'sinon';
 import {MyBidOptimizerPlugin} from '../MyPluginImpl';
 
-describe("Test Example BidOptimizer", function() {
-    // We stub the Gateway calls
-    const rpMockup: sinon.SinonStub = sinon.stub();
-  
-    // Activity Analyzer stub
-    const bidOptimizer: core.DataResponse<core.BidOptimizer> = {
-      status: "ok",
-      data: {
-        id: "1000",
-        name: "my analyzer",
-        organisation_id: "1000",
-        engine_version_id: "123456",
-        engine_group_id: "com.mediarithmics.visit-analyzer",
-        engine_artifact_id: "default"
+describe('Test Example BidOptimizer', function () {
+  // We stub the Gateway calls
+  const rpMockup: sinon.SinonStub = sinon.stub();
+
+  // Activity Analyzer stub
+  const bidOptimizer: core.DataResponse<core.BidOptimizer> = {
+    status: 'ok',
+    data: {
+      id: '1000',
+      name: 'my analyzer',
+      organisation_id: '1000',
+      engine_version_id: '123456',
+      engine_group_id: 'com.mediarithmics.visit-analyzer',
+      engine_artifact_id: 'default'
+    }
+  };
+
+  rpMockup
+    .withArgs(
+      sinon.match.has(
+        'uri',
+        sinon.match(function (value: string) {
+          return value.match(/\/v1\/bid_optimizers\/(.){1,10}/) !== null;
+        })
+      )
+    )
+    .returns(bidOptimizer);
+
+  // Activity Analyzer properties stub
+  const bidOptimizerProperties: core.PluginPropertyResponse = {
+    count: 1,
+    data: [
+      {
+        technical_name: 'name',
+        value: {
+          value:
+            'my bid optimizer',
+        },
+        property_type: 'STRING',
+        origin: 'PLUGIN',
+        writable: true,
+        deletable: true
       }
-    };
-  
-    rpMockup
-      .withArgs(
-        sinon.match.has(
-          "uri",
-          sinon.match(function(value: string) {
-            return value.match(/\/v1\/bid_optimizers\/(.){1,10}/) !== null;
-          })
-        )
+    ],
+    status: 'ok'
+  };
+
+  rpMockup
+    .withArgs(
+      sinon.match.has(
+        'uri',
+        sinon.match(function (value: string) {
+          return (
+            value.match(/\/v1\/bid_optimizers\/(.){1,10}\/properties/) !==
+            null
+          );
+        })
       )
-      .returns(bidOptimizer);
-  
-    // Activity Analyzer properties stub
-    const bidOptimizerProperties: core.PluginPropertyResponse = {
-      count: 1,
-      data: [
-        {
-          technical_name: "name",
-          value: {
-            value:
-              "my bid optimizer",
-          },
-          property_type: "STRING",
-          origin: "PLUGIN",
-          writable: true,
-          deletable: true
-        }
-      ],
-      status: "ok"
-    };
-  
-    rpMockup
-      .withArgs(
-        sinon.match.has(
-          "uri",
-          sinon.match(function(value: string) {
-            return (
-              value.match(/\/v1\/bid_optimizers\/(.){1,10}\/properties/) !==
-              null
-            );
-          })
-        )
-      )
-      .returns(bidOptimizerProperties);
-    
-    const bidDecisionRequest: core.BidOptimizerRequest = JSON.parse(`
+    )
+    .returns(bidOptimizerProperties);
+
+  const bidDecisionRequest: core.BidOptimizerRequest = JSON.parse(`
         {
             "bid_info":{
                "media_type":"WEB",
@@ -153,37 +153,37 @@ describe("Test Example BidOptimizer", function() {
          
             ]
          }`);
-  
-    it("Check behavior of dummy bid optimizer", function(done) {
-      // All the magic is here
-      const plugin = new MyBidOptimizerPlugin(false);
-      const runner = new core.TestingPluginRunner(plugin, rpMockup);
-  
-      // Plugin init
-      request(runner.plugin.app)
-        .post("/v1/init")
-        .send({ authentication_token: "Manny", worker_id: "Calavera" })
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-  
-          // Plugin log level to debug
-          request(runner.plugin.app)
-            .put("/v1/log_level")
-            .send({ level: "debug" })
-            .end((err, res) => {
-              expect(res.status).to.equal(200);
-  
-              // Activity to process
-              request(runner.plugin.app)
-                .post("/v1/bid_decisions")
-                .send(bidDecisionRequest)
-                .end((err, res) => {
-                  expect(res.status).to.eq(200);
-  
-                  expect((JSON.parse(res.text) as core.BidOptimizerPluginResponse).bids[0].bid_price).to.be.eq(bidDecisionRequest.campaign_info.max_bid_price);
-                  done();
-                });
-            });
-        });
-    });
+
+  it('Check behavior of dummy bid optimizer', function (done) {
+    // All the magic is here
+    const plugin = new MyBidOptimizerPlugin(false);
+    const runner = new core.TestingPluginRunner(plugin, rpMockup);
+
+    // Plugin init
+    request(runner.plugin.app)
+      .post('/v1/init')
+      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+
+        // Plugin log level to debug
+        request(runner.plugin.app)
+          .put('/v1/log_level')
+          .send({level: 'debug'})
+          .end((err, res) => {
+            expect(res.status).to.equal(200);
+
+            // Activity to process
+            request(runner.plugin.app)
+              .post('/v1/bid_decisions')
+              .send(bidDecisionRequest)
+              .end((err, res) => {
+                expect(res.status).to.eq(200);
+
+                expect((JSON.parse(res.text) as core.BidOptimizerPluginResponse).bids[0].bid_price).to.be.eq(bidDecisionRequest.campaign_info.max_bid_price);
+                done();
+              });
+          });
+      });
   });
+});

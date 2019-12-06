@@ -8,8 +8,8 @@ export class TestingPluginRunner {
 
   constructor(plugin: BasePlugin, transport?: any) {
     this.plugin = plugin;
-    
-    if(transport) {
+
+    if (transport) {
       this.plugin._transport = transport;
     }
   }

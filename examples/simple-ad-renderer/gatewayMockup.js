@@ -84,7 +84,7 @@ app.get('/v1/creatives/:creativeId/renderer_properties', function (req, res) {
 }`;
 
   res.send(json);
-  
+
 });
 
 // Start the plugin and listen on port 8123
