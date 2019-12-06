@@ -2,7 +2,7 @@ export type StatusCode = 'ok' | 'error';
 
 export interface SimpleResponse {
   status: StatusCode
-};
+}
 
 export interface DataResponse<T>
   extends SimpleResponse {

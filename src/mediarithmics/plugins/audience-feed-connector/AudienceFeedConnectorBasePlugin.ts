@@ -5,15 +5,15 @@ import {AudienceSegmentExternalFeedResource, AudienceSegmentResource} from '../.
 import {PluginProperty} from '../../';
 import {BasePlugin, PropertiesWrapper} from '../common';
 import {
-    ExternalSegmentConnectionRequest,
-    ExternalSegmentCreationRequest,
-    UserSegmentUpdateRequest
+  ExternalSegmentConnectionRequest,
+  ExternalSegmentCreationRequest,
+  UserSegmentUpdateRequest
 } from '../../api/plugin/audiencefeedconnector/AudienceFeedConnectorRequestInterface';
 import {
-    AudienceFeedConnectorPluginResponse,
-    ExternalSegmentConnectionPluginResponse,
-    ExternalSegmentCreationPluginResponse,
-    UserSegmentUpdatePluginResponse
+  AudienceFeedConnectorPluginResponse,
+  ExternalSegmentConnectionPluginResponse,
+  ExternalSegmentCreationPluginResponse,
+  UserSegmentUpdatePluginResponse
 } from '../../api/plugin/audiencefeedconnector/AudienceFeedConnectorPluginResponseInterface';
 
 export interface AudienceFeedConnectorBaseInstanceContext {
