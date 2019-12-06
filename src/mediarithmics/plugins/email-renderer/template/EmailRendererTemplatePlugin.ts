@@ -1,8 +1,5 @@
-import {
-  EmailRendererBaseInstanceContext,
-  EmailRendererPlugin
-} from '../base/EmailRendererBasePlugin';
-import { ExploreableInternalsTemplatingEngine, ProfileDataTemplater } from "../../common/TemplatingInterface";
+import {EmailRendererBaseInstanceContext, EmailRendererPlugin} from '../base/EmailRendererBasePlugin';
+import {ExploreableInternalsTemplatingEngine, ProfileDataTemplater} from '../../common/TemplatingInterface';
 
 export interface EmailRendererTemplateInstanceContext
   extends EmailRendererBaseInstanceContext {

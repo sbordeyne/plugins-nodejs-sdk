@@ -1,9 +1,4 @@
-import {
-    UserAccountIdentifierInfo,
-    UserAgentIdentifierInfo,
-    UserEmailIdentifierInfo,
-    UserPointIdentifierInfo
-} from '../../reference/UserIdentifierInterface';
+import {UserAccountIdentifierInfo, UserAgentIdentifierInfo, UserEmailIdentifierInfo, UserPointIdentifierInfo} from '../../reference/UserIdentifierInterface';
 import {EmailRenderingContext} from '.';
 
 export interface EmailRenderRequest {

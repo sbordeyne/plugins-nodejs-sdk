@@ -1,5 +1,4 @@
-import { UserActivity  } from "../../datamart/UserActivityInterface";
-import { UserAgentInfo } from "../../reference/UserIdentifierInterface";
+import {UserAgentInfo} from '../../reference/UserIdentifierInterface';
 
 export type AdSlotVisibility =
   | "ABOVE_THE_FOLD"

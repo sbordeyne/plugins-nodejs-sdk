@@ -1,22 +1,13 @@
-import * as Handlebars from "handlebars";
-import numeral = require("numeral");
-import _ = require("lodash");
+import * as Handlebars from 'handlebars';
 
-import {
-  AdRendererRequest,
-  AdRendererTemplateInstanceContext
-} from "../../mediarithmics/plugins/ad-renderer";
+import {AdRendererRequest, AdRendererTemplateInstanceContext} from '../../mediarithmics/plugins/ad-renderer';
 
-import {
-  Creative
-} from "../../mediarithmics/api/core/creative";
-
-import {
-  ItemProposal
-} from "../../mediarithmics/api/datamart";
-import { ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
-import {ClickUrlInfo} from "../../mediarithmics/plugins/ad-renderer/base/AdRendererInterface";
-import {generateEncodedClickUrl} from "../../mediarithmics/plugins/ad-renderer/utils/index";
+import {ItemProposal} from '../../mediarithmics/api/datamart';
+import {ExploreableInternalsTemplatingEngine, ProfileDataTemplater, TemplateMacro} from '../../mediarithmics/plugins/common/TemplatingInterface';
+import {ClickUrlInfo} from '../../mediarithmics/plugins/ad-renderer/base/AdRendererInterface';
+import {generateEncodedClickUrl} from '../../mediarithmics/plugins/ad-renderer/utils/index';
+import numeral = require('numeral');
+import _ = require('lodash');
 
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {

@@ -1,12 +1,10 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../common";
-import {BidOptimizer} from "../../api/core/bidoptimizer/BidOptimizerInterface";
-import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
-import {BidOptimizerRequest, SaleCondition} from "../../api/plugin/bidoptimizer/BidOptimizerRequestInterface";
-import {BidDecision} from "../../api/plugin/bidoptimizer/BidDecision";
-import {DataListResponse} from "../../";
+import * as express from 'express';
+import * as _ from 'lodash';
+import {BasePlugin, PropertiesWrapper} from '../common';
+import {BidOptimizer} from '../../api/core/bidoptimizer/BidOptimizerInterface';
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
+import {BidOptimizerRequest, SaleCondition} from '../../api/plugin/bidoptimizer/BidOptimizerRequestInterface';
+import {BidDecision} from '../../api/plugin/bidoptimizer/BidDecision';
 
 export type BidOptimizerPluginResponse = BidDecision;
 

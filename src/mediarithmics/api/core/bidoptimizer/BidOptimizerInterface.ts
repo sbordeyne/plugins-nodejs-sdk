@@ -1,4 +1,4 @@
-import {DataListResponse} from "../common/Response";
+import {DataListResponse} from '../common/Response';
 
 export type BidOptimizerResponse = DataListResponse<BidOptimizer>;
 

@@ -1,18 +1,11 @@
-import * as express from "express";
-import * as _ from "lodash";
+import * as express from 'express';
+import * as _ from 'lodash';
 
-import {
-  BasePlugin,
-  PropertiesWrapper
-} from '../common/BasePlugin';
+import {BasePlugin, PropertiesWrapper} from '../common/BasePlugin';
 
-import { PluginProperty } from '../../api/core/plugin/PluginPropertyInterface'
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
 
-import {
-    ActivityAnalyzerRequest,
-    ActivityAnalyzer,
-    ActivityAnalyzerPluginResponse,
-} from './ActivityAnalyzerInterface';
+import {ActivityAnalyzer, ActivityAnalyzerPluginResponse, ActivityAnalyzerRequest,} from './ActivityAnalyzerInterface';
 
 export interface ActivityAnalyzerBaseInstanceContext{
   properties: PropertiesWrapper;

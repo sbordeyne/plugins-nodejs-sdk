@@ -1,13 +1,5 @@
-import {
-    UserAccountIdentifierInfo,
-    UserAgentIdentifierInfo,
-    UserEmailIdentifierInfo,
-    UserPointIdentifierInfo
-} from '../../reference/UserIdentifierInterface';
-import {
-    EmailRenderingContext,
-    PluginEmailContent,
-    PluginEmailMeta} from '../emailtemplaterenderer';
+import {UserAccountIdentifierInfo, UserAgentIdentifierInfo, UserEmailIdentifierInfo, UserPointIdentifierInfo} from '../../reference/UserIdentifierInterface';
+import {EmailRenderingContext, PluginEmailContent, PluginEmailMeta} from '../emailtemplaterenderer';
 
 export interface EmailRoutingRequest {
     email_router_id: string;

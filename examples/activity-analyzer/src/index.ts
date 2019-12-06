@@ -1,5 +1,5 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import { MyActivityAnalyzerPlugin } from './MyPluginImpl'
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import {MyActivityAnalyzerPlugin} from './MyPluginImpl';
 
 // All the magic is here
 const plugin = new MyActivityAnalyzerPlugin();

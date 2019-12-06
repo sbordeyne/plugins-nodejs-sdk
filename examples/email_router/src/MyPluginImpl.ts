@@ -1,7 +1,7 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import { MyInstanceContext } from "./MyInstanceContext";
-import * as rp from "request-promise-native";
-import * as retry from "retry";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import {MyInstanceContext} from './MyInstanceContext';
+import * as rp from 'request-promise-native';
+import * as retry from 'retry';
 
 export interface MailjetSentResponse {
   Sent: {

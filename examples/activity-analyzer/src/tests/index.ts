@@ -1,6 +1,6 @@
-import "mocha";
-import {core, helpers} from "@mediarithmics/plugins-nodejs-sdk";
-import {MyActivityAnalyzerPlugin} from "../MyPluginImpl";
+import 'mocha';
+import {core, helpers} from '@mediarithmics/plugins-nodejs-sdk';
+import {MyActivityAnalyzerPlugin} from '../MyPluginImpl';
 
 describe("Test Example Activity Analyzer", function () {
     const activityAnalyzerProperties: core.PluginPropertyResponse = {

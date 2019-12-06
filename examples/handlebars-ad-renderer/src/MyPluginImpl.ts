@@ -1,4 +1,4 @@
-import { core, extra } from "@mediarithmics/plugins-nodejs-sdk";
+import {core, extra} from '@mediarithmics/plugins-nodejs-sdk';
 
 export interface MyInstanceContext extends core.AdRendererRecoTemplateInstanceContext {
   render_template?: (...args: any[]) => string;

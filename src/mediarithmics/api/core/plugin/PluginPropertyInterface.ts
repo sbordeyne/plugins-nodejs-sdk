@@ -1,22 +1,22 @@
 import {
+  AdLayoutPropertyResource,
   AssetFilePropertyResource,
   AssetFolderPropertyResource,
-  DataFilePropertyResource,
-  UrlPropertyResource,
-  StringPropertyResource,
-  AdLayoutPropertyResource,
-  StyleSheetPropertyResource,
-  PixelTagPropertyResource,
-  DoublePropertyResource,
   BooleanPropertyResource,
+  DataFilePropertyResource,
+  DoublePropertyResource,
   IntPropertyResource,
-  RecommenderPropertyResource,
   NativeDataPropertyResource,
+  NativeImagePropertyResource,
   NativeTitlePropertyResource,
-  NativeImagePropertyResource
-} from "./ValueInterface";
+  PixelTagPropertyResource,
+  RecommenderPropertyResource,
+  StringPropertyResource,
+  StyleSheetPropertyResource,
+  UrlPropertyResource
+} from './ValueInterface';
 
-import { Option } from "../../../utils";
+import {Option} from '../../../utils';
 
 export interface PluginPropertyResponse {
   status: string;

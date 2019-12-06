@@ -1,5 +1,3 @@
-import { Template } from "handlebars";
-
 /**
  * Represent a Macro found in a template. If should be stored as an array to represent 'sub level' in the macro.
  * 

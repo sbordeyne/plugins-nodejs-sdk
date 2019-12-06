@@ -1,5 +1,5 @@
-import { BasePlugin } from "./BasePlugin";
-import { Server } from "http";
+import {BasePlugin} from './BasePlugin';
+import {Server} from 'http';
 
 export class TestingPluginRunner {
 

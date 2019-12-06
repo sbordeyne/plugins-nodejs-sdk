@@ -1,5 +1,5 @@
-import {Customizable} from "../core/common/Customizable";
-import {Index} from "../../utils";
+import {Customizable} from '../core/common/Customizable';
+import {Index} from '../../utils';
 
 export type UserActivityTypeEnum =
     | "SITE_VISIT"

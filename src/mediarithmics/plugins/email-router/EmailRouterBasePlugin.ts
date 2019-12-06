@@ -1,12 +1,8 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../common/BasePlugin";
-import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
-import {
-    CheckEmailsRequest,
-    EmailRoutingRequest
-} from "../../api/plugin/emailtemplaterouter/EmailRouterRequestInterface";
+import * as express from 'express';
+import * as _ from 'lodash';
+import {BasePlugin, PropertiesWrapper} from '../common/BasePlugin';
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
+import {CheckEmailsRequest, EmailRoutingRequest} from '../../api/plugin/emailtemplaterouter/EmailRouterRequestInterface';
 
 
 export interface EmailRouterBaseInstanceContext {

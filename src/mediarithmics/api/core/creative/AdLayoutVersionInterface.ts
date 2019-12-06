@@ -1,4 +1,4 @@
-import { DataResponse } from "../common/Response";
+import {DataResponse} from '../common/Response';
 
 export type AdLayoutVersionResponse  = DataResponse<AdLayoutVersion>;
 

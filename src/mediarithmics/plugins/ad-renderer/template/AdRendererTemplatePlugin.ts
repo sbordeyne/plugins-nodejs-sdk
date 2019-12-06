@@ -1,10 +1,7 @@
-import {map} from '../../../utils'
+import {map} from '../../../utils';
 
-import {
-  AdRendererBaseInstanceContext, 
-  AdRendererBasePlugin
-} from '../base/AdRendererBasePlugin';
-import { TemplatingEngine } from "../../common/TemplatingInterface";
+import {AdRendererBaseInstanceContext, AdRendererBasePlugin} from '../base/AdRendererBasePlugin';
+import {TemplatingEngine} from '../../common/TemplatingInterface';
 
 export interface AdRendererTemplateInstanceContext
 extends AdRendererBaseInstanceContext {

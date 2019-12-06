@@ -1,4 +1,4 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
 
 export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
   core.AdRendererBaseInstanceContext

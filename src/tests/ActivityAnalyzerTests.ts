@@ -1,10 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
 describe("Fetch analyzer API", () => {
   class MyFakeActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {

@@ -1,10 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as rp from "request-promise-native";
-import * as toobusy from "toobusy-js";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
 describe("Plugin Status API Tests", function() {
   class MyFakePlugin extends core.BasePlugin {}

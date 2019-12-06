@@ -1,19 +1,7 @@
-import * as _ from "lodash";
-import {
-  AdRendererTemplateInstanceContext,
-  AdRendererTemplatePlugin
-} from '../template/AdRendererTemplatePlugin';
+import {AdRendererTemplateInstanceContext, AdRendererTemplatePlugin} from '../template/AdRendererTemplatePlugin';
 import {map} from '../../../utils';
 
-import {
-  ItemProposal,
-  Creative,
-  AdRendererRequest,
-  UserCampaignResponse,
-  UserCampaignResource,
-  AdRendererBasePlugin,
-  RecommenderResponse
-} from "../../../index";
+import {ItemProposal, RecommenderResponse, UserCampaignResource, UserCampaignResponse} from '../../../index';
 
 export interface AdRendererRecoTemplateInstanceContext
   extends AdRendererTemplateInstanceContext {

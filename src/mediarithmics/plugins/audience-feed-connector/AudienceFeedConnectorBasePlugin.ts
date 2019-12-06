@@ -1,15 +1,13 @@
 import * as express from 'express';
 import * as _ from 'lodash';
 
-import {
-    AudienceSegmentExternalFeedResource,
-    AudienceSegmentResource
-} from '../../api/core/audiencesegment/AudienceSegmentInterface';
+import {AudienceSegmentExternalFeedResource, AudienceSegmentResource} from '../../api/core/audiencesegment/AudienceSegmentInterface';
 import {PluginProperty} from '../../';
 import {BasePlugin, PropertiesWrapper} from '../common';
 import {
     ExternalSegmentConnectionRequest,
-    ExternalSegmentCreationRequest, UserSegmentUpdateRequest
+    ExternalSegmentCreationRequest,
+    UserSegmentUpdateRequest
 } from '../../api/plugin/audiencefeedconnector/AudienceFeedConnectorRequestInterface';
 import {
     AudienceFeedConnectorPluginResponse,

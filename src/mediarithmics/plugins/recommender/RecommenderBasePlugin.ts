@@ -1,21 +1,13 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
+import * as express from 'express';
+import * as _ from 'lodash';
 
-import {
-  BasePlugin, PropertiesWrapper
-} from "../common/BasePlugin";
+import {BasePlugin, PropertiesWrapper} from '../common/BasePlugin';
 
-import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
 
-import {
-  Catalog,
-  RecommendationsWrapper
-} from "../../api/datamart"
+import {Catalog, RecommendationsWrapper} from '../../api/datamart';
 
-import {
-  RecommenderRequest
-} from "../../api/plugin/recommender/RecommenderRequestInterface"
+import {RecommenderRequest} from '../../api/plugin/recommender/RecommenderRequestInterface';
 
 export interface RecommenderBaseInstanceContext {
   properties: PropertiesWrapper;

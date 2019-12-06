@@ -1,11 +1,10 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as rp from "request-promise-native";
-import { MyHandlebarsAdRenderer } from "../MyPluginImpl";
-import { badChars, escapeChar } from "./utils";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
+import {MyHandlebarsAdRenderer} from '../MyPluginImpl';
+import {badChars, escapeChar} from './utils';
 
 // Creative stub
 const creative: core.DataResponse<core.DisplayAd> = {

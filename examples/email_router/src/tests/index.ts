@@ -1,10 +1,9 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as rp from "request-promise-native";
-import { MySimpleEmailRouter, MailjetSentResponse } from "../MyPluginImpl";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
+import {MailjetSentResponse, MySimpleEmailRouter} from '../MyPluginImpl';
 
 describe("Test Example Email Router", function() {
 

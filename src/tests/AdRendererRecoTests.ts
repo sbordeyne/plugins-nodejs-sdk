@@ -1,11 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core, extra } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
-import { PropertiesWrapper } from "../mediarithmics/index";
+import {expect} from 'chai';
+import 'mocha';
+import {core, extra} from '../';
+import * as sinon from 'sinon';
+import {PropertiesWrapper} from '../mediarithmics/index';
 
 describe("Fetch recommendation API", () => {
   class MyDummyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {

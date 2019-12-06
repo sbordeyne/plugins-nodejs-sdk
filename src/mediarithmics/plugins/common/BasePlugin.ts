@@ -1,43 +1,43 @@
-import * as express from "express";
-import * as request from "request";
-import * as rp from "request-promise-native";
-import * as winston from "winston";
-import * as bodyParser from "body-parser";
-import * as cache from "memory-cache";
-import * as toobusy from "toobusy-js";
-import * as _ from "lodash";
+import * as express from 'express';
+import * as request from 'request';
+import * as rp from 'request-promise-native';
+import * as winston from 'winston';
+import * as bodyParser from 'body-parser';
+import * as cache from 'memory-cache';
+import * as toobusy from 'toobusy-js';
+import * as _ from 'lodash';
 
-import {SocketMsg, MsgCmd} from "./index";
+import {MsgCmd, SocketMsg} from './index';
 
 import {
-  PluginProperty,
-  PropertyType,
-  AssetFileProperty,
-  asAssetFileProperty,
-  AssetFolderProperty,
-  asAssetFolderProperty,
-  DataFileProperty,
-  asDataFileProperty,
   AdLayoutProperty,
   asAdLayoutProperty,
-  UrlProperty,
-  asUrlProperty,
-  StringProperty,
-  asStringProperty,
+  asAssetFileProperty,
+  asAssetFolderProperty,
   asBooleanProperty,
-  BooleanProperty,
+  asDataFileProperty,
   asNativeDataProperty,
   asNativeImageProperty,
   asNativeTitleProperty,
+  AssetFileProperty,
+  AssetFolderProperty,
+  asStringProperty,
+  asUrlProperty,
+  BooleanProperty,
+  DataFileProperty,
   NativeDataProperty,
   NativeImageProperty,
-  NativeTitleProperty
+  NativeTitleProperty,
+  PluginProperty,
+  PropertyType,
+  StringProperty,
+  UrlProperty
 } from '../../api/core/plugin/PluginPropertyInterface';
 
-import { Index, Option, flatMap, obfuscateString } from '../../utils';
-import { normalizeArray } from '../../utils/Normalizer';
-import { DataListResponse, Compartment } from "../../";
-import { Datamart } from "../../api/core/datamart/Datamart";
+import {flatMap, Index, obfuscateString, Option} from '../../utils';
+import {normalizeArray} from '../../utils/Normalizer';
+import {Compartment, DataListResponse} from '../../';
+import {Datamart} from '../../api/core/datamart/Datamart';
 
 export interface InitUpdateResponse {
   status: ResponseStatusCode;

@@ -1,12 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
-import {AudienceSegmentExternalFeedResource} from '../mediarithmics/api/core/audiencesegment/AudienceSegmentInterface';
-import {DataListResponse} from '../mediarithmics/api/core/common/Response';
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
 class MyFakeAudienceFeedConnector extends core.AudienceFeedConnectorBasePlugin {
   protected onExternalSegmentCreation(

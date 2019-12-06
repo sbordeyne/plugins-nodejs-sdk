@@ -1,19 +1,12 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as jsesc from "jsesc";
+import * as express from 'express';
+import * as _ from 'lodash';
+import * as jsesc from 'jsesc';
 
-import {
-  PropertiesWrapper,
-  BasePlugin
-} from '../../common/BasePlugin';
+import {BasePlugin, PropertiesWrapper} from '../../common/BasePlugin';
 import {DisplayAd} from '../../../api/core/creative/index';
 import {PluginProperty} from '../../../api/core/plugin/PluginPropertyInterface';
-import {
-  AdRendererPluginResponse,
-  AdRendererRequest, ClickUrlInfo
-} from "./AdRendererInterface";
-import { Option } from "../../../utils/index";
-import { generateEncodedClickUrl } from "../utils/index";
+import {AdRendererPluginResponse, AdRendererRequest, ClickUrlInfo} from './AdRendererInterface';
+import {generateEncodedClickUrl} from '../utils/index';
 
 export class AdRendererBaseInstanceContext {
   properties: PropertiesWrapper;

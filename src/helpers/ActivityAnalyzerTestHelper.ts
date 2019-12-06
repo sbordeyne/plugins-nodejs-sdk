@@ -2,7 +2,6 @@ import 'mocha';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 import {SinonStub} from 'sinon';
-import * as rp from 'request-promise-native';
 import {expect} from 'chai';
 import {ActivityAnalyzerPlugin} from '../mediarithmics';
 import {core} from '../index';

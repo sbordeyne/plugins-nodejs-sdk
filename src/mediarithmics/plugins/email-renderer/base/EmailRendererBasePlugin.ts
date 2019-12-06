@@ -1,11 +1,10 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../../common";
-import {Creative} from "../../../api/core/creative";
-import {PluginProperty} from "../../../api/core/plugin/PluginPropertyInterface";
-import {EmailRenderRequest} from "../../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface";
-import {EmailRendererPluginResponse} from "../../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse";
+import * as express from 'express';
+import * as _ from 'lodash';
+import {BasePlugin, PropertiesWrapper} from '../../common';
+import {Creative} from '../../../api/core/creative';
+import {PluginProperty} from '../../../api/core/plugin/PluginPropertyInterface';
+import {EmailRenderRequest} from '../../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface';
+import {EmailRendererPluginResponse} from '../../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse';
 
 export interface EmailRendererBaseInstanceContext {
   creative: Creative;

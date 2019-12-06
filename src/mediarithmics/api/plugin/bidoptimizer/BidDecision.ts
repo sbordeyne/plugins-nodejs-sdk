@@ -1,5 +1,3 @@
-import { UserActivity } from "../../datamart/UserActivityInterface";
-
 export interface BidDecision {
   bids: Bid[];
 }

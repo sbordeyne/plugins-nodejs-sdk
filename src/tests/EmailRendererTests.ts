@@ -1,9 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import { EmailRendererBaseInstanceContext } from "../mediarithmics";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
 class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
   protected onEmailContents(

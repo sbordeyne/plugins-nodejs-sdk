@@ -1,5 +1,5 @@
-import { DataResponse } from "../../api/core/common/Response";
-import { Customizable } from "../../api/core/common/Customizable";
+import {DataResponse} from '../../api/core/common/Response';
+import {Customizable} from '../../api/core/common/Customizable';
 
 export type RecommenderResponse = DataResponse<RecommendationsWrapper>;
 

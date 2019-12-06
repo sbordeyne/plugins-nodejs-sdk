@@ -1,5 +1,5 @@
-import { DataResponse } from "../../api/core/common/Response";
-import { UserActivity, UserVisitActivity } from "../../index";
+import {DataResponse} from '../../api/core/common/Response';
+import {UserActivity, UserVisitActivity} from '../../index';
 
 export type ActivityAnalyzerResponse = DataResponse<ActivityAnalyzer>;
 

@@ -1,12 +1,10 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
-import { PropertiesWrapper } from "../mediarithmics";
-import { generateEncodedClickUrl } from "../mediarithmics/plugins/ad-renderer/utils/index";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
+import {PropertiesWrapper} from '../mediarithmics';
+import {generateEncodedClickUrl} from '../mediarithmics/plugins/ad-renderer/utils/index';
 
 describe("Fetch DisplayAd API", () => {
   let requestPromiseProx: sinon.SinonStub = sinon

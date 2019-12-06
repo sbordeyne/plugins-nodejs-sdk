@@ -1,10 +1,9 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as rp from "request-promise-native";
-import { MyBidOptimizerPlugin } from "../MyPluginImpl";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
+import {MyBidOptimizerPlugin} from '../MyPluginImpl';
 
 describe("Test Example BidOptimizer", function() {
     // We stub the Gateway calls

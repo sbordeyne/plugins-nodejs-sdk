@@ -1,4 +1,4 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
 
 // Check that we can extend an Activity
 export interface MySuperActivity extends core.UserActivity {

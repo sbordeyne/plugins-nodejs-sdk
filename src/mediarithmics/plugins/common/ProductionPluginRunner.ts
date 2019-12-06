@@ -1,7 +1,7 @@
-import { BasePlugin } from "./BasePlugin";
-import { Server } from "http";
-import * as cluster from "cluster";
-import { Credentials } from "./index";
+import {BasePlugin} from './BasePlugin';
+import {Server} from 'http';
+import * as cluster from 'cluster';
+import {Credentials} from './index';
 
 export enum MsgCmd {
   CREDENTIAL_UPDATE_FROM_WORKER,

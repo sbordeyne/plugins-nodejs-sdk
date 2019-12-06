@@ -1,5 +1,5 @@
-import { UserIdentifierInfo } from "../../../api/reference/UserIdentifierInterface";
-import { DataResponse } from "../../../api/core/common/Response";
+import {UserIdentifierInfo} from '../../../api/reference/UserIdentifierInterface';
+import {DataResponse} from '../../../api/core/common/Response';
 
 export type UserCampaignResponse = DataResponse<UserCampaignResource>;
 
