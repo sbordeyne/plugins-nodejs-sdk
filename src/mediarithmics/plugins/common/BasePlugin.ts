@@ -534,7 +534,10 @@ export abstract class BasePlugin {
     this.app.use(bodyParser.json({type: "*/*", limit: "5mb"}));
     
     this.logger = winston.createLogger({
-      format: winston.format.simple(),
+      format: winston.format.combine(
+        winston.format.splat(),
+        winston.format.simple()
+      ),
       transports: [
         new winston.transports.Console()
       ]
