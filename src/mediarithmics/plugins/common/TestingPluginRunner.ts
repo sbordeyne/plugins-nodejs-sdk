@@ -1,5 +1,5 @@
-import { BasePlugin } from "./BasePlugin";
-import { Server } from "http";
+import {BasePlugin} from './BasePlugin';
+import {Server} from 'http';
 
 export class TestingPluginRunner {
 
@@ -8,8 +8,8 @@ export class TestingPluginRunner {
 
   constructor(plugin: BasePlugin, transport?: any) {
     this.plugin = plugin;
-    
-    if(transport) {
+
+    if (transport) {
       this.plugin._transport = transport;
     }
   }

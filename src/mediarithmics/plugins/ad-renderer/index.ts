@@ -1,4 +1,3 @@
-
 export * from './base/AdRendererBasePlugin';
 export * from './base/AdRendererInterface';
 export * from './reco-template/AdRendererRecoTemplatePlugin';

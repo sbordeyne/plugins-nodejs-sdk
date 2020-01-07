@@ -1,20 +1,19 @@
-import { UserActivity  } from "../../datamart/UserActivityInterface";
-import { UserAgentInfo } from "../../reference/UserIdentifierInterface";
+import {UserAgentInfo} from '../../reference/UserIdentifierInterface';
 
 export type AdSlotVisibility =
-  | "ABOVE_THE_FOLD"
-  | "MIDDLE_OF_THE_PAGE"
-  | "BELOW_THE_FOLD"
-  | "UNKNOWN";
+  | 'ABOVE_THE_FOLD'
+  | 'MIDDLE_OF_THE_PAGE'
+  | 'BELOW_THE_FOLD'
+  | 'UNKNOWN';
 
-export type BidMediaType = "WEB" | "MOBILE_APP" | "VIDEO";
+export type BidMediaType = 'WEB' | 'MOBILE_APP' | 'VIDEO';
 
-export type BidObjectiveType = "CPC" | "CPA" | "CTR" | "CPV";
+export type BidObjectiveType = 'CPC' | 'CPA' | 'CTR' | 'CPV';
 
 export type BidOptimizerModelType =
-  | "CATEGORICAL_MODEL"
-  | "REGRESSION_MODEL"
-  | "DYNAMIC_ALLOCATION";
+  | 'CATEGORICAL_MODEL'
+  | 'REGRESSION_MODEL'
+  | 'DYNAMIC_ALLOCATION';
 
 export interface BidOptimizerRequest {
   bid_info: BidInfo;

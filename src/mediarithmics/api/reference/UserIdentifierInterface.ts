@@ -8,47 +8,47 @@ export type UserEmailIdentifierProviderResource = any; //TODO
 export type UserAgentInfo = any; //TODO
 
 export interface UserIdentifierInfo {
-    type: UserIdentifierInfoType;
+  type: UserIdentifierInfoType;
 }
 
 export interface UserPointIdentifierInfo extends UserIdentifierInfo {
-    user_point_id: UUID;
-    creation_ts: TimeStamp;    
+  user_point_id: UUID;
+  creation_ts: TimeStamp;
 }
 
 export interface UserEmailIdentifierInfo extends UserIdentifierInfo {
-    hash: string;
-    email?: string;
-    operator?: string;
-    creation_ts: TimeStamp;
-    last_activity_ts: TimeStamp;
-    providers: Array<UserEmailIdentifierProviderResource>;
+  hash: string;
+  email?: string;
+  operator?: string;
+  creation_ts: TimeStamp;
+  last_activity_ts: TimeStamp;
+  providers: Array<UserEmailIdentifierProviderResource>;
 }
 
 export interface UserAccountIdentifierInfo extends UserIdentifierInfo {
-    user_account_id: string;
-    creation_ts: TimeStamp;
-    compartment_id?: number; //To Be changed to `string` when the back will be updated
+  user_account_id: string;
+  creation_ts: TimeStamp;
+  compartment_id?: number; //To Be changed to `string` when the back will be updated
 }
 
 export interface UserAgentIdentifierInfo extends UserIdentifierInfo {
-    vector_id: VectorId;
-    device?: UserAgentInfo;
-    creation_ts: TimeStamp;
-    last_activity_ts: TimeStamp;
-    providers: Array<UserAgentIdentifierProviderResource>;
-    mappings: Array<UserAgentIdMappingResource>;
+  vector_id: VectorId;
+  device?: UserAgentInfo;
+  creation_ts: TimeStamp;
+  last_activity_ts: TimeStamp;
+  providers: Array<UserAgentIdentifierProviderResource>;
+  mappings: Array<UserAgentIdMappingResource>;
 }
 
 export interface UserAgentIdMappingResource {
-    user_agent_id: string;
-    realm_name: string;
-    last_activity_ts: number;
+  user_agent_id: string;
+  realm_name: string;
+  last_activity_ts: number;
 }
 
 export interface UserAgentIdentifierProviderResource {
-    technical_name: string;
-    creation_ts?: TimeStamp;
-    last_activity_ts?: TimeStamp;
-    expiration_ts?: TimeStamp;
+  technical_name: string;
+  creation_ts?: TimeStamp;
+  last_activity_ts?: TimeStamp;
+  expiration_ts?: TimeStamp;
 }

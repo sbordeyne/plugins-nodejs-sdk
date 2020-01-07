@@ -1,13 +1,13 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
 
 export class MyBidOptimizerPlugin extends core.BidOptimizerPlugin {
   protected onBidDecisions(
     request: core.BidOptimizerRequest,
     instanceContext: core.BidOptimizerBaseInstanceContext
   ): Promise<core.BidOptimizerPluginResponse> {
-    
+
     // Optimization, we only do the stringify  if we are really on debug / silly mode
-    if (this.logger.level === "debug" || this.logger.level === "silly") {
+    if (this.logger.level === 'debug' || this.logger.level === 'silly') {
       this.logger.debug(
         `Received inside plugin: ${JSON.stringify(request, null, 4)}`
       );

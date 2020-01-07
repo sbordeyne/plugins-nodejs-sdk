@@ -1,32 +1,33 @@
-import * as express from "express";
-import * as _ from "lodash";
+import * as express from 'express';
+import * as _ from 'lodash';
 
-import {
-  BasePlugin,
-  PropertiesWrapper
-} from '../common/BasePlugin';
+import {BasePlugin, PropertiesWrapper} from '../common/BasePlugin';
 
-import { PluginProperty } from '../../api/core/plugin/PluginPropertyInterface'
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
 
-import {
-    ActivityAnalyzerRequest,
-    ActivityAnalyzer,
-    ActivityAnalyzerPluginResponse,
-} from './ActivityAnalyzerInterface';
+import {ActivityAnalyzer, ActivityAnalyzerPluginResponse, ActivityAnalyzerRequest,} from './ActivityAnalyzerInterface';
 
-export interface ActivityAnalyzerBaseInstanceContext{
+export interface ActivityAnalyzerBaseInstanceContext {
   properties: PropertiesWrapper;
-  activityAnalyzer: ActivityAnalyzer;  
+  activityAnalyzer: ActivityAnalyzer;
 }
 
 export abstract class ActivityAnalyzerPlugin extends BasePlugin {
+
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    // We init the specific route to listen for activity analysis requests
+    this.initActivityAnalysis();
+    this.setErrorHandler();
+  }
 
   // Helper to fetch the activity analyzer resource with caching
   async fetchActivityAnalyzer(
     activityAnalyzerId: string
   ): Promise<ActivityAnalyzer> {
     const activityAnalyzerResponse = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/activity_analyzers/${activityAnalyzerId}`
     );
     this.logger.debug(
@@ -37,14 +38,17 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     return activityAnalyzerResponse.data;
   }
 
+  // Method to build an instance context
+  // To be overriden to get a cutom behavior
+
   // Helper to fetch the activity analyzer resource with caching
   async fetchActivityAnalyzerProperties(
     activityAnalyzerId: string
   ): Promise<PluginProperty[]> {
     const activityAnalyzerPropertyResponse = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/activity_analyzers/${
-      activityAnalyzerId
+        activityAnalyzerId
       }/properties`
     );
     this.logger.debug(
@@ -55,8 +59,8 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
     return activityAnalyzerPropertyResponse.data;
   }
 
-  // Method to build an instance context
-  // To be overriden to get a cutom behavior
+  // Method to process an Activity Analysis
+
   // This is a default provided implementation
   protected async instanceContextBuilder(
     activityAnalyzerId: string
@@ -81,7 +85,6 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
   }
 
-  // Method to process an Activity Analysis
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onActivityAnalysis(
     request: ActivityAnalyzerRequest,
@@ -90,15 +93,15 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
   private initActivityAnalysis(): void {
     this.app.post(
-      "/v1/activity_analysis",
+      '/v1/activity_analysis',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "Missing request body"
+              error: 'Missing request body'
             };
             this.logger.error(
-              "POST /v1/activity_analysis : %s",
+              'POST /v1/activity_analysis : %s',
               JSON.stringify(msg)
             );
             return res.status(500).json(msg);
@@ -110,9 +113,9 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
             const activityAnalyzerRequest = req.body as ActivityAnalyzerRequest;
 
             if (!this.onActivityAnalysis) {
-              const errMsg = "No Activity Analyzer listener registered!";
+              const errMsg = 'No Activity Analyzer listener registered!';
               this.logger.error(errMsg);
-              return res.status(500).json({ error: errMsg });
+              return res.status(500).json({error: errMsg});
             }
 
             if (
@@ -144,13 +147,5 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
         }
       )
     );
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
-
-    // We init the specific route to listen for activity analysis requests
-    this.initActivityAnalysis();
-    this.setErrorHandler();
   }
 }

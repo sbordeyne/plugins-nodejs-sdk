@@ -1,4 +1,4 @@
-export type Index<T> = { [key: string]: T }
+export type Index<T> = {[key: string]: T}
 export type Option<T> = T | undefined;
 
 export function map<A, B>(a: Option<A>, f: (a: A) => B): Option<B> {
@@ -16,11 +16,11 @@ export function getOrElse<T>(t: Option<T>, _default: T): T {
 export function obfuscateString(rawString?: string): string | undefined {
   if (!rawString) return undefined;
   const stringLength = rawString.length;
-  if (stringLength === 0) return "";
+  if (stringLength === 0) return '';
   else {
     const clearSize = Math.floor(0.3 * stringLength);
     const clear = rawString.substring(0, clearSize);
-    const obfuscated = "X".repeat(stringLength - clearSize);
+    const obfuscated = 'X'.repeat(stringLength - clearSize);
     return clear + obfuscated;
   }
 }

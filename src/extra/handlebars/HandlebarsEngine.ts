@@ -1,22 +1,13 @@
-import * as Handlebars from "handlebars";
-import numeral = require("numeral");
-import _ = require("lodash");
+import * as Handlebars from 'handlebars';
 
-import {
-  AdRendererRequest,
-  AdRendererTemplateInstanceContext
-} from "../../mediarithmics/plugins/ad-renderer";
+import {AdRendererRequest, AdRendererTemplateInstanceContext} from '../../mediarithmics/plugins/ad-renderer';
 
-import {
-  Creative
-} from "../../mediarithmics/api/core/creative";
-
-import {
-  ItemProposal
-} from "../../mediarithmics/api/datamart";
-import { ExploreableInternalsTemplatingEngine, TemplateMacro, ProfileDataTemplater } from "../../mediarithmics/plugins/common/TemplatingInterface";
-import {ClickUrlInfo} from "../../mediarithmics/plugins/ad-renderer/base/AdRendererInterface";
-import {generateEncodedClickUrl} from "../../mediarithmics/plugins/ad-renderer/utils/index";
+import {ItemProposal} from '../../mediarithmics/api/datamart';
+import {ExploreableInternalsTemplatingEngine, ProfileDataTemplater, TemplateMacro} from '../../mediarithmics/plugins/common/TemplatingInterface';
+import {ClickUrlInfo} from '../../mediarithmics/plugins/ad-renderer/base/AdRendererInterface';
+import {generateEncodedClickUrl} from '../../mediarithmics/plugins/ad-renderer/utils/index';
+import numeral = require('numeral');
+import _ = require('lodash');
 
 // Handlebar Context for URLs (not all macros are available)
 export interface URLHandlebarsRootContext {
@@ -79,7 +70,7 @@ const encodeClickUrl = () => (redirectUrls: ClickUrlInfo[], clickUrl: string) =>
   return generateEncodedClickUrl(urls);
 };
 
-const placeHolder = "{{MICS_AD_CONTENT_ID}}";
+const placeHolder = '{{MICS_AD_CONTENT_ID}}';
 const uriEncodePlaceHolder = encodeURI(placeHolder);
 const doubleEncodedUriPlaceHolder = encodeURI(encodeURI(placeHolder));
 
@@ -107,7 +98,7 @@ const encodeRecoClickUrlHelper = () => (
     }
   );
 
-  const recommendationUrl = recommendation.$url ? recommendation.$url : "";
+  const recommendationUrl = recommendation.$url ? recommendation.$url : '';
 
   return encodeClickUrl()(filledRedirectUrls, recommendationUrl);
 };
@@ -133,7 +124,7 @@ export function buildURLHandlebarsRootContext(
     CACHE_BUSTER: Date.now().toString(),
     IAS_CLIENT_ID: instanceContext.ias_client_id,
     CB: Date.now().toString()
-  }
+  };
 
 }
 
@@ -155,26 +146,31 @@ export interface ProfileDataArgs {
 export interface ProfileDataHelperOptions {
   name: string;
   hash: ProfileDataArgs;
-  data: { root: ProfileEmailHandlebarsRootContext }
+  data: {root: ProfileEmailHandlebarsRootContext}
 }
 
 export class HandlebarsEngine
   implements ExploreableInternalsTemplatingEngine<void, string, HandlebarsTemplateDelegate<any>, hbs.AST.Program>, ProfileDataTemplater {
+
+  engine: typeof Handlebars;
+
+  constructor() {
+  }
 
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
   init(): void {
     this.engine = Handlebars.create();
 
     /* Generic Helpers */
-    this.engine.registerHelper("formatPrice", formatPrice);
-    this.engine.registerHelper("toJson", (object: any) =>
+    this.engine.registerHelper('formatPrice', formatPrice);
+    this.engine.registerHelper('toJson', (object: any) =>
       JSON.stringify(object)
     );
   }
 
   enableProfileDataLayer(): void {
 
-    this.engine.registerHelper("profileData", function (opts: ProfileDataHelperOptions) {
+    this.engine.registerHelper('profileData', function (opts: ProfileDataHelperOptions) {
 
       // See https://blog.osteele.com/2007/12/cheap-monads/
       const $N = {};
@@ -189,7 +185,7 @@ export class HandlebarsEngine
   };
 
   parse(template: string): hbs.AST.Program {
-    return Handlebars.parse(template)
+    return Handlebars.parse(template);
   };
 
   // TODO: Test this thing
@@ -201,9 +197,9 @@ export class HandlebarsEngine
 
     // The Handlebars Compiler library is documented there: https://github.com/wycats/handlebars.js/blob/master/docs/compiler-api.md
     MacroScanner.prototype.MustacheStatement = function (macro: hbs.AST.MustacheStatement) {
-      
-      if (macro.type === "MustacheStatement") {
-        const pathExpression = macro.path as hbs.AST.PathExpression
+
+      if (macro.type === 'MustacheStatement') {
+        const pathExpression = macro.path as hbs.AST.PathExpression;
         this.macros.push({parts: pathExpression.parts});
       }
 
@@ -218,17 +214,17 @@ export class HandlebarsEngine
 
   };
 
-  engine: typeof Handlebars;
-
   compile(template: string | hbs.AST.Program) {
     // Handlebars.compile() can take a string or an AST
     return this.engine.compile(template);
   }
-
-  constructor() { }
 }
 
 export class RecommendationsHandlebarsEngine extends HandlebarsEngine {
+  constructor() {
+    super();
+  }
+
   // Initialisation of the engine. Done once at every InstanceContext rebuild.
   init(): void {
     super.init();
@@ -245,9 +241,9 @@ export class RecommendationsHandlebarsEngine extends HandlebarsEngine {
     // This is how the encodeClickUrl partial should be used in templates:
     // {{> encodeClickUrl url="http://www.mediarithmics.com/en/"}}
     const encodeClickUrlPartial =
-      "{{encodeClickUrlInternal @root.private.redirectUrls url}}";
-    this.engine.registerPartial("encodeClickUrl", encodeClickUrlPartial);
-    this.engine.registerHelper("encodeClickUrlInternal", encodeClickUrl());
+      '{{encodeClickUrlInternal @root.private.redirectUrls url}}';
+    this.engine.registerPartial('encodeClickUrl', encodeClickUrlPartial);
+    this.engine.registerHelper('encodeClickUrlInternal', encodeClickUrl());
 
     // Same story than previously but this time the partial will inject:
     // @index -> the index of the recommendation, which is used to include it in the URL
@@ -259,18 +255,14 @@ export class RecommendationsHandlebarsEngine extends HandlebarsEngine {
     // This is how the partial should be used in templates:
     // {{> encodeRecoClickUrl}}
     const encodeRecoClickUrlPartial =
-      "{{encodeRecoClickUrlInternal @index @root this}}";
+      '{{encodeRecoClickUrlInternal @index @root this}}';
     this.engine.registerPartial(
-      "encodeRecoClickUrl",
+      'encodeRecoClickUrl',
       encodeRecoClickUrlPartial
     );
     this.engine.registerHelper(
-      "encodeRecoClickUrlInternal",
+      'encodeRecoClickUrlInternal',
       encodeRecoClickUrlHelper()
     );
-  }
-
-  constructor() {
-    super();
   }
 }

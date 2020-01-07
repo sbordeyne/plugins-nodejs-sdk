@@ -1,10 +1,8 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
 class MyFakeEmailRouterPlugin extends core.EmailRouterPlugin {
   protected onEmailRouting(
@@ -32,20 +30,20 @@ class MyFakeEmailRouterPlugin extends core.EmailRouterPlugin {
 
 const rpMockup: sinon.SinonStub = sinon.stub().returns(
   new Promise((resolve, reject) => {
-    resolve("Yolo");
+    resolve('Yolo');
   })
 );
 
-describe("Fetch Email Router API", () => {
+describe('Fetch Email Router API', () => {
 
   // All the magic is here
   const plugin = new MyFakeEmailRouterPlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that email_router_id is passed correctly in fetchEmailRouterProperties", function(
+  it('Check that email_router_id is passed correctly in fetchEmailRouterProperties', function (
     done
   ) {
-    const fakeId = "42000000";
+    const fakeId = '42000000';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeEmailRouterPlugin)
@@ -61,13 +59,13 @@ describe("Fetch Email Router API", () => {
 
 });
 
-describe("Email Router API test", function() {
+describe('Email Router API test', function () {
 
   // All the magic is here
   const plugin = new MyFakeEmailRouterPlugin(false);
   let runner: core.TestingPluginRunner;
 
-  it("Check that the plugin is giving good results with a simple onEmailRouting handler", function(
+  it('Check that the plugin is giving good results with a simple onEmailRouting handler', function (
     done
   ) {
     const rpMockup = sinon.stub();
@@ -75,16 +73,16 @@ describe("Email Router API test", function() {
     rpMockup.onCall(0).returns(
       new Promise((resolve, reject) => {
         const pluginInfo: core.PluginPropertyResponse = {
-          status: "ok",
+          status: 'ok',
           count: 45,
           data: [
             {
-              technical_name: "hello_world",
+              technical_name: 'hello_world',
               value: {
-                value: "Yay"
+                value: 'Yay'
               },
-              property_type: "STRING",
-              origin: "PLUGIN",
+              property_type: 'STRING',
+              origin: 'PLUGIN',
               writable: true,
               deletable: false
             }
@@ -98,8 +96,8 @@ describe("Email Router API test", function() {
 
     // We init the plugin
     request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .post('/v1/init')
+      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
       });
@@ -165,25 +163,25 @@ describe("Email Router API test", function() {
     }`);
 
     request(runner.plugin.app)
-    .post("/v1/email_router_check")
-    .send(requestBody)
-    .end(function(err, res) {
-      expect(res.status).to.equal(200);
-
-      expect(JSON.parse(res.text).result).to.be.true;
-
-      request(runner.plugin.app)
-      .post("/v1/email_routing")
+      .post('/v1/email_router_check')
       .send(requestBody)
-      .end(function(err, res) {
+      .end(function (err, res) {
         expect(res.status).to.equal(200);
 
         expect(JSON.parse(res.text).result).to.be.true;
 
-        done();
-      });
+        request(runner.plugin.app)
+          .post('/v1/email_routing')
+          .send(requestBody)
+          .end(function (err, res) {
+            expect(res.status).to.equal(200);
 
-    });
+            expect(JSON.parse(res.text).result).to.be.true;
+
+            done();
+          });
+
+      });
 
   });
 

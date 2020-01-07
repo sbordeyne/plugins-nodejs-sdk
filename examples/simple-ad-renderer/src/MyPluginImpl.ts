@@ -1,8 +1,6 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
 
-export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
-  core.AdRendererBaseInstanceContext
-> {
+export class MySimpleAdRenderer extends core.AdRendererBasePlugin<core.AdRendererBaseInstanceContext> {
   protected async onAdContents(
     request: core.AdRendererRequest,
     instanceContext: core.AdRendererBaseInstanceContext
@@ -14,7 +12,7 @@ export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
     <br/>
     <p>
     Powered by the Ad Renderer: ${instanceContext.displayAd
-      .renderer_group_id}:${instanceContext.displayAd
+        .renderer_group_id}:${instanceContext.displayAd
         .renderer_artifact_id} v.${instanceContext.displayAd
         .renderer_version_value}
     </p>
@@ -22,7 +20,7 @@ export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
     <img src="${request.display_tracking_url}" />
     </body>
     </html>`,
-    displayContext: { hello: "❤" }
+      displayContext: {hello: '❤'}
     };
 
     return Promise.resolve(result);

@@ -1,12 +1,8 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../common/BasePlugin";
-import {PluginProperty} from "../../api/core/plugin/PluginPropertyInterface";
-import {
-    CheckEmailsRequest,
-    EmailRoutingRequest
-} from "../../api/plugin/emailtemplaterouter/EmailRouterRequestInterface";
+import * as express from 'express';
+import * as _ from 'lodash';
+import {BasePlugin, PropertiesWrapper} from '../common/BasePlugin';
+import {PluginProperty} from '../../api/core/plugin/PluginPropertyInterface';
+import {CheckEmailsRequest, EmailRoutingRequest} from '../../api/plugin/emailtemplaterouter/EmailRouterRequestInterface';
 
 
 export interface EmailRouterBaseInstanceContext {
@@ -14,19 +10,31 @@ export interface EmailRouterBaseInstanceContext {
 }
 
 export interface EmailRoutingPluginResponse {
-    result: boolean;
+  result: boolean;
 }
 
 export interface CheckEmailsPluginResponse {
-    result: boolean;
+  result: boolean;
 }
 
 export abstract class EmailRouterPlugin extends BasePlugin {
   instanceContext: Promise<EmailRouterBaseInstanceContext>;
 
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    // We init the specific route to listen for activity analysis requests
+    this.initEmailRouting();
+    this.initEmailCheck();
+    this.setErrorHandler();
+  }
+
+  // Method to build an instance context
+  // To be overriden to get a cutom behavior
+
   async fetchEmailRouterProperties(id: string): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/email_routers/${id}/properties`
     );
     this.logger.debug(
@@ -37,8 +45,6 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     return response.data;
   }
 
-  // Method to build an instance context
-  // To be overriden to get a cutom behavior
   // This is a default provided implementation
   protected async instanceContextBuilder(
     routerId: string
@@ -72,17 +78,23 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     return await this.pluginCache.get(emailRouterId);
   }
 
+  // To be overriden by the Plugin to get a custom behavior
+  protected abstract onEmailCheck(
+    request: CheckEmailsRequest,
+    instanceContext: EmailRouterBaseInstanceContext
+  ): Promise<CheckEmailsPluginResponse>;
+
   private initEmailRouting(): void {
     this.app.post(
-      "/v1/email_routing",
+      '/v1/email_routing',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "Missing request body"
+              error: 'Missing request body'
             };
             this.logger.error(
-              "POST /v1/email_routing : %s",
+              'POST /v1/email_routing : %s',
               JSON.stringify(msg)
             );
             return res.status(500).json(msg);
@@ -94,9 +106,9 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             const emailRoutingRequest = req.body as EmailRoutingRequest;
 
             if (!this.onEmailRouting) {
-              const errMsg = "No Email Routing listener registered!";
+              const errMsg = 'No Email Routing listener registered!';
               this.logger.error(errMsg);
-              return res.status(500).json({ error: errMsg });
+              return res.status(500).json({error: errMsg});
             }
 
             const instanceContext = await this.getInstanceContext(
@@ -115,22 +127,16 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     );
   }
 
-  // To be overriden by the Plugin to get a custom behavior
-  protected abstract onEmailCheck(
-    request: CheckEmailsRequest,
-    instanceContext: EmailRouterBaseInstanceContext
-  ): Promise<CheckEmailsPluginResponse>;
-
   private initEmailCheck(): void {
     this.app.post(
-      "/v1/email_router_check",
+      '/v1/email_router_check',
       (req: express.Request, res: express.Response) => {
         if (!req.body || _.isEmpty(req.body)) {
           const msg = {
-            error: "Missing request body"
+            error: 'Missing request body'
           };
           this.logger.error(
-            "POST /v1/email_router_check : %s",
+            'POST /v1/email_router_check : %s',
             JSON.stringify(msg)
           );
           res.status(500).json(msg);
@@ -142,7 +148,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
           const emailCheckRequest = req.body as CheckEmailsRequest;
 
           if (!this.onEmailRouting) {
-            throw new Error("No Email Check listener registered!");
+            throw new Error('No Email Check listener registered!');
           }
 
           if (!this.pluginCache.get(emailCheckRequest.email_router_id)) {
@@ -167,19 +173,10 @@ export abstract class EmailRouterPlugin extends BasePlugin {
               this.logger.error(
                 `Something bad happened : ${error.message} - ${error.stack}`
               );
-              return res.status(500).send(error.message + "\n" + error.stack);
+              return res.status(500).send(error.message + '\n' + error.stack);
             });
         }
       }
     );
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
-
-    // We init the specific route to listen for activity analysis requests
-    this.initEmailRouting();
-    this.initEmailCheck();
-    this.setErrorHandler();
   }
 }

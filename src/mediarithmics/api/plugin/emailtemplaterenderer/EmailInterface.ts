@@ -7,7 +7,7 @@ export interface PluginEmailMeta {
   subject_line?: string;
 }
 
-export type EmailRenderingContext = "LIVE" | "STAGE" | "PREVIEW";
+export type EmailRenderingContext = 'LIVE' | 'STAGE' | 'PREVIEW';
 
 export interface PluginEmailContent {
   html?: string;

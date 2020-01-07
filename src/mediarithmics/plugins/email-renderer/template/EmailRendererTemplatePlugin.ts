@@ -1,8 +1,5 @@
-import {
-  EmailRendererBaseInstanceContext,
-  EmailRendererPlugin
-} from '../base/EmailRendererBasePlugin';
-import { ExploreableInternalsTemplatingEngine, ProfileDataTemplater } from "../../common/TemplatingInterface";
+import {EmailRendererBaseInstanceContext, EmailRendererPlugin} from '../base/EmailRendererBasePlugin';
+import {ExploreableInternalsTemplatingEngine, ProfileDataTemplater} from '../../common/TemplatingInterface';
 
 export interface EmailRendererTemplateInstanceContext
   extends EmailRendererBaseInstanceContext {
@@ -17,7 +14,7 @@ export abstract class EmailRendererTemplatePlugin extends EmailRendererPlugin<Em
   /**
    * The engineBuilder that can be used to compile the template
    * during the InstanceContext building
-   * 
+   *
    * Have to be overriden (see examples)
    */
   protected abstract engineBuilder: ExploreableInternalsTemplatingEngine<any, any, any, any> & ProfileDataTemplater;
