@@ -1,27 +1,34 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as cache from "memory-cache";
-import {PropertiesWrapper, BasePlugin} from "../../common";
-import {Creative} from "../../../api/core/creative";
-import {PluginProperty} from "../../../api/core/plugin/PluginPropertyInterface";
-import {EmailRenderRequest} from "../../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface";
-import {EmailRendererPluginResponse} from "../../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse";
+import * as express from 'express';
+import * as _ from 'lodash';
+import {BasePlugin, PropertiesWrapper} from '../../common';
+import {Creative} from '../../../api/core/creative';
+import {PluginProperty} from '../../../api/core/plugin/PluginPropertyInterface';
+import {EmailRenderRequest} from '../../../api/plugin/emailtemplaterenderer/EmailRendererRequestInterface';
+import {EmailRendererPluginResponse} from '../../../api/plugin/emailtemplaterenderer/EmailRendererPluginResponse';
 
 export interface EmailRendererBaseInstanceContext {
   creative: Creative;
   properties: PropertiesWrapper;
 }
 
-export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceContext = EmailRendererBaseInstanceContext> extends BasePlugin {
+export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceContext = EmailRendererBaseInstanceContext> extends BasePlugin {
   instanceContext: Promise<T>;
+
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    // We init the specific route to listen for email contents requests
+    this.initEmailContents();
+    this.setErrorHandler();
+  }
 
   // Helper to fetch the creative resource with caching
   async fetchCreative(id: string, forceReload = false): Promise<Creative> {
     const response = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/creatives/${id}`,
       undefined,
-      {"force-reload": forceReload}
+      {'force-reload': forceReload}
     );
     this.logger.debug(
       `Fetched Creative: ${id} - ${JSON.stringify(response.data)}`
@@ -29,12 +36,15 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
     return response.data;
   }
 
+  // Method to build an instance context
+  // To be overriden to get a cutom behavior
+
   async fetchCreativeProperties(id: string, forceReload = false): Promise<PluginProperty[]> {
     const response = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/creatives/${id}/renderer_properties`,
       undefined,
-      {"force-reload": forceReload}
+      {'force-reload': forceReload}
     );
     this.logger.debug(
       `Fetched Email Templates Properties: ${id} - ${JSON.stringify(response.data)}`
@@ -42,8 +52,8 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
     return response.data;
   }
 
-  // Method to build an instance context
-  // To be overriden to get a cutom behavior
+  // Method to process an Activity Analysis
+
   // This is a default provided implementation
   protected async instanceContextBuilder(
     creativeId: string,
@@ -65,7 +75,6 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
     return context;
   }
 
-  // Method to process an Activity Analysis
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailContents(
     request: EmailRenderRequest,
@@ -74,15 +83,15 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
 
   private initEmailContents(): void {
     this.app.post(
-      "/v1/email_contents",
+      '/v1/email_contents',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "Missing request body"
+              error: 'Missing request body'
             };
             this.logger.error(
-              "POST /v1/email_contents : %s",
+              'POST /v1/email_contents : %s',
               JSON.stringify(msg)
             );
             return res.status(500).json(msg);
@@ -94,13 +103,13 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
             const emailRenderRequest = req.body as EmailRenderRequest;
 
             if (!this.onEmailContents) {
-              const errMsg = "No Email Renderer listener registered!";
+              const errMsg = 'No Email Renderer listener registered!';
               this.logger.error(errMsg);
-              return res.status(500).send({ error: errMsg });
+              return res.status(500).send({error: errMsg});
             }
 
             // We flush the Plugin Gateway cache during previews
-            const forceReload = (emailRenderRequest.context === "PREVIEW" || emailRenderRequest.context === "STAGE")
+            const forceReload = (emailRenderRequest.context === 'PREVIEW' || emailRenderRequest.context === 'STAGE');
 
             if (!this.pluginCache.get(emailRenderRequest.creative_id) || forceReload) {
               this.pluginCache.put(
@@ -128,13 +137,5 @@ export abstract class EmailRendererPlugin< T extends EmailRendererBaseInstanceCo
         }
       )
     );
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
-
-    // We init the specific route to listen for email contents requests
-    this.initEmailContents();
-    this.setErrorHandler();
   }
 }

@@ -1,4 +1,4 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
 
 // Check that we can extend an Activity
 export interface MySuperActivity extends core.UserActivity {
@@ -18,22 +18,22 @@ export class MyActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
   ): Promise<core.ActivityAnalyzerPluginResponse> {
     const updatedActivity = request.activity;
     const response: core.ActivityAnalyzerPluginResponse = {
-      status: "ok",
+      status: 'ok',
       data: null
     };
 
     // We add a field on the processed activity
     updatedActivity.processed_by = `${instanceContext.activityAnalyzer
       .group_id}:${instanceContext.activityAnalyzer
-        .artifact_id} v.${instanceContext.activityAnalyzer
-          .visit_analyzer_plugin_id}`;
+      .artifact_id} v.${instanceContext.activityAnalyzer
+      .visit_analyzer_plugin_id}`;
 
     // We rename the first event
-    updatedActivity.$events[0].$event_name = "hello";
+    updatedActivity.$events[0].$event_name = 'hello';
 
     response.data = updatedActivity;
 
-    updatedActivity.$events
+    updatedActivity.$events;
 
     return Promise.resolve(response);
   }

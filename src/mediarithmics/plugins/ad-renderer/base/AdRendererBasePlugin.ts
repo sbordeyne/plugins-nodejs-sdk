@@ -1,45 +1,43 @@
-import * as express from "express";
-import * as _ from "lodash";
-import * as jsesc from "jsesc";
+import * as express from 'express';
+import * as _ from 'lodash';
+import * as jsesc from 'jsesc';
 
-import {
-  PropertiesWrapper,
-  BasePlugin
-} from '../../common/BasePlugin';
+import {BasePlugin, PropertiesWrapper} from '../../common/BasePlugin';
 import {DisplayAd} from '../../../api/core/creative/index';
 import {PluginProperty} from '../../../api/core/plugin/PluginPropertyInterface';
-import {
-  AdRendererPluginResponse,
-  AdRendererRequest, ClickUrlInfo
-} from "./AdRendererInterface";
-import { Option } from "../../../utils/index";
-import { generateEncodedClickUrl } from "../utils/index";
+import {AdRendererPluginResponse, AdRendererRequest, ClickUrlInfo} from './AdRendererInterface';
+import {generateEncodedClickUrl} from '../utils/index';
 
 export class AdRendererBaseInstanceContext {
   properties: PropertiesWrapper;
-  displayAd: DisplayAd;    
+  displayAd: DisplayAd;
 }
 
-export abstract class AdRendererBasePlugin<
-  T extends AdRendererBaseInstanceContext
-> extends BasePlugin {
+export abstract class AdRendererBasePlugin<T extends AdRendererBaseInstanceContext> extends BasePlugin {
 
-  displayContextHeader = "x-mics-display-context";
+  displayContextHeader = 'x-mics-display-context';
+
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    this.initAdContentsRoute();
+    this.setErrorHandler();
+  }
 
   // Helper to fetch the Display Ad resource with caching
   async fetchDisplayAd(displayAdId: string, forceReload = false): Promise<DisplayAd> {
     const response = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/creatives/${displayAdId}`,
       undefined,
-      {"force-reload": forceReload}
+      {'force-reload': forceReload}
     );
 
     this.logger.debug(
       `Fetched Creative: ${displayAdId} - ${JSON.stringify(response.data)}`
     );
 
-    if ((response.data as DisplayAd).type !== "DISPLAY_AD") {
+    if ((response.data as DisplayAd).type !== 'DISPLAY_AD') {
       throw new Error(
         `crid: ${
           displayAdId
@@ -56,12 +54,12 @@ export abstract class AdRendererBasePlugin<
     forceReload = false
   ): Promise<PluginProperty[]> {
     const creativePropertyResponse = await super.requestGatewayHelper(
-      "GET",
+      'GET',
       `${this.outboundPlatformUrl}/v1/creatives/${
         displayAdId
       }/renderer_properties`,
       undefined,
-      {"force-reload": forceReload}
+      {'force-reload': forceReload}
     );
 
     this.logger.debug(
@@ -73,11 +71,12 @@ export abstract class AdRendererBasePlugin<
     return creativePropertyResponse.data;
   }
 
+  // Method to build an instance context
+
   getEncodedClickUrl(redirectUrls: ClickUrlInfo[]) {
     return generateEncodedClickUrl(redirectUrls);
   }
 
-  // Method to build an instance context
   // To be overriden to get a custom behavior
   protected async instanceContextBuilder(creativeId: string, forceReload = false): Promise<T> {
 
@@ -104,14 +103,14 @@ export abstract class AdRendererBasePlugin<
 
   private initAdContentsRoute(): void {
     this.app.post(
-      "/v1/ad_contents",
+      '/v1/ad_contents',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
           if (!req.body || _.isEmpty(req.body)) {
             const msg = {
-              error: "Missing request body"
+              error: 'Missing request body'
             };
-            this.logger.error("POST /v1/ad_contents : %s", JSON.stringify(msg));
+            this.logger.error('POST /v1/ad_contents : %s', JSON.stringify(msg));
             return res.status(500).json(msg);
           } else {
             this.logger.debug(
@@ -122,16 +121,16 @@ export abstract class AdRendererBasePlugin<
 
             if (!this.onAdContents) {
               this.logger.error(
-                "POST /v1/ad_contents: No AdContents listener registered!"
+                'POST /v1/ad_contents: No AdContents listener registered!'
               );
               const msg = {
-                error: "No AdContents listener registered!"
+                error: 'No AdContents listener registered!'
               };
               return res.status(500).json(msg);
             }
 
             // We flush the Plugin Gateway cache during previews
-            const forceReload = (adRendererRequest.context === "PREVIEW" || adRendererRequest.context === "STAGE")
+            const forceReload = (adRendererRequest.context === 'PREVIEW' || adRendererRequest.context === 'STAGE');
 
             if (
               !this.pluginCache.get(adRendererRequest.creative_id) ||
@@ -164,12 +163,5 @@ export abstract class AdRendererBasePlugin<
         }
       )
     );
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
-
-    this.initAdContentsRoute();
-    this.setErrorHandler();
   }
 }

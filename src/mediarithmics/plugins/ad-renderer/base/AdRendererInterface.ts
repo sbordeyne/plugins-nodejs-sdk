@@ -1,5 +1,5 @@
-export type ContextEnum = "LIVE" | "STAGE" | "PREVIEW";
-export type ProtocolEnum = "http" | "https";
+export type ContextEnum = 'LIVE' | 'STAGE' | 'PREVIEW';
+export type ProtocolEnum = 'http' | 'https';
 
 export interface SspExtension {
   source: string;

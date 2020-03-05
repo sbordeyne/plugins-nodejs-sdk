@@ -1,6 +1,6 @@
-import "mocha";
-import {core, helpers} from "@mediarithmics/plugins-nodejs-sdk";
-import {MyActivityAnalyzerPlugin} from "../MyPluginImpl";
+import 'mocha';
+import {core, helpers} from '@mediarithmics/plugins-nodejs-sdk';
+import {MyActivityAnalyzerPlugin} from '../MyPluginImpl';
 
 describe("Test Example Activity Analyzer", function () {
 
@@ -23,11 +23,12 @@ describe("Test Example Activity Analyzer", function () {
         status: "ok"
     };
 
-    const itFactory = helpers.itFactory(new MyActivityAnalyzerPlugin(), activityAnalyzerProperties);
 
-    itFactory(
-        "Check behavior of dummy activity analyzer",
-        require(`${process.cwd()}/src/tests/activity_input`),
-        require(`${process.cwd()}/src/tests/activity_output`),
-    );
+  const itFactory = helpers.itFactory(new MyActivityAnalyzerPlugin(), activityAnalyzerProperties);
+
+  itFactory(
+    'Check behavior of dummy activity analyzer',
+    require(`${process.cwd()}/src/tests/activity_input`),
+    require(`${process.cwd()}/src/tests/activity_output`),
+  );
 });

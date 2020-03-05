@@ -1,26 +1,24 @@
-import { expect } from "chai";
-import "mocha";
-import { core } from "../";
-import * as request from "supertest";
-import * as sinon from "sinon";
-import * as mockery from "mockery";
-import * as rp from "request-promise-native";
+import {expect} from 'chai';
+import 'mocha';
+import {core} from '../';
+import * as request from 'supertest';
+import * as sinon from 'sinon';
 
-describe("Fetch recommender API", () => {
+describe('Fetch recommender API', () => {
   class MyFakeRecommenderPlugin extends core.RecommenderPlugin {
     protected onRecommendationRequest(
       request: core.RecommenderRequest,
       instanceContext: core.RecommenderBaseInstanceContext
     ) {
       const proposal: core.ItemProposal = {
-        $type: "ITEM_PROPOSAL",
-        $id: "42"
+        $type: 'ITEM_PROPOSAL',
+        $id: '42'
       };
 
       const response: core.RecommenderPluginResponse = {
         ts: Date.now(),
         proposals: [proposal],
-        recommendation_log: "yolo"
+        recommendation_log: 'yolo'
       };
 
       return Promise.resolve(response);
@@ -29,7 +27,7 @@ describe("Fetch recommender API", () => {
 
   const rpMockup: sinon.SinonStub = sinon.stub().returns(
     new Promise((resolve, reject) => {
-      resolve("Yolo");
+      resolve('Yolo');
     })
   );
 
@@ -37,8 +35,8 @@ describe("Fetch recommender API", () => {
   const plugin = new MyFakeRecommenderPlugin();
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that recommenderId is passed correctly in fetchRecommenderProperties", function(done) {
-    const fakeRecommenderId = "42000000";
+  it('Check that recommenderId is passed correctly in fetchRecommenderProperties', function (done) {
+    const fakeRecommenderId = '42000000';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeRecommenderPlugin)
@@ -53,8 +51,8 @@ describe("Fetch recommender API", () => {
       });
   });
 
-  it("Check that RecommenderId is passed correctly in fetchRecommenderCatalogs", function(done) {
-    const fakeRecommenderId = "4255";
+  it('Check that RecommenderId is passed correctly in fetchRecommenderCatalogs', function (done) {
+    const fakeRecommenderId = '4255';
 
     // We try a call to the Gateway
     (runner.plugin as MyFakeRecommenderPlugin)
@@ -70,7 +68,7 @@ describe("Fetch recommender API", () => {
   });
 });
 
-describe("Recommender API test", function() {
+describe('Recommender API test', function () {
   class MyFakeSimpleRecommenderPlugin extends core.RecommenderPlugin {
     protected onRecommendationRequest(
       request: core.RecommenderRequest,
@@ -78,7 +76,7 @@ describe("Recommender API test", function() {
     ) {
       const response: core.RecommenderPluginResponse = {
         ts: Date.now(),
-        recommendation_log: "",
+        recommendation_log: '',
         proposals: []
       };
       return Promise.resolve(response);
@@ -89,20 +87,20 @@ describe("Recommender API test", function() {
   const plugin = new MyFakeSimpleRecommenderPlugin();
   let runner: core.TestingPluginRunner;
 
-  it("Check that the plugin is giving good results with a simple onRecommendationRequest handler", function(done) {
+  it('Check that the plugin is giving good results with a simple onRecommendationRequest handler', function (done) {
     const rpMockup = sinon.stub();
 
     const fakeRecommenderProperties = {
-      status: "ok",
+      status: 'ok',
       count: 45,
       data: [
         {
-          technical_name: "hello_world",
+          technical_name: 'hello_world',
           value: {
-            value: "Yay"
+            value: 'Yay'
           },
-          property_type: "STRING",
-          origin: "PLUGIN",
+          property_type: 'STRING',
+          origin: 'PLUGIN',
           writable: true,
           deletable: false
         }
@@ -110,42 +108,42 @@ describe("Recommender API test", function() {
     };
 
     rpMockup
-    .withArgs(
-      sinon.match.has(
-        "uri",
-        sinon.match(function(value: string) {
-          return (
-            value.match(/\/v1\/recommenders\/(.){1,10}\/properties/) !==
-            null
-          );
-        })
+      .withArgs(
+        sinon.match.has(
+          'uri',
+          sinon.match(function (value: string) {
+            return (
+              value.match(/\/v1\/recommenders\/(.){1,10}\/properties/) !==
+              null
+            );
+          })
+        )
       )
-    )
-    .returns(fakeRecommenderProperties);
+      .returns(fakeRecommenderProperties);
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
     // We init the plugin
     request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
+      .post('/v1/init')
+      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
       });
 
     const requestBody = {
-      recommender_id: "5",
-      datamart_id: "1089",
+      recommender_id: '5',
+      datamart_id: '1089',
       user_identifiers: [],
       input_data: {
-        user_agent_id: "vec:971677694"
+        user_agent_id: 'vec:971677694'
       }
     };
 
     request(runner.plugin.app)
-      .post("/v1/recommendations")
+      .post('/v1/recommendations')
       .send(requestBody)
-      .end(function(err, res) {
+      .end(function (err, res) {
         expect(res.status).to.equal(200);
 
         done();

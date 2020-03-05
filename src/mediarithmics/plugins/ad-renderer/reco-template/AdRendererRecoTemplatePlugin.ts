@@ -1,19 +1,7 @@
-import * as _ from "lodash";
-import {
-  AdRendererTemplateInstanceContext,
-  AdRendererTemplatePlugin
-} from '../template/AdRendererTemplatePlugin';
+import {AdRendererTemplateInstanceContext, AdRendererTemplatePlugin} from '../template/AdRendererTemplatePlugin';
 import {map} from '../../../utils';
 
-import {
-  ItemProposal,
-  Creative,
-  AdRendererRequest,
-  UserCampaignResponse,
-  UserCampaignResource,
-  AdRendererBasePlugin,
-  RecommenderResponse
-} from "../../../index";
+import {ItemProposal, RecommenderResponse, UserCampaignResource, UserCampaignResponse} from '../../../index';
 
 export interface AdRendererRecoTemplateInstanceContext
   extends AdRendererTemplateInstanceContext {
@@ -21,12 +9,16 @@ export interface AdRendererRecoTemplateInstanceContext
 }
 
 export abstract class AdRendererRecoTemplatePlugin extends AdRendererTemplatePlugin {
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+  }
+
   /**
- * Helper to fetch the User Campaign
- * @param campaignId  The campaignId -> should come from the AdRendererRequest
- * @param userCampaignId  The userCampaignId -> should come from the AdRendererRequest
- * @returns       A Promise of the User Campaign
- */
+   * Helper to fetch the User Campaign
+   * @param campaignId  The campaignId -> should come from the AdRendererRequest
+   * @param userCampaignId  The userCampaignId -> should come from the AdRendererRequest
+   * @returns       A Promise of the User Campaign
+   */
   async fetchUserCampaign(
     campaignId: string,
     userCampaignId: string
@@ -34,7 +26,7 @@ export abstract class AdRendererRecoTemplatePlugin extends AdRendererTemplatePlu
     let userCampaignResponse: UserCampaignResponse;
     try {
       userCampaignResponse = await super.requestGatewayHelper(
-        "GET",
+        'GET',
         `${this
           .outboundPlatformUrl}/v1/display_campaigns/${campaignId}/user_campaigns/${userCampaignId}`
       );
@@ -45,11 +37,11 @@ Returning empty user campaign
 Error: ${e.message} - ${e.stack}`);
 
       userCampaignResponse = {
-        status: "ok",
+        status: 'ok',
         data: {
-          user_account_id: "null",
-          user_agent_ids: ["null"],
-          databag: "",
+          user_account_id: 'null',
+          user_agent_ids: ['null'],
+          databag: '',
           user_identifiers: []
         }
       };
@@ -59,11 +51,11 @@ Error: ${e.message} - ${e.stack}`);
   }
 
   /**
- * Helper to fetch the User recommendations
- * @param instanceContext  The instanceContext -> contains the recommender_id of the creative
- * @param userAgentId  The userAgentId as a string -> should come from the AdRendererRequest (recommended) or from the UserCampaign
- * @returns       A Promise of the Recommendations
- */
+   * Helper to fetch the User recommendations
+   * @param instanceContext  The instanceContext -> contains the recommender_id of the creative
+   * @param userAgentId  The userAgentId as a string -> should come from the AdRendererRequest (recommended) or from the UserCampaign
+   * @returns       A Promise of the Recommendations
+   */
   async fetchRecommendations(
     instanceContext: AdRendererRecoTemplateInstanceContext,
     userAgentId: string
@@ -86,7 +78,7 @@ Error: ${e.message} - ${e.stack}`);
     this.logger.debug(`POST: ${uri} - ${JSON.stringify(body)}`);
 
     const response: RecommenderResponse = await super.requestGatewayHelper(
-      "POST",
+      'POST',
       uri,
       body
     );
@@ -103,7 +95,7 @@ Error: ${e.message} - ${e.stack}`);
   protected async instanceContextBuilder(creativeId: string) {
     const baseInstanceContext = await super.instanceContextBuilder(creativeId);
 
-    const recommenderProperty = baseInstanceContext.properties.findStringProperty("recommender_id");
+    const recommenderProperty = baseInstanceContext.properties.findStringProperty('recommender_id');
 
     const context: AdRendererRecoTemplateInstanceContext = {
       ...baseInstanceContext,
@@ -111,9 +103,5 @@ Error: ${e.message} - ${e.stack}`);
     };
 
     return context;
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
   }
 }

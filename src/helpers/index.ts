@@ -1,1 +1,1 @@
-export * from './ActivityAnalyzerTestHelper'
+export * from './ActivityAnalyzerTestHelper';

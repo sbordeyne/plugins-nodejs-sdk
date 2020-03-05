@@ -1,7 +1,7 @@
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
-import { MyInstanceContext } from "./MyInstanceContext";
-import * as rp from "request-promise-native";
-import * as retry from "retry";
+import {core} from '@mediarithmics/plugins-nodejs-sdk';
+import {MyInstanceContext} from './MyInstanceContext';
+import * as rp from 'request-promise-native';
+import * as retry from 'retry';
 
 export interface MailjetSentResponse {
   Sent: {
@@ -21,7 +21,7 @@ export interface MailjetPayload {
 
 // See https://dev.mailjet.com/guides/#events
 export interface MailjetEvent {
-  event: "open" | "click" | "bounce" | "blocked" | "spam" | "unsub" | "sent";
+  event: 'open' | 'click' | 'bounce' | 'blocked' | 'spam' | 'unsub' | 'sent';
   time: number;
   email: string;
   mj_campaign_id: number;
@@ -43,6 +43,11 @@ export interface MailjetEvent {
 }
 
 export class MySimpleEmailRouter extends core.EmailRouterPlugin {
+  constructor(enableThrottling = false) {
+    super(enableThrottling);
+    this.initMailjetNotificationRoute();
+  }
+
   /**
    * Helpers
    */
@@ -82,7 +87,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     );
 
     const emailHeaders = {
-      "Reply-To": request.meta.reply_to
+      'Reply-To': request.meta.reply_to
     };
 
     const emailData = {
@@ -90,19 +95,19 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       FromName: request.meta.from_name,
       Headers: emailHeaders,
       Subject: request.meta.subject_line,
-      "Text-part": request.content.text,
-      "Html-part": request.content.html,
+      'Text-part': request.content.text,
+      'Html-part': request.content.html,
       Recipients: [
         {
           Email: identifier.email || request.meta.to_email
         }
       ],
-      "Mj-EventPayLoad": JSON.stringify(payload),
-      "Mj-campaign": request.campaign_id
+      'Mj-EventPayLoad': JSON.stringify(payload),
+      'Mj-campaign': request.campaign_id
     };
 
     const mailjetResponse: MailjetSentResponse = await this.requestGatewayHelper(
-      "POST",
+      'POST',
       `${
         this.outboundPlatformUrl
       }/v1/external_services/technical_name=mailjet/call`,
@@ -110,8 +115,8 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     );
 
     if (mailjetResponse.Sent.length === 0) {
-      this.logger.error("Mailjet sent an empty response, will retry");
-      throw new Error("Mailjet sent an empty response, will retry");
+      this.logger.error('Mailjet sent an empty response, will retry');
+      throw new Error('Mailjet sent an empty response, will retry');
     }
 
     return mailjetResponse;
@@ -125,8 +130,8 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     const now = Date.now();
 
     return ({
-      $type: "EMAIL",
-      $source: "API",
+      $type: 'EMAIL',
+      $source: 'API',
       $ts: now,
       $email_hash: {
         $hash: payload.emailHash
@@ -137,7 +142,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
           $ts: now,
           $event_name: eventName,
           $properties: {
-            $delivery_id: "" + event.MessageID
+            $delivery_id: '' + event.MessageID
           }
         }
       ],
@@ -153,51 +158,51 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     mailjetEvent: MailjetEvent
   ): core.UserActivity {
     switch (mailjetEvent.event) {
-      case "open":
+      case 'open':
         return this.createEmailTrackingActivity(
           mailjetEvent,
-          "$email_view",
+          '$email_view',
           mailjetEvent.Payload
         );
-      case "click":
+      case 'click':
         return this.createEmailTrackingActivity(
           mailjetEvent,
-          "$email_click",
+          '$email_click',
           mailjetEvent.Payload
         );
-      case "bounce":
+      case 'bounce':
         if (
           mailjetEvent.blocked === true ||
           mailjetEvent.hard_bounce === true
         ) {
           return this.createEmailTrackingActivity(
             mailjetEvent,
-            "$email_hard_bounce",
+            '$email_hard_bounce',
             mailjetEvent.Payload
           );
         } else {
           return this.createEmailTrackingActivity(
             mailjetEvent,
-            "$email_soft_bounce",
+            '$email_soft_bounce',
             mailjetEvent.Payload
           );
         }
-      case "blocked":
+      case 'blocked':
         return this.createEmailTrackingActivity(
           mailjetEvent,
-          "$email_hard_bounce",
+          '$email_hard_bounce',
           mailjetEvent.Payload
         );
-      case "spam":
+      case 'spam':
         return this.createEmailTrackingActivity(
           mailjetEvent,
-          "$email_complaint",
+          '$email_complaint',
           mailjetEvent.Payload
         );
-      case "unsub":
+      case 'unsub':
         return this.createEmailTrackingActivity(
           mailjetEvent,
-          "$email_unsubscribe",
+          '$email_unsubscribe',
           mailjetEvent.Payload
         );
       default:
@@ -217,13 +222,13 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     authenticationToken: string
   ) {
     const uri =
-      (process.env.OUTBOUND_PLATFORM_URL || "https://api.mediarithmics.com") +
-      "/v1/datamarts/" +
+      (process.env.OUTBOUND_PLATFORM_URL || 'https://api.mediarithmics.com') +
+      '/v1/datamarts/' +
       datamartId +
-      "/user_activities";
+      '/user_activities';
 
     const options = {
-      method: "POST",
+      method: 'POST',
       uri: uri,
       body: emailUserActivity,
       json: true,
@@ -238,13 +243,13 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
       )}`
     );
 
-    return rp(options).catch(function(e) {
-      if (e.name === "StatusCodeError") {
+    return rp(options).catch(function (e) {
+      if (e.name === 'StatusCodeError') {
         throw new Error(
           `Error while calling ${options.method} '${
             options.uri
           }' with the request body '${JSON.stringify(options.body) ||
-            ""}': got a ${e.response.statusCode} ${
+          ''}': got a ${e.response.statusCode} ${
             e.response.statusMessage
           } with the response body ${JSON.stringify(e.response.body)}`
         );
@@ -258,39 +263,39 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     // Return an emailRoutingResponse
     // Mailjet notify entry point for events such as sent, open, click, bounce, spam, blocked etc...
     this.app.post(
-      "/r/external_token_to_be_provided_by_your_account_manager", // This will be listening on : https://plugins.mediarithmics.io/r/external_token_to_be_provided_by_your_account_manager
+      '/r/external_token_to_be_provided_by_your_account_manager', // This will be listening on : https://plugins.mediarithmics.io/r/external_token_to_be_provided_by_your_account_manager
       async (req, res) => {
         const emailEvent = req.body;
         this.logger.debug(
-          "POST /r/external_token_to_be_provided_by_your_account_manager",
+          'POST /r/external_token_to_be_provided_by_your_account_manager',
           JSON.stringify(emailEvent)
         );
         try {
           if (!emailEvent) {
             this.logger.error(
-              "POST /r/external_token_to_be_provided_by_your_account_manager: Missing email event"
+              'POST /r/external_token_to_be_provided_by_your_account_manager: Missing email event'
             );
             return res.status(400).json({
-              Result: "Missing email event"
+              Result: 'Missing email event'
             });
           }
 
           if (!emailEvent.Payload || !emailEvent.MessageID) {
             this.logger.error(
-              "POST /r/external_token_to_be_provided_by_your_account_manager: Missing Payload or MessageID"
+              'POST /r/external_token_to_be_provided_by_your_account_manager: Missing Payload or MessageID'
             );
             return res.status(400).json({
-              Result: "Missing Payload or MessageID"
+              Result: 'Missing Payload or MessageID'
             });
           }
 
           if (
-            JSON.stringify(emailEvent.Payload) === "" &&
+            JSON.stringify(emailEvent.Payload) === '' &&
             emailEvent.MessageID === 0
           ) {
             // If test sent with mailjet
             return res.status(200).json({
-              Result: "Considered as test. Success."
+              Result: 'Considered as test. Success.'
             });
           } else {
             const mailjetEvent = JSON.parse(emailEvent) as MailjetEvent;
@@ -340,11 +345,32 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     );
   }
 
+  retryPromiseHelper(mainFn: Function, args: any[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const operation = retry.operation();
+      operation.attempt(async attempt => {
+        try {
+          this.logger.debug(
+            `Trying to call for the ${attempt}th time ${mainFn.name}`
+          );
+
+          const response = await mainFn.apply(this, args);
+          resolve(response);
+        } catch (err) {
+          if (operation.retry(err)) {
+            return;
+          }
+          reject(operation.mainError());
+        }
+      });
+    });
+  }
+
   protected async instanceContextBuilder(
     routerId: string
   ): Promise<MyInstanceContext> {
     const defaultInstanceContext = await super.instanceContextBuilder(routerId);
-    const authenticationToken = defaultInstanceContext.properties.findStringProperty("authentication_token");
+    const authenticationToken = defaultInstanceContext.properties.findStringProperty('authentication_token');
 
     if (authenticationToken && authenticationToken.value.value) {
       return {
@@ -371,7 +397,7 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
   ): Promise<core.CheckEmailsPluginResponse> {
     // Mailjet can send emails to every email adress.
     // Trust me, I've seen it.
-    return Promise.resolve({ result: true });
+    return Promise.resolve({result: true});
   }
 
   protected async onEmailRouting(
@@ -380,13 +406,13 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
   ): Promise<core.EmailRoutingPluginResponse> {
     const identifier = request.user_identifiers.find(identifier => {
       return (
-        identifier.type === "USER_EMAIL" &&
+        identifier.type === 'USER_EMAIL' &&
         !!(identifier as core.UserEmailIdentifierInfo).email
       );
     }) as core.UserEmailIdentifierInfo;
 
     if (!identifier) {
-      throw Error("No clear email identifiers were provided");
+      throw Error('No clear email identifiers were provided');
     }
 
     const payload = this.buildMailjetPayload(
@@ -404,35 +430,9 @@ export class MySimpleEmailRouter extends core.EmailRouterPlugin {
     );
 
     if (mailjetResponse.Sent.length > 0) {
-      return { result: true };
+      return {result: true};
     } else {
-      return { result: false };
+      return {result: false};
     }
-  }
-
-  retryPromiseHelper(mainFn: Function, args: any[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const operation = retry.operation();
-      operation.attempt(async attempt => {
-        try {
-          this.logger.debug(
-            `Trying to call for the ${attempt}th time ${mainFn.name}`
-          );
-
-          const response = await mainFn.apply(this, args);
-          resolve(response);
-        } catch (err) {
-          if (operation.retry(err)) {
-            return;
-          }
-          reject(operation.mainError());
-        }
-      });
-    });
-  }
-
-  constructor(enableThrottling = false) {
-    super(enableThrottling);
-    this.initMailjetNotificationRoute();
   }
 }
