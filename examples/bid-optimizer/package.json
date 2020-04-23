@@ -11,25 +11,25 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@mediarithmics/plugins-nodejs-sdk": "^0.7.7",
-    "@types/express": "^4.17.0",
+    "@mediarithmics/plugins-nodejs-sdk": "^0.7.9",
+    "@types/express": "^4.17.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.6",
     "@types/escape-html": "0.0.20",
     "@types/mocha": "^5.2.7",
-    "@types/sinon": "^7.0.13",
-    "@types/supertest": "^2.0.7",
-    "@types/node": "^12.0.10",
+    "@types/sinon": "^7.5.1",
+    "@types/supertest": "^2.0.8",
+    "@types/node": "^12.12.14",
     "chai": "^4.2.0",
     "escape-html": "^1.0.3",
-    "mocha": "^6.1.4",
-    "sinon": "^7.3.2",
+    "mocha": "^6.2.2",
+    "sinon": "^7.5.0",
     "supertest": "^4.0.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.3"
   }
 }
