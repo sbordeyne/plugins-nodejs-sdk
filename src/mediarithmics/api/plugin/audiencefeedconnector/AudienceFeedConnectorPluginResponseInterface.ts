@@ -23,7 +23,6 @@ export interface UserSegmentUpdatePluginResponse {
     grouping_key?: string
     content?: string;
     binary_content?: BinaryType;
-    line: string;
   }];
   stats?: [{
     identifier?: string;
