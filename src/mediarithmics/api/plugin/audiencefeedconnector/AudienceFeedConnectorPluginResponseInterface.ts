@@ -18,6 +18,17 @@ export interface ExternalSegmentConnectionPluginResponse {
 
 export interface UserSegmentUpdatePluginResponse {
   status: AudienceFeedConnectorStatus;
+  data?: [{
+    destination_token?: string;
+    grouping_key?: string
+    content?: string;
+    binary_content?: BinaryType;
+  }];
+  stats?: [{
+    identifier?: string;
+    sync_result?: string;
+    tags?: any
+  }];
   message?: string;
   nextMsgDelayInMs?: number;
 }
