@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.7.11 - 2020-10-06
+
+- Update interface for the expected output of the onUserSegmentUpdate which optional parameters.
+
 # 0.7.10 - 2020-04-23
 
 - Fix logs, enable the use of macros such as %j instead of using JSON.stringify()
