@@ -258,7 +258,7 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             request.feed_id
           );
 
-          const response = await this.onUserSegmentUpdate(
+          const response: UserSegmentUpdatePluginResponse = await this.onUserSegmentUpdate(
             request,
             instanceContext
           );
@@ -278,6 +278,14 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
 
           if (response.message) {
             pluginResponse.message = response.message;
+          }
+
+          if (response.data) {
+              pluginResponse.data = response.data;
+          }
+
+          if (response.stats) {
+              pluginResponse.stats = response.stats;
           }
 
           let statusCode: number;

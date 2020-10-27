@@ -1,5 +1,8 @@
 # Changelog
 
+# 0.7.12 - 2020-10-27
+- Fix : properly pass data and stats object in the onUserSegmentUpdate response
+
 # 0.7.11 - 2020-10-06
 
 - Update interface for the expected output of the onUserSegmentUpdate which optional parameters.
