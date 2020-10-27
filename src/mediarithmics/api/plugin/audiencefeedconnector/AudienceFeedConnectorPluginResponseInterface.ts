@@ -3,6 +3,8 @@ export declare type AudienceFeedConnectorConnectionStatus = 'ok' | 'error' | 'ex
 
 export interface AudienceFeedConnectorPluginResponse {
   status: AudienceFeedConnectorStatus;
+  data?: UserSegmentUpdatePluginResponseData[];
+  stats?: UserSegmentUpdatePluginResponseStats[];
   message?: string;
 }
 
@@ -18,17 +20,21 @@ export interface ExternalSegmentConnectionPluginResponse {
 
 export interface UserSegmentUpdatePluginResponse {
   status: AudienceFeedConnectorStatus;
-  data?: [{
-    destination_token?: string;
-    grouping_key?: string
-    content?: string;
-    binary_content?: BinaryType;
-  }];
-  stats?: [{
-    identifier?: string;
-    sync_result?: string;
-    tags?: any
-  }];
+  data?: UserSegmentUpdatePluginResponseData[];
+  stats?: UserSegmentUpdatePluginResponseStats[];
   message?: string;
   nextMsgDelayInMs?: number;
+}
+
+export interface UserSegmentUpdatePluginResponseData {
+  destination_token?: string;
+  grouping_key?: string
+  content?: string;
+  binary_content?: BinaryType;
+}
+
+export interface UserSegmentUpdatePluginResponseStats {
+  identifier?: string;
+  sync_result?: string;
+  tags?: any
 }

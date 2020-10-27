@@ -30,7 +30,12 @@ class MyFakeAudienceFeedConnector extends core.AudienceFeedConnectorBasePlugin {
     instanceContext: core.AudienceFeedConnectorBaseInstanceContext
   ): Promise<core.UserSegmentUpdatePluginResponse> {
     const response: core.UserSegmentUpdatePluginResponse = {
-      status: 'ok'
+      status: 'ok',
+      data: [{
+        destination_token: "destToken",
+        grouping_key: "segId",
+        content: "my_string"
+      }]
     };
     return Promise.resolve(response);
   }
@@ -82,7 +87,7 @@ describe('Fetch Audience Feed Gateway API', () => {
   });
 });
 
-describe('External Audience Feed API test', function () {
+describe.only('External Audience Feed API test', function () {
   // All the magic is here
   const plugin = new MyFakeAudienceFeedConnector(false);
   let runner: core.TestingPluginRunner;
@@ -238,7 +243,7 @@ describe('External Audience Feed API test', function () {
               .send(userSegmentUpdateRequest)
               .end(function (err, res) {
                 expect(res.status).to.equal(200);
-
+                expect(JSON.parse(res.text).data).to.deep.equal([{"destination_token":"destToken", "grouping_key":"segId","content":"my_string"}])
                 expect(JSON.parse(res.text).status).to.be.eq('ok');
 
                 done();
