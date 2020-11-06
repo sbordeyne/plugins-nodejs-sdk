@@ -179,7 +179,7 @@ describe('Data File helper Tests', function () {
   const authenticationToken = 'Manny';
   const workerId = 'Calavera';
 
-  const fakeDataFile = new Buffer('Hello');
+  const fakeDataFile = Buffer.from('Hello');
 
   const rpMockup = sinon.stub().returns(Promise.resolve(fakeDataFile));
 
