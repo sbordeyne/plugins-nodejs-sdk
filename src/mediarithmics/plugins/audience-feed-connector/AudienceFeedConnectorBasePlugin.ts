@@ -296,6 +296,9 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             case 'error':
               statusCode = 500;
               break;
+            case 'retry':
+              statusCode = 429;
+              break;
             default:
               statusCode = 500;
           }

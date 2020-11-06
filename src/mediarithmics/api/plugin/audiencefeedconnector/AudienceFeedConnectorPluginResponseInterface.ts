@@ -1,6 +1,6 @@
-export type AudienceFeedConnectorStatus = 'ok' | 'error';
+export type AudienceFeedConnectorStatus = 'ok' | 'error' | 'retry';
 export declare type AudienceFeedConnectorConnectionStatus = 'ok' | 'error' | 'external_segment_not_ready_yet';
-
+export type AudienceFeedConnectorContentType = 'text/csv' | 'application/json' | 'text/plain';
 export interface AudienceFeedConnectorPluginResponse {
   status: AudienceFeedConnectorStatus;
   data?: UserSegmentUpdatePluginResponseData[];
