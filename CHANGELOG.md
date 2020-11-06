@@ -1,5 +1,8 @@
 # Changelog
 
+# xxxxx - YYYY-MM-DD
+- Enable to return retry statusName (429 Status Code) for the onUserSegmentUpdate method for the Audience Feed Connector Plugin
+
 # 0.7.12 - 2020-10-27
 - Fix : properly pass data and stats object in the onUserSegmentUpdate response
 
