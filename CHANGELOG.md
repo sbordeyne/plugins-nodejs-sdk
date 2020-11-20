@@ -1,5 +1,10 @@
 # Changelog
 
+# Next
+
+- Add support for Custom Action plugins
+- Add tests for Custom Action plugins
+
 # 0.7.12 - 2020-10-27
 - Fix : properly pass data and stats object in the onUserSegmentUpdate response
 
