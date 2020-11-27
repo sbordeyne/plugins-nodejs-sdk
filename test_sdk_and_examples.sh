@@ -6,7 +6,9 @@ npm install
 npm run prepublishOnly
 
 export TS_NODE_TYPE_CHECK=1
-mocha -r ts-node/register src/tests/*.ts
+for t in src/tests/*.ts; do
+  mocha -r ts-node/register $t
+done
 
 npm link
 
