@@ -135,6 +135,10 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
             `POST /v1/external_segment_creation ${JSON.stringify(req.body)}`
           );
 
+          if (!this.httpIsReady()) {
+            throw new Error('Plugin not initialized');
+          }
+
           const request = req.body as ExternalSegmentCreationRequest;
 
           if (!this.onExternalSegmentCreation) {
@@ -182,6 +186,10 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
           this.logger.debug(
             `POST /v1/external_segment_connection ${JSON.stringify(req.body)}`
           );
+
+          if (!this.httpIsReady()) {
+            throw new Error('Plugin not initialized');
+          }
 
           const request = req.body as ExternalSegmentConnectionRequest;
 

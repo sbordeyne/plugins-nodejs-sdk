@@ -386,6 +386,10 @@ export abstract class BasePlugin {
   start() {
   }
 
+  protected httpIsReady() {
+    return this.credentials && this.credentials.worker_id && this.credentials.authentication_token;
+  }
+
   // This method can be overridden by any subclass
   protected onLogLevelUpdateHandler(req: express.Request,
     res: express.Response) {
@@ -434,7 +438,7 @@ export abstract class BasePlugin {
   protected onStatusRequest(req: express.Request, res: express.Response) {
     //Route used by the plugin manager to check if the plugin is UP and running
     this.logger.silly('GET /v1/status');
-    if (this.credentials.worker_id && this.credentials.authentication_token) {
+    if (this.httpIsReady()) {
       res.status(200).end();
     } else {
       this.logger.error(

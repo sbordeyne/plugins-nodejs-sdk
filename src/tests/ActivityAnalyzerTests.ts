@@ -189,9 +189,46 @@ describe('Activity Analysis API test', function () {
 
   });
 
+  it("Check that the plugin doesn't reply when not initialized", function (
+    done
+  ) {
+    const rpMockup = sinon.stub();
+
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
+
+    // We init the plugin
+    request(runner.plugin.app)
+    const requestBody = JSON.parse(`{
+        "activity_analyzer_id": 123456789,
+        "datamart_id": 1034,
+        "channel_id": "1268",
+        "activity": {
+          "$email_hash": null,
+          "$events": [],
+          "$site_id": "1268",
+          "$ts": 1479820606901,
+          "$type": "SITE_VISIT"
+        }
+      }`);
+
+    request(runner.plugin.app)
+      .post('/v1/activity_analysis')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(500);
+        expect(runner.plugin.pluginCache.size()).to.equal(0, "no cache should has been initialized when we don't even have init the plugin");
+
+        done();
+      });
+
+  });
+
+
   afterEach(() => {
     // We clear the cache so that we don't have any processing still running in the background
     runner.plugin.pluginCache.clear();
+    runner.plugin.credentials.worker_id = '';
+    runner.plugin.credentials.authentication_token = '';
   });
 
 });

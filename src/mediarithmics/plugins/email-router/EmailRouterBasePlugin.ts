@@ -89,7 +89,16 @@ export abstract class EmailRouterPlugin extends BasePlugin {
       '/v1/email_routing',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/email_routing : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -131,7 +140,16 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     this.app.post(
       '/v1/email_router_check',
       (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
+        if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/email_router_check : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: 'Missing request body'
           };
