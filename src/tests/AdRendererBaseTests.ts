@@ -214,55 +214,58 @@ describe('Ad Contents API test', function () {
 });
 
 describe('Instance Context check', () => {
-  it('Check that the instanceContext is rebuilt at each call for PREVIEW', function (done) {
 
-    const ICStub = sinon.stub();
+  // Fake AdRenderer with dummy processing
+  class MyFakeAdRenderer extends core.AdRendererBasePlugin<core.AdRendererBaseInstanceContext> {
 
-    // Fake AdRenderer with dummy processing
-    class MyFakeAdRenderer extends core.AdRendererBasePlugin<core.AdRendererBaseInstanceContext> {
+    protected async instanceContextBuilder(creativeId: String) {
 
-      protected async instanceContextBuilder(creativeId: String) {
+      // We check if the method was called once or twice
+      ICStub();
 
-        // We check if the method was called once or twice
-        ICStub();
-
-        const IC: core.AdRendererBaseInstanceContext = {
-          properties: new PropertiesWrapper([]),
-          displayAd: {
-            type: 'DISPLAY_AD',
-            id: '7168',
-            organisation_id: '1126',
-            name: 'Toto',
-            technical_name: undefined,
-            archived: false,
-            editor_version_id: '5',
-            editor_version_value: '1.0.0',
-            editor_group_id: 'com.mediarithmics.creative.display',
-            editor_artifact_id: 'default-editor',
-            editor_plugin_id: '5',
-            renderer_version_id: '1054',
-            renderer_version_value: '1.0.0',
-            renderer_group_id: 'com.trololo.creative.display',
-            renderer_artifact_id: 'multi-advertisers-display-ad-renderer',
-            renderer_plugin_id: '1041',
-            creation_date: 1492785056278,
-            subtype: 'BANNER',
-            format: '300x250'
-          }
-        };
-        return IC;
-      }
-
-      protected async onAdContents(
-        request: core.AdRendererRequest,
-        instanceContext: core.AdRendererBaseInstanceContext
-      ) {
-        const response: core.AdRendererPluginResponse = {
-          html: request.call_id
-        };
-        return Promise.resolve(response);
-      }
+      const IC: core.AdRendererBaseInstanceContext = {
+        properties: new PropertiesWrapper([]),
+        displayAd: {
+          type: 'DISPLAY_AD',
+          id: '7168',
+          organisation_id: '1126',
+          name: 'Toto',
+          technical_name: undefined,
+          archived: false,
+          editor_version_id: '5',
+          editor_version_value: '1.0.0',
+          editor_group_id: 'com.mediarithmics.creative.display',
+          editor_artifact_id: 'default-editor',
+          editor_plugin_id: '5',
+          renderer_version_id: '1054',
+          renderer_version_value: '1.0.0',
+          renderer_group_id: 'com.trololo.creative.display',
+          renderer_artifact_id: 'multi-advertisers-display-ad-renderer',
+          renderer_plugin_id: '1041',
+          creation_date: 1492785056278,
+          subtype: 'BANNER',
+          format: '300x250'
+        }
+      };
+      return IC;
     }
+
+    protected async onAdContents(
+      request: core.AdRendererRequest,
+      instanceContext: core.AdRendererBaseInstanceContext
+    ) {
+      const response: core.AdRendererPluginResponse = {
+        html: request.call_id
+      };
+      return Promise.resolve(response);
+    }
+  }
+
+  const ICStub = sinon.stub();
+  const plugin = new MyFakeAdRenderer(false);
+  const runner = new core.TestingPluginRunner(plugin);
+
+  it('Check that the instanceContext is rebuilt at each call for PREVIEW', function (done) {
 
     // Fake "Preview" AdCall
 
@@ -305,9 +308,6 @@ describe('Instance Context check', () => {
       restrictions: {animation_max_duration: 25}
     };
 
-    const plugin = new MyFakeAdRenderer(false);
-    const runner = new core.TestingPluginRunner(plugin);
-
     // Plugin init
     request(runner.plugin.app)
       .post('/v1/init')
@@ -344,6 +344,12 @@ describe('Instance Context check', () => {
               });
           });
       });
+
+    afterEach(() => {
+      // We clear the cache so that we don't have any processing still running in the background
+      runner.plugin.pluginCache.clear();
+      ICStub.reset();
+    });
   });
 });
 
