@@ -26,6 +26,8 @@ export * from './plugins/ad-renderer/template/AdRendererTemplatePlugin';
 export * from './plugins/ad-renderer/template/UserCampaignInterface';
 export * from './plugins/ad-renderer/template/UserCampaignInterface';
 export * from './plugins/bid-optimizer/BidOptimizerBasePlugin';
+export * from './plugins/custom-action/CustomActionBasePlugin';
+export * from './plugins/custom-action/CustomActionInterface';
 export * from './plugins/common';
 export * from './plugins/email-renderer/base/EmailRendererBasePlugin';
 export * from './plugins/email-renderer/template/EmailRendererTemplatePlugin';
