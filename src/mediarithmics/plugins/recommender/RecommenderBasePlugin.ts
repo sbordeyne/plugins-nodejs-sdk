@@ -95,7 +95,16 @@ export abstract class RecommenderPlugin extends BasePlugin {
       '/v1/recommendations',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/recommendations : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
