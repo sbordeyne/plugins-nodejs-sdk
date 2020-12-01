@@ -1,9 +1,9 @@
 # Changelog
 
-# Next
+# 0.7.13 - 2020-12-01
 
 - Add support for Custom Action plugins
-- Add tests for Custom Action plugins
+- Refuse to process calls before the initialization
 
 # 0.7.12 - 2020-10-27
 - Fix : properly pass data and stats object in the onUserSegmentUpdate response
