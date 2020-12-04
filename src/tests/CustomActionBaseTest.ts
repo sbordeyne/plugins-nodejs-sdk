@@ -27,7 +27,7 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
   const plugin = new MyFakeCustomActionBasePlugin(false);
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-  it("Check that instance_id is passed correctly in fetchCustomActionProperties", function (done) {
+  it("Check that custom_action_id is passed correctly in fetchCustomActionProperties", function (done) {
     const fakeId = "62";
 
     // We try to call the Gateway
@@ -41,7 +41,7 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
       });
   });
 
-  it("Check that instance_id is passed correctly in fetchCustomAction", function (done) {
+  it("Check that custom_action_id is passed correctly in fetchCustomAction", function (done) {
     const fakeId = "62";
 
     // We try to call the Gateway
@@ -113,7 +113,7 @@ describe.only("Custom Action API test", function () {
 
     const customActionRequest: core.CustomActionRequest = {
       user_point_id: "26340584-f777-404c-82c5-56220667464b",
-      instance_id: "62",
+      custom_action_id: "62",
     };
 
     request(runner.plugin.app)

@@ -126,7 +126,7 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
           }
 
           const instanceContext = await this.getInstanceContext(
-            request.instance_id
+            request.custom_action_id
           );
 
           const response = await this.onCustomActionCall(
@@ -135,7 +135,7 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
           );
 
           this.logger.debug(
-            `CustomActionId: ${request.instance_id} - Plugin impl returned: %j`,
+            `CustomActionId: ${request.custom_action_id} - Plugin impl returned: %j`,
             response
           );
 
@@ -157,7 +157,7 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
           }
 
           this.logger.debug(
-            `CustomActionId: ${request.instance_id} - Returning : ${statusCode} - %j`,
+            `CustomActionId: ${request.custom_action_id} - Returning : ${statusCode} - %j`,
             response
           );
 

@@ -57,7 +57,7 @@ describe.only("Test Custom Action example", function () {
 
     const customActionRequest: core.CustomActionRequest = {
       user_point_id: "26340584-f777-404c-82c5-56220667464b",
-      instance_id: "62",
+      custom_action_id: "62",
     };
 
     request(runner.plugin.app)
