@@ -1,5 +1,8 @@
 # Changelog
 
+# Next
+- Change CustomActionRequest for a custom action (instance_id to custom_action_id)
+
 # 0.7.13 - 2020-12-01
 
 - Add support for Custom Action plugins

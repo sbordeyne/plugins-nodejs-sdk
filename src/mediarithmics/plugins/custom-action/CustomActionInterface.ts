@@ -1,6 +1,6 @@
 export interface CustomActionRequest {
   user_point_id: string;
-  instance_id: string; // custom action id, used to fetch the instance context, aka the instance configuration
+  custom_action_id: string;
 }
 
 export interface CustomActionPluginResponse {
