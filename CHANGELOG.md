@@ -1,6 +1,9 @@
 # Changelog
 
 # Next
+
+# 0.8.0 - 2020-12-08
+
 - Change CustomActionRequest for a custom action (instance_id to custom_action_id)
 
 # 0.7.13 - 2020-12-01
