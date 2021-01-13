@@ -6,13 +6,10 @@ import {
   CustomActionPluginResponse,
   CustomAction,
 } from "./CustomActionInterface";
-import { PropertiesWrapper } from "./../common/BasePlugin";
 import { PluginProperty } from "./../../api/core/plugin/PluginPropertyInterface";
 import { BasePlugin } from "../common";
 
-export interface CustomActionBaseInstanceContext {
-  properties: PropertiesWrapper;
-}
+export interface CustomActionBaseInstanceContext {}
 
 export abstract class CustomActionBasePlugin extends BasePlugin {
   constructor(enableThrottling = false) {
@@ -26,15 +23,20 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
    *
    * @param customActionId
    */
-  async fetchCustomAction(customActionId: string): Promise<CustomAction> {
-    const customActionResponse = await super.requestGatewayHelper(
-      "GET",
-      `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${customActionId}`
-    );
+  async fetchCustomAction(apiToken: string, customActionId: string): Promise<CustomAction> {
+    const options = {
+      method: 'GET',
+      uri: `https://api.mediarithmics.com/v1/scenario_custom_actions/${customActionId}`,
+      json: true
+    };
+
+    const customActionResponse = await this.requestPublicMicsApiHelper(apiToken, options);
+
     this.logger.debug(
       `Fetched Custom Action: ${customActionId} - %j`,
       customActionResponse.data
     );
+
     return customActionResponse.data;
   }
 
@@ -43,32 +45,30 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
    * @param customActionId
    */
   async fetchCustomActionProperties(
+    apiToken: string,
     customActionId: string
   ): Promise<PluginProperty[]> {
-    const customActionPropertiesResponse = await super.requestGatewayHelper(
-      "GET",
-      `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${customActionId}/properties`
-    );
+    const options = {
+      method: 'GET',
+      uri: `https://api.mediarithmics.com/v1/scenario_custom_actions/${customActionId}/properties`,
+      json: true
+    };
+
+    const customActionPropertiesResponse = await this.requestPublicMicsApiHelper(apiToken, options);
+
     this.logger.debug(
       `Fetched Custom Action Properties: ${customActionId} - %j`,
       customActionPropertiesResponse.data
     );
+
     return customActionPropertiesResponse.data;
   }
 
   protected async instanceContextBuilder(
-    instanceId: string
+    customActionId: string
   ): Promise<CustomActionBaseInstanceContext> {
-    const customActionProps = await this.fetchCustomActionProperties(
-      instanceId
-    );
-
-    const context: CustomActionBaseInstanceContext = {
-      properties: new PropertiesWrapper(customActionProps),
-    };
-
-    return context;
-  }
+    return {}
+  };
 
   /**
    *
@@ -81,17 +81,17 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
   ): Promise<CustomActionPluginResponse>;
 
   protected async getInstanceContext(
-    instanceId: string
+    customActionId: string
   ): Promise<CustomActionBaseInstanceContext> {
-    if (!this.pluginCache.get(instanceId)) {
+    if (!this.pluginCache.get(customActionId)) {
       this.pluginCache.put(
-        instanceId,
-        this.instanceContextBuilder(instanceId),
+        customActionId,
+        this.instanceContextBuilder(customActionId),
         this.getInstanceContextCacheExpiration()
       );
     }
 
-    return this.pluginCache.get(instanceId);
+    return this.pluginCache.get(customActionId);
   }
 
   private emptyBodyFilter(
