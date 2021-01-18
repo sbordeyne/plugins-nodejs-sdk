@@ -3,8 +3,25 @@ import { core } from "../";
 import "mocha";
 import * as request from "supertest";
 import * as sinon from "sinon";
+import { CustomActionBaseInstanceContext } from "../mediarithmics/plugins/custom-action/CustomActionBasePlugin";
+import { PropertiesWrapper } from "../mediarithmics";
 
 class MyFakeCustomActionBasePlugin extends core.CustomActionBasePlugin {
+  protected async instanceContextBuilder(
+    customActionId: string
+  ): Promise<CustomActionBaseInstanceContext> {
+    const customActionProps = await this.fetchCustomActionProperties(
+      "xxx",
+      customActionId
+    );
+
+    const context: CustomActionBaseInstanceContext = {
+      properties: new PropertiesWrapper(customActionProps),
+    };
+
+    return context;
+  }
+  
   protected onCustomActionCall(
     request: core.CustomActionRequest,
     instanceContext: core.CustomActionBaseInstanceContext
@@ -28,11 +45,12 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
   const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
   it("Check that custom_action_id is passed correctly in fetchCustomActionProperties", function (done) {
+    const fakeToken = "xxxx";
     const fakeId = "62";
 
     // We try to call the Gateway
     (runner.plugin as MyFakeCustomActionBasePlugin)
-      .fetchCustomActionProperties(fakeId)
+      .fetchCustomActionProperties(fakeToken, fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${fakeId}/properties`
@@ -42,11 +60,12 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
   });
 
   it("Check that custom_action_id is passed correctly in fetchCustomAction", function (done) {
+    const fakeToken = "xxxx";
     const fakeId = "62";
 
     // We try to call the Gateway
     (runner.plugin as MyFakeCustomActionBasePlugin)
-      .fetchCustomAction(fakeId)
+      .fetchCustomAction(fakeToken, fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${fakeId}`
