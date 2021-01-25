@@ -1,10 +1,10 @@
 # Changelog
 
-# Next
+# 0.8.1 - 2020-01-25
 
 - Fix CustomActionBasePlugin, `instanceContextBuilder` does not fetch plugin properties as it needs
-a mics API token. Now to retrieve the CustomAction plugin and properties a token is needed, see
-functions `fetchCustomAction` and `fetchCustomActionProperties`.
+  a mics API token. Now to retrieve the CustomAction plugin and properties a token is needed, see
+  functions `fetchCustomAction` and `fetchCustomActionProperties`.
 
 # 0.8.0 - 2020-12-08
 
