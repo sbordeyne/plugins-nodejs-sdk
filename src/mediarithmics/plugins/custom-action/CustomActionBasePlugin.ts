@@ -11,7 +11,7 @@ import { BasePlugin } from "../common";
 
 export interface CustomActionBaseInstanceContext {}
 
-export abstract class CustomActionBasePlugin extends BasePlugin {
+export abstract class CustomActionBasePlugin extends BasePlugin<CustomActionBaseInstanceContext> {
   constructor(enableThrottling = false) {
     super(enableThrottling);
 
@@ -67,7 +67,7 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
   protected async instanceContextBuilder(
     customActionId: string
   ): Promise<CustomActionBaseInstanceContext> {
-    return {}
+    return Promise.resolve({})
   };
 
   /**
@@ -84,13 +84,16 @@ export abstract class CustomActionBasePlugin extends BasePlugin {
     customActionId: string
   ): Promise<CustomActionBaseInstanceContext> {
     if (!this.pluginCache.get(customActionId)) {
-      this.pluginCache.put(
-        customActionId,
-        this.instanceContextBuilder(customActionId),
-        this.getInstanceContextCacheExpiration()
-      );
+        this.pluginCache.put(
+          customActionId,
+          this.instanceContextBuilder(customActionId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(customActionId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
     }
-
     return this.pluginCache.get(customActionId);
   }
 
