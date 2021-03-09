@@ -190,7 +190,13 @@ export abstract class BasePlugin {
 
     if (this.enableThrottling) {
       this.app.use((req, res, next) => {
-        if (toobusy()) {
+        if (toobusy() &&
+        !(
+            req.path === '/v1/init' ||
+            req.path === '/v1/status' ||
+            req.path === '/v1/shutdown' ||
+            req.path === '/v1/log_level'
+          )) {
           res.status(429).send('I\'m busy right now, sorry.');
         } else {
           next();
