@@ -1,6 +1,10 @@
 # Changelog
 
-# 0.8.1 - 2020-01-25
+# 0.8.2 - 2021-03-25
+
+- Improve InstanceContext caching, don't cache failed promise.
+
+# 0.8.1 - 2021-01-25
 
 - Fix CustomActionBasePlugin, `instanceContextBuilder` does not fetch plugin properties as it needs
   a mics API token. Now to retrieve the CustomAction plugin and properties a token is needed, see
