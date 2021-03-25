@@ -21,7 +21,7 @@ export interface AudienceFeedConnectorBaseInstanceContext {
   feedProperties: PropertiesWrapper;
 }
 
-export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
+export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin<AudienceFeedConnectorBaseInstanceContext> {
 
   constructor(enableThrottling = false) {
     super(enableThrottling);
@@ -70,7 +70,9 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
   }
 
   // This is a default provided implementation
-  protected async instanceContextBuilder(feedId: string): Promise<AudienceFeedConnectorBaseInstanceContext> {
+  protected async instanceContextBuilder(
+    feedId: string
+  ): Promise<AudienceFeedConnectorBaseInstanceContext> {
     const audienceFeedP = this.fetchAudienceFeed(feedId);
     const audienceFeedPropsP = this.fetchAudienceFeedProperties(feedId);
 
@@ -96,15 +98,20 @@ export abstract class AudienceFeedConnectorBasePlugin extends BasePlugin {
   protected abstract onUserSegmentUpdate(request: UserSegmentUpdateRequest,
     instanceContext: AudienceFeedConnectorBaseInstanceContext): Promise<UserSegmentUpdatePluginResponse>;
 
-  protected async getInstanceContext(feedId: string): Promise<AudienceFeedConnectorBaseInstanceContext> {
+  protected async getInstanceContext(
+    feedId: string
+  ): Promise<AudienceFeedConnectorBaseInstanceContext> {
     if (!this.pluginCache.get(feedId)) {
-      this.pluginCache.put(
-        feedId,
-        this.instanceContextBuilder(feedId),
-        this.getInstanceContextCacheExpiration()
-      );
+        this.pluginCache.put(
+          feedId,
+          this.instanceContextBuilder(feedId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(feedId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
     }
-
     return this.pluginCache.get(feedId);
   }
 

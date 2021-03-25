@@ -120,7 +120,7 @@ export class PropertiesWrapper {
   };
 }
 
-export abstract class BasePlugin {
+export abstract class BasePlugin<CacheValue = any> {
   multiThread: boolean = false;
 
   // Default cache is now 10 min to give some breathing to the Gateway
@@ -129,7 +129,7 @@ export abstract class BasePlugin {
   // or we should implement a minimum threshold pattern)
   INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 600000;
 
-  pluginCache: any;
+  pluginCache: cache.CacheClass<string, Promise<CacheValue>>;
 
   gatewayHost: string;
   gatewayPort: number;
