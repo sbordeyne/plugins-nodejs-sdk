@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.8.3 - 2021-04-08
+
+- Plugins that enable throttling should treat technical routes normally when they're busy.
+
 # 0.8.2 - 2021-03-25
 
 - Improve InstanceContext caching, don't cache failed promise.
