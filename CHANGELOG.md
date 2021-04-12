@@ -1,5 +1,9 @@
 # Changelog
 
+# Next
+
+- CustomActionBasePlugin fetch CustomAction and properties for InstanceContext.
+
 # 0.8.3 - 2021-04-08
 
 - Plugins that enable throttling should treat technical routes normally when they're busy.
