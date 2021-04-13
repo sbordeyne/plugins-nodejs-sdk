@@ -1,6 +1,6 @@
 # Changelog
 
-# Next
+# 0.8.4 - 2021-04-13
 
 - CustomActionBasePlugin fetch CustomAction and properties for InstanceContext.
 
