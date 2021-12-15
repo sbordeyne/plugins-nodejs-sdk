@@ -13,6 +13,36 @@ describe.only("Test Custom Action example", function () {
   it("Check the behavior of a dummy custom action", function (done) {
     const rpMockup: sinon.SinonStub = sinon.stub();
 
+    const customAction: core.DataResponse<core.CustomAction> = {
+      status: 'ok',
+      data: {
+        id: "1",
+        name: "custom action",
+        organisation_id: "1234",
+        group_id: "com.test.custom-action",
+        artifact_id: "test",
+        creation_ts: 1234,
+        created_by: "2",
+        version_id: "3",
+        version_value: "1.0.0"
+      }
+    };
+    rpMockup
+      .withArgs(
+        sinon.match.has(
+          "uri",
+          sinon.match(function (value: string) {
+            return (
+              value.match(
+                /\/v1\/scenario_custom_actions\/(.){1,10}$/
+              ) !== null
+            );
+          })
+        )
+      )
+      .returns(customAction);
+
+
     const properties: core.DataListResponse<core.PluginProperty> = {
       status: "ok",
       count: 1,

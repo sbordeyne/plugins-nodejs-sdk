@@ -11,11 +11,13 @@ class MyFakeCustomActionBasePlugin extends core.CustomActionBasePlugin {
     customActionId: string
   ): Promise<CustomActionBaseInstanceContext> {
     const customActionProps = await this.fetchCustomActionProperties(
-      "xxx",
       customActionId
     );
 
+    const customAction = await this.fetchCustomAction(customActionId);
+
     const context: CustomActionBaseInstanceContext = {
+      customAction: customAction,
       properties: new PropertiesWrapper(customActionProps),
     };
 
@@ -50,7 +52,7 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
 
     // We try to call the Gateway
     (runner.plugin as MyFakeCustomActionBasePlugin)
-      .fetchCustomActionProperties(fakeToken, fakeId)
+      .fetchCustomActionProperties(fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${fakeId}/properties`
@@ -65,7 +67,7 @@ describe("Fetch Scenario Custom Action Gateway API", () => {
 
     // We try to call the Gateway
     (runner.plugin as MyFakeCustomActionBasePlugin)
-      .fetchCustomAction(fakeToken, fakeId)
+      .fetchCustomAction(fakeId)
       .then(() => {
         expect(rpMockup.args[0][0].uri).to.be.eq(
           `${this.outboundPlatformUrl}/v1/scenario_custom_actions/${fakeId}`
@@ -87,6 +89,35 @@ describe.only("Custom Action API test", function () {
 
   it("Check that the plugin is giving good results with a simple handler", function (done) {
     const rpMockup: sinon.SinonStub = sinon.stub();
+
+    const customAction: core.DataResponse<core.CustomAction> = {
+      status: 'ok',
+      data: {
+        id: "1",
+        name: "custom action",
+        organisation_id: "1234",
+        group_id: "com.test.custom-action",
+        artifact_id: "test",
+        creation_ts: 1234,
+        created_by: "2",
+        version_id: "3",
+        version_value: "1.0.0"
+      }
+    };
+    rpMockup
+      .withArgs(
+        sinon.match.has(
+          "uri",
+          sinon.match(function (value: string) {
+            return (
+              value.match(
+                /\/v1\/scenario_custom_actions\/(.){1,10}$/
+              ) !== null
+            );
+          })
+        )
+      )
+      .returns(customAction);
 
     const properties: core.DataListResponse<core.PluginProperty> = {
       status: "ok",
