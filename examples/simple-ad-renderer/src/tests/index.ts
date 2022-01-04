@@ -5,6 +5,13 @@ import * as request from 'supertest';
 import * as sinon from 'sinon';
 import {MySimpleAdRenderer} from '../MyPluginImpl';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 // Creative stub
 const creative: core.DataResponse<core.Creative> = {
   status: 'ok',
@@ -184,30 +191,22 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MySimpleAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'silly'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'silly'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            expect(res.header['x-mics-display-context']).to.eq('{"hello":"\\u2764"}');
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                expect(res.header['x-mics-display-context']).to.eq('{"hello":"\\u2764"}');
-
-                done();
-              });
+            done();
           });
       });
   });

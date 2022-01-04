@@ -4,7 +4,15 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch analyzer API', () => {
+
   class MyFakeActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
     protected onActivityAnalysis(
       request: core.ActivityAnalyzerRequest,
@@ -72,7 +80,6 @@ describe('Fetch analyzer API', () => {
 });
 
 describe('Activity Analysis API test', function () {
-
   let runner: core.TestingPluginRunner;
 
   class MyFakeSimpleActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
@@ -136,14 +143,7 @@ describe('Activity Analysis API test', function () {
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        const requestBody = JSON.parse(`{
+    const requestBody = JSON.parse(`{
           "activity_analyzer_id": 1923,
           "datamart_id": 1034,
           "channel_id": "1268",
@@ -174,17 +174,15 @@ describe('Activity Analysis API test', function () {
           }
         }`);
 
-        request(runner.plugin.app)
-          .post('/v1/activity_analysis')
-          .send(requestBody)
-          .end(function (err, res) {
-            expect(res.status).to.equal(200);
+    request(runner.plugin.app)
+      .post('/v1/activity_analysis')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(200);
 
-            expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
+        expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
 
-            done();
-          });
-
+        done();
       });
 
   });
@@ -227,8 +225,6 @@ describe('Activity Analysis API test', function () {
   afterEach(() => {
     // We clear the cache so that we don't have any processing still running in the background
     runner.plugin.pluginCache.clear();
-    runner.plugin.credentials.worker_id = '';
-    runner.plugin.credentials.authentication_token = '';
   });
 
 });

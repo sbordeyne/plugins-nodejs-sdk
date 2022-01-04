@@ -5,6 +5,13 @@ import * as request from "supertest";
 import * as sinon from "sinon";
 import { MyCustomActionPlugin } from "../MyPluginImpl";
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe.only("Test Custom Action example", function () {
   // All the magic is here
   const plugin = new MyCustomActionPlugin(false);
@@ -76,14 +83,6 @@ describe.only("Test Custom Action example", function () {
       .returns(properties);
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    // We init the plugin
-    request(runner.plugin.app)
-      .post("/v1/init")
-      .send({ authentication_token: "Manny", worker_id: "Calavera" })
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-      });
 
     const customActionRequest: core.CustomActionRequest = {
       user_point_id: "26340584-f777-404c-82c5-56220667464b",

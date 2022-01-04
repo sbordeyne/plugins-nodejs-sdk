@@ -219,9 +219,15 @@ export abstract class BasePlugin<CacheValue = any> {
     this.pluginCache = cache;
     this.pluginCache.clear();
 
+    if (!process.env.PLUGIN_WORKER_ID) {
+      throw new Error("Missing worker id in the environment!");
+    }
+    if (!process.env.PLUGIN_AUTHENTICATION_TOKEN) {
+      throw new Error("Missing auth token in the environment!");
+    }
     this.credentials = {
-      authentication_token: '',
-      worker_id: ''
+      authentication_token: process.env.PLUGIN_AUTHENTICATION_TOKEN,
+      worker_id: process.env.PLUGIN_WORKER_ID
     };
 
     this.initInitRoute();
@@ -454,55 +460,6 @@ export abstract class BasePlugin<CacheValue = any> {
     }
   }
 
-  // This method can be overridden by any subclass
-  protected onInitRequestHandler(req: express.Request, res: express.Response) {
-    if (req.body.authentication_token && req.body.worker_id) {
-      const creds: Credentials = {
-        authentication_token: req.body.authentication_token,
-        worker_id: req.body.worker_id
-      };
-
-      // If MultiThread, we send a message to the cluster master,
-      // the onInitRequest() will be called once the master will propagate the update to each worker
-      if (this.multiThread) {
-        const msg: SocketMsg = {
-          value: JSON.stringify(creds),
-          cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER
-        };
-
-        this.logger.debug(
-          `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${
-            process.pid
-          } to master with value: ${msg.value}`
-        );
-
-        if (typeof process.send === 'function') {
-          process.send(msg);
-        }
-
-        // We have to assume that everything went fine in the propagation...
-        res.status(200).end();
-
-        // Else, we handle the onInitRequest in this process
-      } else {
-        this.logger.debug('POST /v1/init ', JSON.stringify(creds));
-
-        if (creds && creds.authentication_token && creds.worker_id) {
-          this.onInitRequest(creds);
-          res.status(200).end();
-        } else {
-          this.logger.error(`Error while Init: "creds are undefined"`);
-          res.status(500).end();
-        }
-      }
-    } else {
-      this.logger.error(
-        `Received /v1/init call without authentification_token or worker_id`
-      );
-      res.status(400).end();
-    }
-  }
-
   // Plugin Init implementation
 
   protected asyncMiddleware = (fn: (req: express.Request,
@@ -567,7 +524,8 @@ export abstract class BasePlugin<CacheValue = any> {
       '/v1/init',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          this.onInitRequestHandler(req, res);
+          // not useful anymore, keep it during the migration phase
+          res.status(200).end();
         }
       )
     );

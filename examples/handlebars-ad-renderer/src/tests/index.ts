@@ -6,6 +6,13 @@ import * as sinon from 'sinon';
 import {MyHandlebarsAdRenderer} from '../MyPluginImpl';
 import {badChars, escapeChar} from './utils';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 // Creative stub
 const creative: core.DataResponse<core.DisplayAd> = {
   status: 'ok',
@@ -272,44 +279,36 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
+            expect(
+              rpMockup.withArgs(
+                sinon.match.has(
+                  'uri',
+                  sinon.match(function (value: string) {
+                    return (
+                      value.match(
+                        /\/v1\/recommenders\/(.){1,10}\/recommendations/
+                      ) !== null
+                    );
+                  })
+                )
+              ).args[0][0].body.input_data.user_agent_id
+            ).to.be.eq(adRequest.user_agent_id);
 
-                expect(
-                  rpMockup.withArgs(
-                    sinon.match.has(
-                      'uri',
-                      sinon.match(function (value: string) {
-                        return (
-                          value.match(
-                            /\/v1\/recommenders\/(.){1,10}\/recommendations/
-                          ) !== null
-                        );
-                      })
-                    )
-                  ).args[0][0].body.input_data.user_agent_id
-                ).to.be.eq(adRequest.user_agent_id);
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -323,37 +322,29 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'silly'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'silly'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const urlFromHandlebar = res.text.trim();
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const urlFromHandlebar = res.text.trim();
+            const correctUrl =
+              'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=%7B%7BMICS_AD_CONTENT_ID%7D%7D&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttp%253A%252F%252Fwww.mediarithmics.com%252Fen%252F';
 
-                const correctUrl =
-                  'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=%7B%7BMICS_AD_CONTENT_ID%7D%7D&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttp%253A%252F%252Fwww.mediarithmics.com%252Fen%252F';
+            expect(urlFromHandlebar).to.be.eq(
+              correctUrl.replace(badChars, escapeChar)
+            );
 
-                expect(urlFromHandlebar).to.be.eq(
-                  correctUrl.replace(badChars, escapeChar)
-                );
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -370,48 +361,40 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const urlsFromHandlebar = res.text
+              .split(',')
+              .map(url => url.trim());
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const urlsFromHandlebar = res.text
-                  .split(',')
-                  .map(url => url.trim());
+            const correctUrls = [];
+            correctUrls.push(
+              'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=0&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fflaine%252Fresidence-les-terrasses-de-veret%252F'
+            );
+            correctUrls.push(
+              'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=1&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fval-thorens%252Fle-chalet-altitude%252F'
+            );
+            correctUrls.push(
+              'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=2&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fvalfrejus%252Fles-chalets-du-thabor%252F'
+            );
+            correctUrls.push('');
 
-                const correctUrls = [];
-                correctUrls.push(
-                  'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=0&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fflaine%252Fresidence-les-terrasses-de-veret%252F'
-                );
-                correctUrls.push(
-                  'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=1&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fval-thorens%252Fle-chalet-altitude%252F'
-                );
-                correctUrls.push(
-                  'https://ads.mediarithmics.com/ads/event?caid=auc%3Agoo%3A58346725000689de0a16ac4f120ecc41-0&ctx=LIVE&tid=1093&gid=1622&rid=2757&uaid=tech%3Agoo%3ACAESEANnikq25sbChKLHU7-o7ls&type=clk&ctid=2&redirect=https%3A%2F%2Fadclick.g.doubleclick.net%2Faclk%3Fsa%3DL%26ai%3DCDypOJWc0WN6TGs_YWsGYu5AB4Kmf9UbfuK_coAPAjbcBEAEgAGDVjdOCvAiCARdjYS1wdWItNjE2Mzg1Nzk5Mjk1Njk2NMgBCakCNKXJyWPNsT7gAgCoAwGqBOkBT9DCltAKPa0ltaiH2E0CxRF2Jee8ykOBqRGHBbE8aYS7jODKKPHE3KkGbenZXwSan1UZekvmuIfSdRUg6DFQhnbJnMR_bK57BQlMaMnmd71MXTv6P9Hh0m5cuoj7SlpOoyMX9IG8mNomIve031sZUPKOb5QA_tVKhtrlnm2hYJ7KSVZJH_83YmpK_ShxuxIwiAwQKMhYBnM4tnbvEinl3fROiwH1FFNOlqNJPaNgU4z9kEGCHIpj3RLErIcrxmT5OFLZ3q5AELXCYBJP1zB-UvscTkLrfc3Vl-sOe5f5_Tkkn-MpcijM_Z_gBAGABvDqk_ivqMjMFaAGIagHpr4b2AcA0ggFCIBhEAE%26num%3D1%26sig%3DAOD64_3iMhOr3Xh-A4bP1jvMzeEMGFfwtw%26client%3Dca-pub-6163857992956964%26adurl%3Dhttps%253A%252F%252Fwww.madamevacances.com%252Flocations%252Ffrance%252Falpes-du-nord%252Fvalfrejus%252Fles-chalets-du-thabor%252F'
-                );
-                correctUrls.push('');
+            expect(urlsFromHandlebar).to.be.deep.eq(
+              correctUrls.map(url => url.replace(badChars, escapeChar))
+            );
 
-                expect(urlsFromHandlebar).to.be.deep.eq(
-                  correctUrls.map(url => url.replace(badChars, escapeChar))
-                );
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -425,35 +408,27 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const priceFromHandlebar = res.text.trim();
+            const correctPrice = '123.45';
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const priceFromHandlebar = res.text.trim();
-                const correctPrice = '123.45';
+            expect(priceFromHandlebar).to.be.eq(
+              correctPrice.replace(badChars, escapeChar)
+            );
 
-                expect(priceFromHandlebar).to.be.eq(
-                  correctPrice.replace(badChars, escapeChar)
-                );
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -467,34 +442,26 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const json = res.text.trim();
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const json = res.text.trim();
+            expect(json).to.be.eq(
+              JSON.stringify(adRequest).replace(badChars, escapeChar)
+            );
 
-                expect(json).to.be.eq(
-                  JSON.stringify(adRequest).replace(badChars, escapeChar)
-                );
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -508,33 +475,25 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const trackingURL = res.text.trim();
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const trackingURL = res.text.trim();
-
-                expect(trackingURL).to.be.eq(
-                  adRequest.display_tracking_url.replace(badChars, escapeChar)
-                );
-                done();
-              });
+            expect(trackingURL).to.be.eq(
+              adRequest.display_tracking_url.replace(badChars, escapeChar)
+            );
+            done();
           });
       });
   });
@@ -551,41 +510,33 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
+            const headers = res.header['x-mics-display-context'];
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                const headers = res.header['x-mics-display-context'];
+            console.log('Headers: ' + JSON.stringify(headers));
 
-                console.log('Headers: ' + JSON.stringify(headers));
+            recommendations.data.proposals.map((prop, idx) => {
+              expect(
+                JSON.parse(headers).$clickable_contents[idx].item_id
+              ).to.be.eq(prop.$id);
+              expect(
+                JSON.parse(headers).$clickable_contents[idx].$content_id
+              ).to.be.eq(idx);
+            });
 
-                recommendations.data.proposals.map((prop, idx) => {
-                  expect(
-                    JSON.parse(headers).$clickable_contents[idx].item_id
-                  ).to.be.eq(prop.$id);
-                  expect(
-                    JSON.parse(headers).$clickable_contents[idx].$content_id
-                  ).to.be.eq(idx);
-                });
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -609,7 +560,7 @@ describe('Test Example Handlebar Ad Renderer', function () {
           technical_name: 'click_url',
           value: {
             url:
-              'http://www.april.fr/mon-assurance-de-pret-formulaire?cmpid=disp_datacomp_formadp_bann_300x250'
+            'http://www.april.fr/mon-assurance-de-pret-formulaire?cmpid=disp_datacomp_formadp_bann_300x250'
           },
           property_type: 'URL',
           origin: 'PLUGIN',
@@ -688,29 +639,21 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const plugin = new MyHandlebarsAdRenderer(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-
-                done();
-              });
+            done();
           });
       });
   });
@@ -729,44 +672,36 @@ describe('Test Example Handlebar Ad Renderer', function () {
     const adRequest2 = Object.assign({}, adRequest);
     adRequest2.user_agent_id = null;
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'info'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'info'})
+          .post('/v1/ad_contents')
+          .send(adRequest2)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/ad_contents')
-              .send(adRequest2)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
+            expect(
+              rpMockup.withArgs(
+                sinon.match.has(
+                  'uri',
+                  sinon.match(function (value: string) {
+                    return (
+                      value.match(
+                        /\/v1\/recommenders\/(.){1,10}\/recommendations/
+                      ) !== null
+                    );
+                  })
+                )
+              ).args[0][0].body.input_data.user_agent_id
+            ).to.be.eq(adRequest2.user_agent_id);
 
-                expect(
-                  rpMockup.withArgs(
-                    sinon.match.has(
-                      'uri',
-                      sinon.match(function (value: string) {
-                        return (
-                          value.match(
-                            /\/v1\/recommenders\/(.){1,10}\/recommendations/
-                          ) !== null
-                        );
-                      })
-                    )
-                  ).args[0][0].body.input_data.user_agent_id
-                ).to.be.eq(adRequest2.user_agent_id);
-
-                done();
-              });
+            done();
           });
       });
   });
