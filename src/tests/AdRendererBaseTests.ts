@@ -6,6 +6,13 @@ import * as sinon from 'sinon';
 import {PropertiesWrapper} from '../mediarithmics';
 import {generateEncodedClickUrl} from '../mediarithmics/plugins/ad-renderer/utils/index';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch DisplayAd API', () => {
   let requestPromiseProx: sinon.SinonStub = sinon
     .stub()
@@ -168,13 +175,7 @@ describe('Ad Contents API test', function () {
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        const requestBody = JSON.parse(`{
+    const requestBody = JSON.parse(`{
           "call_id":"auc:goo:58346725000689de0a16ac4f120ecc41-0",
           "context":"LIVE",
           "creative_id":"2757",
@@ -192,16 +193,14 @@ describe('Ad Contents API test', function () {
           "restrictions":{"animation_max_duration":25}
       }`);
 
-        request(runner.plugin.app)
-          .post('/v1/ad_contents')
-          .send(requestBody)
-          .end(function (err, res) {
-            expect(res.status).to.equal(200);
-            expect(res.text).to.be.eq(requestBody.call_id);
+    request(runner.plugin.app)
+      .post('/v1/ad_contents')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(200);
+        expect(res.text).to.be.eq(requestBody.call_id);
 
-            done();
-          });
-
+        done();
       });
 
   });
@@ -308,39 +307,31 @@ describe('Instance Context check', () => {
       restrictions: {animation_max_duration: 25}
     };
 
-    // Plugin init
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
         // Plugin log level to debug
         request(runner.plugin.app)
           .put('/v1/log_level')
           .send({level: 'silly'})
-          .end((err, res) => {
-            expect(res.status).to.equal(200);
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
 
-            // First AdCall
+        // First AdCall
+        request(runner.plugin.app)
+          .post('/v1/ad_contents')
+          .send(adRequest)
+          .end((err, res) => {
+            expect(res.status).to.eq(200);
+
+            // Second AdCall
             request(runner.plugin.app)
               .post('/v1/ad_contents')
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
 
-                // Second AdCall
-                request(runner.plugin.app)
-                  .post('/v1/ad_contents')
-                  .send(adRequest)
-                  .end((err, res) => {
-                    expect(res.status).to.eq(200);
+                // As it's a PREVIEW AdCall, we should have loaded the InstanceContext twice
+                expect(ICStub.callCount).to.eq(2);
 
-                    // As it's a PREVIEW AdCall, we should have loaded the InstanceContext twice
-                    expect(ICStub.callCount).to.eq(2);
-
-                    done();
-                  });
+                done();
               });
           });
       });

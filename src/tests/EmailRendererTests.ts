@@ -4,6 +4,13 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 class MyFakeEmailRendererPlugin extends core.EmailRendererPlugin {
   protected onEmailContents(
     request: core.EmailRenderRequest,
@@ -127,14 +134,7 @@ describe('Email Renderer API test', function () {
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        const requestBody = JSON.parse(`{
+    const requestBody = JSON.parse(`{
           "email_renderer_id": "1034",
           "call_id": "8e20e0fc-acb5-4bf3-8e36-f85a9ff25150",
           "context": "LIVE",
@@ -164,17 +164,15 @@ describe('Email Renderer API test', function () {
           "email_tracking_url": null
         }`);
 
-        request(runner.plugin.app)
-          .post('/v1/email_contents')
-          .send(requestBody)
-          .end(function (err, res) {
-            expect(res.status).to.equal(200);
+    request(runner.plugin.app)
+      .post('/v1/email_contents')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(200);
 
-            expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
+        expect(JSON.parse(res.text).content.html).to.be.eq(requestBody.call_id);
 
-            done();
-          });
-
+        done();
       });
 
   });

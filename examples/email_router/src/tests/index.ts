@@ -5,6 +5,13 @@ import * as request from 'supertest';
 import * as sinon from 'sinon';
 import {MailjetSentResponse, MySimpleEmailRouter} from '../MyPluginImpl';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Test Example Email Router', function () {
 
   function buildRpMockup() {
@@ -137,33 +144,25 @@ describe('Test Example Email Router', function () {
       )
       .returns(mjResponse);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'debug'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'debug'})
+          .post('/v1/email_routing')
+          .send(emailRoutingRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/email_routing')
-              .send(emailRoutingRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-
-                expect(
-                  (JSON.parse(res.text) as core.EmailRoutingPluginResponse)
-                    .result
-                ).to.be.true;
-                done();
-              });
+            expect(
+              (JSON.parse(res.text) as core.EmailRoutingPluginResponse)
+              .result
+            ).to.be.true;
+            done();
           });
       });
   });
@@ -265,33 +264,25 @@ describe('Test Example Email Router', function () {
     });
     mjMock.onCall(3).returns(mjResponse);
 
-    // Plugin init
+    // Plugin log level to debug
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: 'debug'})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
-        // Plugin log level to debug
+        // Activity to process
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: 'debug'})
+          .post('/v1/email_routing')
+          .send(emailRoutingRequest)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
+            expect(res.status).to.eq(200);
 
-            // Activity to process
-            request(runner.plugin.app)
-              .post('/v1/email_routing')
-              .send(emailRoutingRequest)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-
-                expect(
-                  (JSON.parse(res.text) as core.EmailRoutingPluginResponse)
-                    .result
-                ).to.be.true;
-                done();
-              });
+            expect(
+              (JSON.parse(res.text) as core.EmailRoutingPluginResponse)
+              .result
+            ).to.be.true;
+            done();
           });
       });
   });

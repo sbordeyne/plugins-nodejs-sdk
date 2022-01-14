@@ -5,6 +5,13 @@ import * as request from "supertest";
 import * as sinon from "sinon";
 import { ExampleEmailRenderer } from "../ExampleEmailRenderer";
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe.only("Test Email Renderer example", function () {
   const plugin = new ExampleEmailRenderer(false);
   let runner: core.TestingPluginRunner;
@@ -55,14 +62,6 @@ describe.only("Test Email Renderer example", function () {
         .returns(properties);
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    // We init the plugin
-    request(runner.plugin.app)
-        .post("/v1/init")
-        .send({ authentication_token: "Manny", worker_id: "Calavera" })
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-        });
 
     const emailRenderRequest: core.EmailRenderRequest = {
       email_renderer_id: "54",

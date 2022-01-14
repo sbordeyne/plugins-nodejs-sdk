@@ -39,25 +39,18 @@ const itFactory = (
     const runner = new core.TestingPluginRunner(plugin, rpMockupGlobal);
 
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
+      .put('/v1/log_level')
+      .send({level: logLevel})
       .end((err, res) => {
         expect(res.status).to.equal(200);
 
         request(runner.plugin.app)
-          .put('/v1/log_level')
-          .send({level: logLevel})
+          .post('/v1/activity_analysis')
+          .send(input)
           .end((err, res) => {
-            expect(res.status).to.equal(200);
-
-            request(runner.plugin.app)
-              .post('/v1/activity_analysis')
-              .send(input)
-              .end((err, res) => {
-                expect(res.status).to.eq(200);
-                expect(JSON.parse(res.text)).to.be.deep.equal(output);
-                done();
-              });
+            expect(res.status).to.eq(200);
+            expect(JSON.parse(res.text)).to.be.deep.equal(output);
+            done();
           });
       });
 

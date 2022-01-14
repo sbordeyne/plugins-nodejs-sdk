@@ -4,8 +4,6 @@ import * as cluster from 'cluster';
 import {Credentials} from './index';
 
 export enum MsgCmd {
-  CREDENTIAL_UPDATE_FROM_WORKER,
-  CREDENTIAL_UPDATE_FROM_MASTER,
   LOG_LEVEL_UPDATE_FROM_WORKER,
   LOG_LEVEL_UPDATE_FROM_MASTER,
   GET_LOG_LEVEL_REQUEST
@@ -27,29 +25,6 @@ export class ProductionPluginRunner {
   constructor(plugin: BasePlugin) {
     this.plugin = plugin;
   }
-
-  updatePluginCredentials = (jsonValue: string) => {
-    this.plugin.credentials = JSON.parse(jsonValue);
-  };
-
-  broadcastCredentialsToWorkers = () => {
-    if (
-      this.plugin.credentials &&
-      this.plugin.credentials.authentication_token &&
-      this.plugin.credentials.worker_id
-    ) {
-      const msg = {
-        cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER,
-        value: JSON.stringify(this.plugin.credentials)
-      };
-      for (const id in cluster.workers) {
-        const worker = cluster.workers[id];
-        if (worker) {
-          worker.send(msg);
-        }
-      }
-    }
-  };
 
   updatePluginLogLevel = (value: string) => {
     this.plugin.logger.level = value;
@@ -84,19 +59,6 @@ export class ProductionPluginRunner {
       }, value: ${recMsg.value}`
     );
 
-    if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER) {
-      if (recMsg.value) {
-        // If we receive a Token Update, we update the token
-        this.updatePluginCredentials(recMsg.value);
-        // We send the token to each of the workers
-        this.broadcastCredentialsToWorkers();
-      } else {
-        throw new Error(
-          'We received a CREDENTIAL_UPDATE_FROM_WORKER msg without credentials in the value field of the msg.'
-        );
-      }
-    }
-
     if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_WORKER) {
       if (recMsg.value) {
         // If we receive a Log Level, we update the token
@@ -123,21 +85,7 @@ export class ProductionPluginRunner {
       }, value: ${recMsg.value}`
     );
 
-    // If we receive a Token Update, we propagate it to all workers
-    if (recMsg.cmd === MsgCmd.CREDENTIAL_UPDATE_FROM_MASTER) {
-      if (!recMsg.value) {
-        throw new Error(
-          'We received a CREDENTIAL_UPDATE_FROM_MASTER msg without credentials in the value field of the msg.'
-        );
-      }
-      const creds: Credentials = JSON.parse(recMsg.value);
-
-      this.plugin.onInitRequest(creds);
-
-      this.plugin.logger.debug(
-        `Updated credentials with: ${JSON.stringify(this.plugin.credentials)}`
-      );
-    } else if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
+    if (recMsg.cmd === MsgCmd.LOG_LEVEL_UPDATE_FROM_MASTER) {
       if (!recMsg.value) {
         throw new Error(
           'We received a LOG_LEVEL_UPDATE_FROM_MASTER msg without logLevel in the value field of the msg.'

@@ -4,6 +4,13 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Plugin Status API Tests', function () {
   class MyFakePlugin extends core.BasePlugin {
   }
@@ -13,13 +20,6 @@ describe('Plugin Status API Tests', function () {
     const runner = new core.TestingPluginRunner(plugin);
 
     request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-      });
-
-    request(runner.plugin.app)
       .get('/v1/status')
       .end(function (err, res) {
         expect(res.status).to.equal(200);
@@ -27,19 +27,6 @@ describe('Plugin Status API Tests', function () {
       });
   });
 
-  it('should return (503) if the plugin is not initialized yet', function (
-    done
-  ) {
-    const plugin = new MyFakePlugin(false);
-    const runner = new core.TestingPluginRunner(plugin);
-
-    request(runner.plugin.app)
-      .get('/v1/status')
-      .end(function (err, res) {
-        expect(res.status).to.equal(503);
-        done();
-      });
-  });
 });
 
 describe('Plugin log level API tests', function () {
@@ -127,30 +114,19 @@ describe('Request Gateway helper API tests', function () {
     });
   });
 
-  it('Authentification token should be passed from values passed in /v1/init', function (
+  it('Authentification token should be passed from values passed in the env', function (
     done
   ) {
     const plugin = new MyFakePlugin(false);
     const runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    const authenticationToken = 'Manny';
-    const workerId = 'Calavera';
-
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: authenticationToken, worker_id: workerId})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        // We try a call to the Gateway
-        runner.plugin
-          .requestGatewayHelper('GET', '/v1/easter_eggs/')
-          .then(() => {
-            expect(rpMockup.args[1][0].auth.pass).to.be.eq(authenticationToken);
-            expect(rpMockup.args[1][0].auth.user).to.be.eq(workerId);
-            done();
-          });
+    // We try a call to the Gateway
+    runner.plugin
+      .requestGatewayHelper('GET', '/v1/easter_eggs/')
+      .then(() => {
+        expect(rpMockup.args[1][0].auth.pass).to.be.eq(PLUGIN_AUTHENTICATION_TOKEN);
+        expect(rpMockup.args[1][0].auth.user).to.be.eq(PLUGIN_WORKER_ID);
+        done();
       });
   });
 
@@ -176,9 +152,6 @@ describe('Data File helper Tests', function () {
   class MyFakePlugin extends core.BasePlugin {
   }
 
-  const authenticationToken = 'Manny';
-  const workerId = 'Calavera';
-
   const fakeDataFile = new Buffer('Hello');
 
   const rpMockup = sinon.stub().returns(Promise.resolve(fakeDataFile));
@@ -192,20 +165,14 @@ describe('Data File helper Tests', function () {
     const method = 'GET';
     const fakeDataFileURI = 'mics://fake_dir/fake_file';
 
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: authenticationToken, worker_id: workerId})
-      .end((err, res) => {
-        // We try a call to the Gateway
-        runner.plugin.fetchDataFile(fakeDataFileURI).then(file => {
-          expect(rpMockup.args[0][0].method).to.be.eq(method);
-          expect(rpMockup.args[0][0].uri).to.be.eq(`http://${runner.plugin.gatewayHost}:${runner.plugin.gatewayPort}${dataFileGatewayURI}`);
-          expect(rpMockup.args[0][0].qs['uri']).to.be.eq(fakeDataFileURI);
-          expect(file).to.be.eq(fakeDataFile);
-          done();
-        });
-      });
+    // We try a call to the Gateway
+    runner.plugin.fetchDataFile(fakeDataFileURI).then(file => {
+      expect(rpMockup.args[0][0].method).to.be.eq(method);
+      expect(rpMockup.args[0][0].uri).to.be.eq(`http://${runner.plugin.gatewayHost}:${runner.plugin.gatewayPort}${dataFileGatewayURI}`);
+      expect(rpMockup.args[0][0].qs['uri']).to.be.eq(fakeDataFileURI);
+      expect(file).to.be.eq(fakeDataFile);
+      done();
+    });
   });
 
   it('ConfigurationFile: Should call the proper gateway URL', function (
@@ -216,20 +183,13 @@ describe('Data File helper Tests', function () {
     const method = 'GET';
     const confFileGatewayURI = `/v1/configuration/technical_name=${confFileName}`;
 
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: authenticationToken, worker_id: workerId})
-      .end((err, res) => {
-        // We try a call to the Gateway
-        runner.plugin.fetchConfigurationFile(confFileName).then(file => {
-          expect(rpMockup.args[1][0].method).to.be.eq(method);
-          expect(rpMockup.args[1][0].uri).to.be.eq(`http://${runner.plugin.gatewayHost}:${runner.plugin.gatewayPort}${confFileGatewayURI}`);
-          expect(file).to.be.eq(fakeDataFile);
-          done();
-        });
-      });
-
+    // We try a call to the Gateway
+    runner.plugin.fetchConfigurationFile(confFileName).then(file => {
+      expect(rpMockup.args[1][0].method).to.be.eq(method);
+      expect(rpMockup.args[1][0].uri).to.be.eq(`http://${runner.plugin.gatewayHost}:${runner.plugin.gatewayPort}${confFileGatewayURI}`);
+      expect(file).to.be.eq(fakeDataFile);
+      done();
+    });
   });
 
 });
