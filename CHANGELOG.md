@@ -1,5 +1,11 @@
 # Changelog
 
+# 0.9.0 - 2022-01-14
+
+- Added email renderer example.
+- Simplify the init workflow as credentials are now pushed via the environment.
+  This is a breaking change for tests, see the README file.
+
 # 0.8.4 - 2021-04-13
 
 - CustomActionBasePlugin fetch CustomAction and properties for InstanceContext.

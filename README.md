@@ -179,6 +179,25 @@ export interface EmailHash {
 
 Hence, the fields name were updated; if you were referencing them in your code, you have to refactor it by prepending a `$`.
 
+## Migration from 0.8.x to 0.9.x
+
+The init workflow changed, from a `POST /v1/init` call to tokens given in the environment. The **tests** need to be updated:
+
+The previous
+```js
+request(runner.plugin.app)
+  .post('/v1/init')
+  .send({...})
+  .end((err, res) => { ...
+```
+
+is not needed anymore, use the following instead, at the top of your **test** file (replace the values):
+
+```js
+process.env.PLUGIN_WORKER_ID = "<previously used worker id>"
+process.env.PLUGIN_AUTHENTICATION_TOKEN = "<previously used auth token>"
+```
+
 ## Migration from 0.5.x to 0.6.x
 * `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
 ```js
