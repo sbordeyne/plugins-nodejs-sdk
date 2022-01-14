@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.9.1 - 2022-01-14
+
+- Fix packaging issue (size)
+
 # 0.9.0 - 2022-01-14
 
 - Added email renderer example.
