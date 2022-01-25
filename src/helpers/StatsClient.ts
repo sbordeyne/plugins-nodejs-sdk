@@ -1,4 +1,10 @@
 import { StatsD, Tags } from 'hot-shots';
+import winston = require('winston');
+
+export interface AddTagsToScopeOptions {
+	scope: string;
+	tags: Tags;
+}
 
 export enum PluginType {
 	ACTIVITY_ANALYZER = 'activity_analyzer',
@@ -22,7 +28,8 @@ export enum METRICS_NAME {
 	AD_RENDER_BANNER_GENERATED_DEFAULT = 'ad_render_banner_generated_default',
 	AD_RENDER_BANNER_GENERATED_CUSTOM = 'ad_render_banner_generated_custom',
 
-	ACTIVITY_ANALYZER = 'activity_analyzer',
+	ACTIVITY_CREATED = 'activity_created',
+	ACTIVITY_FAILED_TO_CREATE = 'activity_failed_to_create',
 }
 
 export interface InitOptions {
@@ -35,6 +42,11 @@ export interface InitOptions {
 	 * default plugins tags
 	 */
 	tags: Tags & { pluginType: PluginType; pluginName: string };
+
+	/**
+	 * An optional logger to send Metrics into logs (in debug mode)
+	 */
+	logger?: winston.Logger;
 }
 
 export interface IncrementToStatsOptions {
@@ -65,22 +77,24 @@ export interface TagsToScope {
 	[scope: string]: Tags;
 }
 
-export interface Stats {
+interface Stats {
 	[keyOrScope: string]: Metrics | number;
 }
 
 /**
  * Send stats to datadog
  */
-export default class StatsClient {
+export class StatsClient {
 	private static instance: StatsClient;
 	private interval: NodeJS.Timer;
 	private stats: Stats;
 	private client: StatsD;
+	private logger?: winston.Logger;
 	private tagsToScope: TagsToScope;
 
-	private constructor(timerInMs: number, tags: Tags) {
+	private constructor(timerInMs: number, tags: Tags, logger?: winston.Logger) {
 		this.stats = {};
+		this.logger = logger;
 		this.tagsToScope = {};
 		this.client = new StatsD({
 			globalTags: {
@@ -103,8 +117,8 @@ export default class StatsClient {
 	 * }
 	 * ```
 	 */
-	static init({ timerInMs = 10 * 60 * 1000, tags }: InitOptions): StatsClient {
-		return this.instance || (this.instance = new StatsClient(timerInMs, tags));
+	static init({ timerInMs = 10 * 60 * 1000, tags, logger }: InitOptions): StatsClient {
+		return this.instance || (this.instance = new StatsClient(timerInMs, tags, logger));
 	}
 
 	/**
@@ -135,15 +149,16 @@ export default class StatsClient {
 	 * ```
 	 * privqte this.statsClient: StatsClient
 	 * onInitContext() {
-	 *   this.statsClient.addTagsToScope(scope: ctx.feedId, {segmentId: '4567', datamartId: '1789'})
+	 *   this.statsClient.addTagsToScope({scope: ctx.feedId, tags: {segmentId: '4567', datamartId: '1789'}})
 	 * }
 	 * ```
 	 */
-	public addTagsToScope(scope: string, tags: Tags) {
+	public addTagsToScope({ scope, tags }: AddTagsToScopeOptions) {
 		this.tagsToScope[scope] = tags;
 	}
 
 	private sendStats(): void {
+		this.logger?.debug(`Metrics stats: ${JSON.stringify(this.stats)}`);
 		Object.entries(this.stats).forEach(([keyOrScope, value]) => {
 			if (typeof value === 'number') {
 				this.client.gauge(keyOrScope, value);
