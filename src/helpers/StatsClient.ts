@@ -18,12 +18,16 @@ export enum PluginType {
 }
 
 export enum METRICS_NAME {
-	API_CALL_SUCCESS = 'api_call_success',
-	API_CALL_ERROR = 'api_call_error',
-	API_CALL_RETRY = 'api_call_retry',
+	EXTERNAL_API_CALL_SUCCESS = 'external_api_call_success',
+	EXTERNAL_API_CALL_ERROR = 'external_api_call_error',
+	EXTERNAL_API_CALL_RETRY = 'external_api_call_retry',
 
-	AUDIENCE_FEED_UPSERT = 'audience_feed_upsert',
-	AUDIENCE_FEED_DELETE = 'audience_feed_delete',
+	MICS_API_CALL_SUCCESS = 'mics_api_call_success',
+	MICS_API_API_CALL_ERROR = 'mics_api_call_error',
+	MICS_API_API_CALL_RETRY = 'mics_api_call_retry',
+
+	AUDIENCE_FEED_BATCH_UPSERT = 'audience_feed_batch_upsert',
+	AUDIENCE_FEED_BATCH_DELETE = 'audience_feed_batch_delete',
 
 	AD_RENDER_BANNER_GENERATED_DEFAULT = 'ad_render_banner_generated_default',
 	AD_RENDER_BANNER_GENERATED_CUSTOM = 'ad_render_banner_generated_custom',
