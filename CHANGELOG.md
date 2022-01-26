@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.9.2 - 2022-01-26
+
+- Add a StatsClient using StatsD.
+
 # 0.9.1 - 2022-01-14
 
 - Fix packaging issue (size)
