@@ -6,17 +6,6 @@ export interface AddTagsToScopeOptions {
 	tags: Tags;
 }
 
-export enum PluginType {
-	ACTIVITY_ANALYZER = 'activity_analyzer',
-	AD_RENDER = 'ad_render',
-	AUDIENCE_FEED = 'audience_feed',
-	BID_OPTIMIZER = 'bid_optimizer',
-	CUSTOM_ACTION = 'custom_action',
-	EMAIL_RENDERER = 'email_renderer',
-	EMAIL_ROUTER = 'email_router',
-	RECOMMENDER = 'recommender',
-}
-
 export enum METRICS_NAME {
 	EXTERNAL_API_CALL_SUCCESS = 'external_api_call_success',
 	EXTERNAL_API_CALL_ERROR = 'external_api_call_error',
@@ -45,7 +34,7 @@ export interface InitOptions {
 	/**
 	 * default plugins tags
 	 */
-	tags: Tags & { pluginType: PluginType; pluginName: string };
+	tags: Tags;
 
 	/**
 	 * An optional logger to send Metrics into logs (in debug mode)
@@ -101,8 +90,8 @@ export class StatsClient {
 		this.logger = logger;
 		this.tagsToScope = {};
 		this.client = new StatsD({
+			protocol: 'uds',
 			globalTags: {
-				workerId: process.env.PLUGIN_WORKER_ID || 'DEFAULT_PLUGIN_ID',
 				...tags,
 			},
 		});
