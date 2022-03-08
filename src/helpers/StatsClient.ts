@@ -130,9 +130,9 @@ export class StatsClient {
 	 * @example
 	 * ```
 	 * this.statClient.incrementToStats({scope: ctx.feedId, metrics: {processed_users: 4, users_with_mobile_id_count: 3}})
-	 * this.statClient.addToStats({scope: ctx.creativeId, metrics: {processed_users: 4}})
-	 * this.statClient.addToStats({metrics: {apiCallsSuccess: 4}})
-	 * this.statClient.addToStats({metrics: {apiCallsError: 1}})
+	 * this.statClient.incrementToStats({scope: ctx.creativeId, metrics: {processed_users: 4}})
+	 * this.statClient.incrementToStats({metrics: {apiCallsSuccess: 4}})
+	 * this.statClient.incrementToStats({metrics: {apiCallsError: 1}})
 	 * ```
 	 */
 	public incrementToStats({ scope, metrics }: IncrementToStatsOptions): void {

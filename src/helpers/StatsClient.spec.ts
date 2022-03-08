@@ -58,15 +58,5 @@ describe('statsClient', () => {
 		expect(spyFn.getCall(3).args).to.be.eqls(['noScope', 42]);
 
 		await delay(100);
-
-		// console.log(
-		// 	'------------------',
-		// 	spyFn.getCalls().map((c, index) => {
-		// 		return {
-		// 			args: c.args,
-		// 			index,
-		// 		};
-		// 	}),
-		// );
 	});
 });
