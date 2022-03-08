@@ -17,7 +17,6 @@ describe('statsClient', () => {
 	beforeEach(() => {
 		statsClient = StatsClient.init({
 			timerInMs: 50,
-			tags: { feedId: 'test' },
 			logger,
 		});
 	});

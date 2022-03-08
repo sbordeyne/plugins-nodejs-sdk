@@ -340,16 +340,12 @@ With the 0.3.0+, there are now 2 Handlebars engine:
 
 ### StatsClient helper
 
-You can add a StatsClient to your plugins, by importing helpers.
+You can add a StatsClient to your plugins, by importing helpers. Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically.
 
 ex:
 
 ```js
 this.statsClient = helpers.StatsClient.init({
-	tags: {
-		pluginName: 'twitter-audience-feed',
-		pluginType: helpers.PluginType.AUDIENCE_FEED,
-	},
 	logger: this.logger,
 });
 ```

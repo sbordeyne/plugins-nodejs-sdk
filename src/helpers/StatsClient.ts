@@ -32,11 +32,6 @@ export interface InitOptions {
 	timerInMs?: number;
 
 	/**
-	 * default plugins tags
-	 */
-	tags: Tags;
-
-	/**
 	 * An optional logger to send Metrics into logs (in debug mode)
 	 */
 	logger?: winston.Logger;
@@ -85,15 +80,12 @@ export class StatsClient {
 	private logger?: winston.Logger;
 	private tagsToScope: TagsToScope;
 
-	private constructor(timerInMs: number, tags: Tags, logger?: winston.Logger) {
+	private constructor(timerInMs: number, logger?: winston.Logger) {
 		this.stats = {};
 		this.logger = logger;
 		this.tagsToScope = {};
 		this.client = new StatsD({
 			protocol: 'uds',
-			globalTags: {
-				...tags,
-			},
 		});
 
 		if (!this.interval) {
@@ -106,12 +98,12 @@ export class StatsClient {
 	 * ```
 	 * private this.statsClient: StatsClient
 	 * constructor() {
-	 *   this.statsClient = StatsClient.init({ tags: { pluginType: PluginType.AUDIENCE_FEED, pluginName: 'MySuperPlugInName', segmentId: '1214'} });
+	 *   this.statsClient = StatsClient.init();
 	 * }
 	 * ```
 	 */
-	static init({ timerInMs = 10 * 60 * 1000, tags, logger }: InitOptions): StatsClient {
-		return this.instance || (this.instance = new StatsClient(timerInMs, tags, logger));
+	static init({ timerInMs = 10 * 60 * 1000, logger }: InitOptions): StatsClient {
+		return this.instance || (this.instance = new StatsClient(timerInMs, logger));
 	}
 
 	/**
