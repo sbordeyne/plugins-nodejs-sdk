@@ -1,4 +1,4 @@
-import { StatsClient } from './StatsClient';
+import { MetricsType, PluginType, StatsClient } from './StatsClient';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as winston from 'winston';
@@ -12,10 +12,11 @@ describe('statsClient', () => {
 		transports: [new winston.transports.Console()],
 		level: 'debug',
 	});
-	logger.silent = true;
 
 	beforeEach(() => {
 		statsClient = StatsClient.init({
+			pluginType: PluginType.AUDIENCE_FEED,
+			id: '1234',
 			timerInMs: 50,
 			logger,
 		});
@@ -28,33 +29,40 @@ describe('statsClient', () => {
 
 	it('ok', async () => {
 		// @ts-ignore
-		const spyFn = sinon.spy(statsClient.client, 'gauge');
-		statsClient.incrementToStats({ scope: 'test', metrics: { metricTest: 10 } });
+		const spyFnIncr = sinon.spy(statsClient.client, 'increment');
+		// @ts-ignore
+		const spyFnGauge = sinon.spy(statsClient.client, 'gauge');
+
+		statsClient.addOrUpdateMetrics({
+			metrics: {
+				processed_users: { type: MetricsType.INCREMENT, value: 4, tags: { datamart_id: '4521' } },
+				users_with_mobile_id_count: { type: MetricsType.GAUGE, value: 1, tags: { datamart_id: '4521' } },
+			},
+		});
+
 		await delay(75);
-		expect(spyFn.callCount).to.be.eq(1);
-		expect(spyFn.getCall(0).args).to.be.eqls([
-			'metricTest',
-			10,
-			{
-				scope: 'test',
-			},
-		]);
 
-		await delay(50);
-		statsClient.incrementToStats({ scope: 'test', metrics: { metricTest: 40 } });
-		statsClient.incrementToStats({ metrics: { noScope: 42 } });
+		expect(spyFnIncr.callCount).to.be.eq(1);
+		expect(spyFnIncr.getCall(0).args).to.be.eqls(['processed_users', 4, { datamart_id: '4521' }]);
+
+		expect(spyFnGauge.callCount).to.be.eq(1);
+		expect(spyFnGauge.getCall(0).args).to.be.eqls(['users_with_mobile_id_count', 1, { datamart_id: '4521' }]);
 
 		await delay(50);
 
-		expect(spyFn.getCall(2).args).to.be.eqls([
-			'metricTest',
-			50,
-			{
-				scope: 'test',
+		statsClient.addOrUpdateMetrics({
+			metrics: {
+				processed_users: { type: MetricsType.INCREMENT, value: 2, tags: { datamart_id: '4521' } },
 			},
-		]);
+		});
 
-		expect(spyFn.getCall(3).args).to.be.eqls(['noScope', 42]);
+		statsClient.addOrUpdateMetrics({ metrics: { apiCallsError: { type: MetricsType.INCREMENT, value: 3, tags: { statusCode: '500' } } } });
+
+		await delay(25);
+
+		expect(spyFnIncr.callCount).to.be.eq(4);
+		expect(spyFnIncr.getCall(2).args).to.be.eqls(['processed_users', 6, { datamart_id: '4521' }]);
+		expect(spyFnIncr.getCall(3).args).to.be.eqls(['apiCallsError', 3, { statusCode: '500' }]);
 
 		await delay(100);
 	});

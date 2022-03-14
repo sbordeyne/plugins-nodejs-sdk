@@ -1,31 +1,27 @@
 import { StatsD, Tags } from 'hot-shots';
 import winston = require('winston');
 
-export interface AddTagsToScopeOptions {
-	scope: string;
-	tags: Tags;
+export enum PluginType {
+	AUDIENCE_FEED = 'audience_feed',
+	ACTIVITY_ANALYSER = 'activity_analyser',
+	CUSTOM_ACTION = 'custom_action',
+	AD_RENDERER = 'ad_renderer',
 }
 
-export enum METRICS_NAME {
-	EXTERNAL_API_CALL_SUCCESS = 'external_api_call_success',
-	EXTERNAL_API_CALL_ERROR = 'external_api_call_error',
-	EXTERNAL_API_CALL_RETRY = 'external_api_call_retry',
-
-	MICS_API_CALL_SUCCESS = 'mics_api_call_success',
-	MICS_API_API_CALL_ERROR = 'mics_api_call_error',
-	MICS_API_API_CALL_RETRY = 'mics_api_call_retry',
-
-	AUDIENCE_FEED_BATCH_UPSERT = 'audience_feed_batch_upsert',
-	AUDIENCE_FEED_BATCH_DELETE = 'audience_feed_batch_delete',
-
-	AD_RENDER_BANNER_GENERATED_DEFAULT = 'ad_render_banner_generated_default',
-	AD_RENDER_BANNER_GENERATED_CUSTOM = 'ad_render_banner_generated_custom',
-
-	ACTIVITY_CREATED = 'activity_created',
-	ACTIVITY_FAILED_TO_CREATE = 'activity_failed_to_create',
+export enum MetricsType {
+	GAUGE = 'gauge',
+	INCREMENT = 'increment',
 }
 
 export interface InitOptions {
+	/**
+	 * The type of your plugin
+	 */
+	pluginType: PluginType;
+	/**
+	 * The id of you plugin depending of the type (feed_id, channel_id, custom_action_id, or ad_renderer_id)
+	 */
+	id: string;
 	/**
 	 * interval to send stats to datadog in ms (default = 10 minutes)
 	 */
@@ -37,36 +33,25 @@ export interface InitOptions {
 	logger?: winston.Logger;
 }
 
-export interface IncrementToStatsOptions {
+export interface addOrUpdateMetricsOptions {
 	/**
 	 * @example
 	 * ```
-	 * name of your metrics and its value.
+	 * declare your metrics, their types, value and optionals tags.
+	 * {metrics: {processed_users: {type: MetricsType.GAUGE, value: 4, tags: {datamart_id: '4521'}}, users_with_mobile_id_count: {type: MetricsType.INCREMENT, value: 1, tags: {datamart_id: '4521'}}}}
 	 * {processed_users: 4}
 	 */
-	metrics: Metrics;
-
-	/**
-	 * the main tag used to filter the metrics in datadog.
-	 * Ex: feedId
-	 */
-	scope?: string;
+	metrics: {
+		[metricName: string]: MetricOptions;
+	};
 }
 
-export interface Metrics {
-	[key: string]: number;
-}
+export type MetricsSet = Map<string, MetricOptions>;
 
-export interface TagsToScope {
-	/**
-	 * Custom tags retrived later on the plugin instantiation.
-	 * Ex: instance context infos.
-	 */
-	[scope: string]: Tags;
-}
-
-interface Stats {
-	[keyOrScope: string]: Metrics | number;
+export interface MetricOptions {
+	type: MetricsType;
+	value: number;
+	tags?: Tags;
 }
 
 /**
@@ -75,17 +60,16 @@ interface Stats {
 export class StatsClient {
 	private static instance: StatsClient;
 	private interval: NodeJS.Timer;
-	private stats: Stats;
+	private metrics: MetricsSet;
 	private client: StatsD;
 	private logger?: winston.Logger;
-	private tagsToScope: TagsToScope;
 
-	private constructor(timerInMs: number, logger?: winston.Logger) {
-		this.stats = {};
+	private constructor(pluginId: { [id: string]: string }, timerInMs: number, logger?: winston.Logger) {
+		this.metrics = new Map();
 		this.logger = logger;
-		this.tagsToScope = {};
 		this.client = new StatsD({
 			protocol: 'uds',
+			globalTags: { ...pluginId },
 		});
 
 		if (!this.interval) {
@@ -98,59 +82,61 @@ export class StatsClient {
 	 * ```
 	 * private this.statsClient: StatsClient
 	 * constructor() {
-	 *   this.statsClient = StatsClient.init();
+	 *   this.statsClient = StatsClient.init({pluginType: PluginType.AUDIENCE_FEED, id: '1234'});
 	 * }
 	 * ```
 	 */
-	static init({ timerInMs = 10 * 60 * 1000, logger }: InitOptions): StatsClient {
-		return this.instance || (this.instance = new StatsClient(timerInMs, logger));
+	static init({ pluginType, id, timerInMs = 10 * 60 * 1000, logger }: InitOptions): StatsClient {
+		const pluginId = this.setPluginId(pluginType, id);
+		return this.instance || (this.instance = new StatsClient(pluginId, timerInMs, logger));
+	}
+
+	private static setPluginId(pluginType: PluginType, id: string): { [id: string]: string } {
+		switch (pluginType) {
+			case PluginType.ACTIVITY_ANALYSER:
+				return { channel_id: id };
+			case PluginType.AUDIENCE_FEED:
+				return { feed_id: id };
+			case PluginType.CUSTOM_ACTION:
+				return { custom_action_id: id };
+			case PluginType.AD_RENDERER:
+				return { ad_renderer_id: id };
+		}
 	}
 
 	/**
 	 * Increment some metrics
 	 * @example
 	 * ```
-	 * this.statClient.incrementToStats({scope: ctx.feedId, metrics: {processed_users: 4, users_with_mobile_id_count: 3}})
-	 * this.statClient.incrementToStats({scope: ctx.creativeId, metrics: {processed_users: 4}})
-	 * this.statClient.incrementToStats({metrics: {apiCallsSuccess: 4}})
-	 * this.statClient.incrementToStats({metrics: {apiCallsError: 1}})
+	 * this.statClient.addOrUpdateMetrics({metrics: {processed_users: {type: MetricsType.GAUGE, value: 4, tags: {datamart_id: '4521'}}, users_with_mobile_id_count: {type: MetricsType.INCREMENT, value: 1, tags: {datamart_id: '4521'}}}})
+	 * this.statClient.addOrUpdateMetrics({metrics: {apiCallsError: {type: MetricsType.GAUGE, value: 10, tags: {statusCode: '500'}}}})
 	 * ```
 	 */
-	public incrementToStats({ scope, metrics }: IncrementToStatsOptions): void {
-		Object.entries(metrics).forEach(([key, value]) => {
-			if (scope) {
-				if (this.stats[scope] === undefined) {
-					this.stats[scope] = {};
-				}
-				(this.stats[scope] as Metrics)[key] ? ((this.stats[scope] as Metrics)[key] += value) : ((this.stats[scope] as Metrics)[key] = value);
+	public addOrUpdateMetrics({ metrics }: addOrUpdateMetricsOptions): void {
+		Object.entries(metrics).forEach(([metricName, options]) => {
+			if (this.metrics.has(metricName)) {
+				const metricOptions = this.metrics.get(metricName) as MetricOptions;
+				this.metrics.set(metricName, {
+					type: metricOptions.type,
+					value: metricOptions.value + options.value,
+					tags: { ...options.tags },
+				});
 			} else {
-				this.stats[key] ? ((this.stats[key] as number) += value) : (this.stats[key] = value);
+				this.metrics.set(metricName, {
+					type: options.type,
+					value: options.value,
+					tags: options.tags,
+				});
 			}
 		});
 	}
 
-	/**
-	 * @example
-	 * ```
-	 * privqte this.statsClient: StatsClient
-	 * onInitContext() {
-	 *   this.statsClient.addTagsToScope({scope: ctx.feedId, tags: {segmentId: '4567', datamartId: '1789'}})
-	 * }
-	 * ```
-	 */
-	public addTagsToScope({ scope, tags }: AddTagsToScopeOptions) {
-		this.tagsToScope[scope] = tags;
-	}
-
 	private sendStats(): void {
-		this.logger?.debug(`Metrics stats: ${JSON.stringify(this.stats)}`);
-		Object.entries(this.stats).forEach(([keyOrScope, value]) => {
-			if (typeof value === 'number') {
-				this.client.gauge(keyOrScope, value);
+		[...this.metrics.entries()].forEach(([metricName, options]) => {
+			if (options.type === MetricsType.GAUGE) {
+				this.client.gauge(metricName, options.value, { ...options.tags });
 			} else {
-				Object.entries(this.stats[keyOrScope]).forEach(([key, value]) => {
-					this.client.gauge(key, value, { scope: keyOrScope, ...this.tagsToScope[keyOrScope] });
-				});
+				this.client.increment(metricName, options.value, { ...options.tags });
 			}
 		});
 	}

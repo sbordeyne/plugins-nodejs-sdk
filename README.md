@@ -340,27 +340,36 @@ With the 0.3.0+, there are now 2 Handlebars engine:
 
 ### StatsClient helper
 
-You can add a StatsClient to your plugins, by importing helpers. Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically.
+You can add a StatsClient to your plugins, by importing helpers. Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically. When initiating the StatsD client, 4 options can be passed:
 
-ex:
+- mandatory
+  - pluginType
+  - id (feed_id, channel_id, custom_action_id, or ad_renderer_id)
+- optional
+  - timerInMs (interval to send stats to datadog in ms (default = 10 minutes))
+  - logger
 
 ```js
 this.statsClient = helpers.StatsClient.init({
+	pluginType: PluginType.AUDIENCE_FEED,
+	id: '1234',
 	logger: this.logger,
 });
 ```
 
-Using StatsD, the StatsClient, can aggregate and send your stats to services such as Datadog. Increment your stats be calling incrementToStats method. A scope is needed to increment a stats: the scope will be your main tag for the stats.
+Using StatsD, the StatsClient, can aggregate and send your stats to services such as Datadog. Increment your stats be calling addOrUpdateMetrics method.
 
 ```js
-this.statsClient.incrementToStats({
-	scope: feed_id,
+this.statsClient.addOrUpdateMetrics({
 	metrics: {
-		[helpers.METRICS_NAME.AUDIENCE_FEED_UPSERT]: updatesPayloads[0].params.users.length,
-		[helpers.METRICS_NAME.AUDIENCE_FEED_DELETE]: updatesPayloads[1].params.users.length,
-		[helpers.METRICS_NAME.API_CALL_SUCCESS]: 1,
+		processed_users: { type: MetricsType.GAUGE, value: 4, tags: { datamart_id: '4521' } },
+		users_with_mobile_id_count: { type: MetricsType.GAUGE, value: 1, tags: { datamart_id: '4521' } },
 	},
 });
+this.statsClient.addOrUpdateMetrics({
+	metrics: {
+		processed_users: { type: MetricsType.GAUGE, value: 10, tags: { datamart_id: '4521' } },
+	},
+});
+this.statsClient.addOrUpdateMetrics({ metrics: { apiCallsError: { type: MetricsType.GAUGE, value: 10, tags: { statusCode: '500' } } } });
 ```
-
-You can find predefine metrics name in helpers.METRICS_NAME or you can declare custom one.
