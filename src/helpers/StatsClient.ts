@@ -87,11 +87,11 @@ export class StatsClient {
 	 * ```
 	 */
 	static init({ pluginType, id, timerInMs = 10 * 60 * 1000, logger }: InitOptions): StatsClient {
-		const pluginId = this.setPluginId(pluginType, id);
+		const pluginId = this.setPluginMainId(pluginType, id);
 		return this.instance || (this.instance = new StatsClient(pluginId, timerInMs, logger));
 	}
 
-	private static setPluginId(pluginType: PluginType, id: string): { [id: string]: string } {
+	private static setPluginMainId(pluginType: PluginType, id: string): { [id: string]: string } {
 		switch (pluginType) {
 			case PluginType.ACTIVITY_ANALYSER:
 				return { channel_id: id };

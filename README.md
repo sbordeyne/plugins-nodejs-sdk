@@ -344,7 +344,7 @@ You can add a StatsClient to your plugins, by importing helpers. Global tags wit
 
 - mandatory
   - pluginType
-  - id (feed_id, channel_id, custom_action_id, or ad_renderer_id)
+  - id: the plugin main id (feed_id, channel_id, custom_action_id, or ad_renderer_id)
 - optional
   - timerInMs (interval to send stats to datadog in ms (default = 10 minutes))
   - logger
