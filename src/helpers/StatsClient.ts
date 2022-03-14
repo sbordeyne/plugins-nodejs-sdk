@@ -137,7 +137,17 @@ export class StatsClient {
 				this.client.gauge(metricName, options.value, { ...options.tags });
 			} else {
 				this.client.increment(metricName, options.value, { ...options.tags });
+				this.resetIncrementMetric(metricName);
 			}
+		});
+	}
+
+	private resetIncrementMetric(metricName: string) {
+		const metricOptions = this.metrics.get(metricName) as MetricOptions;
+		this.metrics.set(metricName, {
+			type: metricOptions.type,
+			value: 0,
+			tags: { ...metricOptions.tags },
 		});
 	}
 }

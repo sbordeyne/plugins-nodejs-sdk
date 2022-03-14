@@ -53,6 +53,7 @@ describe('statsClient', () => {
 		statsClient.addOrUpdateMetrics({
 			metrics: {
 				processed_users: { type: MetricsType.INCREMENT, value: 2, tags: { datamart_id: '4521' } },
+				users_with_mobile_id_count: { type: MetricsType.GAUGE, value: 1, tags: { datamart_id: '4521' } },
 			},
 		});
 
@@ -61,8 +62,11 @@ describe('statsClient', () => {
 		await delay(25);
 
 		expect(spyFnIncr.callCount).to.be.eq(4);
-		expect(spyFnIncr.getCall(2).args).to.be.eqls(['processed_users', 6, { datamart_id: '4521' }]);
+		expect(spyFnIncr.getCall(2).args).to.be.eqls(['processed_users', 2, { datamart_id: '4521' }]);
 		expect(spyFnIncr.getCall(3).args).to.be.eqls(['apiCallsError', 3, { statusCode: '500' }]);
+
+		expect(spyFnGauge.callCount).to.be.eq(3);
+		expect(spyFnGauge.getCall(2).args).to.be.eqls(['users_with_mobile_id_count', 2, { datamart_id: '4521' }]);
 
 		await delay(100);
 	});
