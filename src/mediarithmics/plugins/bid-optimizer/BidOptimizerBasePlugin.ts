@@ -13,7 +13,7 @@ export interface BidOptimizerBaseInstanceContext {
   bidOptimizer: BidOptimizer;
 }
 
-export abstract class BidOptimizerPlugin extends BasePlugin {
+export abstract class BidOptimizerPlugin extends BasePlugin<BidOptimizerBaseInstanceContext> {
   instanceContext: Promise<BidOptimizerBaseInstanceContext>;
 
   constructor(enableThrottling = false) {
@@ -137,12 +137,38 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
     instanceContext: BidOptimizerBaseInstanceContext
   ): Promise<BidOptimizerPluginResponse>;
 
+  protected async getInstanceContext(
+    bidOptimizerId: string
+  ): Promise<BidOptimizerBaseInstanceContext> {
+    if (!this.pluginCache.get(bidOptimizerId)) {
+        this.pluginCache.put(
+          bidOptimizerId,
+          this.instanceContextBuilder(bidOptimizerId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(bidOptimizerId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
+    }
+    return this.pluginCache.get(bidOptimizerId);
+  }
+
   private initBidDecisions(): void {
     this.app.post(
       '/v1/bid_decisions',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/bid_decisions : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -169,21 +195,7 @@ export abstract class BidOptimizerPlugin extends BasePlugin {
               return res.status(500).json({error: errMsg});
             }
 
-            if (
-              !this.pluginCache.get(
-                bidOptimizerRequest.campaign_info.bid_optimizer_id
-              )
-            ) {
-              this.pluginCache.put(
-                bidOptimizerRequest.campaign_info.bid_optimizer_id,
-                this.instanceContextBuilder(
-                  bidOptimizerRequest.campaign_info.bid_optimizer_id
-                ),
-                this.getInstanceContextCacheExpiration()
-              );
-            } // We init the specific route to listen for bid decisions requests
-
-            const instanceContext = await this.pluginCache.get(
+            const instanceContext = await this.getInstanceContext(
               bidOptimizerRequest.campaign_info.bid_optimizer_id
             );
 

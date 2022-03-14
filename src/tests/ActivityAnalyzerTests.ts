@@ -4,7 +4,15 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch analyzer API', () => {
+
   class MyFakeActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
     protected onActivityAnalysis(
       request: core.ActivityAnalyzerRequest,
@@ -72,7 +80,6 @@ describe('Fetch analyzer API', () => {
 });
 
 describe('Activity Analysis API test', function () {
-
   let runner: core.TestingPluginRunner;
 
   class MyFakeSimpleActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
@@ -136,14 +143,7 @@ describe('Activity Analysis API test', function () {
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        const requestBody = JSON.parse(`{
+    const requestBody = JSON.parse(`{
           "activity_analyzer_id": 1923,
           "datamart_id": 1034,
           "channel_id": "1268",
@@ -174,20 +174,53 @@ describe('Activity Analysis API test', function () {
           }
         }`);
 
-        request(runner.plugin.app)
-          .post('/v1/activity_analysis')
-          .send(requestBody)
-          .end(function (err, res) {
-            expect(res.status).to.equal(200);
+    request(runner.plugin.app)
+      .post('/v1/activity_analysis')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(200);
 
-            expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
+        expect(JSON.parse(res.text).data).to.deep.eq(requestBody.activity);
 
-            done();
-          });
-
+        done();
       });
 
   });
+
+  it("Check that the plugin doesn't reply when not initialized", function (
+    done
+  ) {
+    const rpMockup = sinon.stub();
+
+    runner = new core.TestingPluginRunner(plugin, rpMockup);
+
+    // We init the plugin
+    request(runner.plugin.app)
+    const requestBody = JSON.parse(`{
+        "activity_analyzer_id": 123456789,
+        "datamart_id": 1034,
+        "channel_id": "1268",
+        "activity": {
+          "$email_hash": null,
+          "$events": [],
+          "$site_id": "1268",
+          "$ts": 1479820606901,
+          "$type": "SITE_VISIT"
+        }
+      }`);
+
+    request(runner.plugin.app)
+      .post('/v1/activity_analysis')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(500);
+        expect(runner.plugin.pluginCache.size()).to.equal(0, "no cache should has been initialized when we don't even have init the plugin");
+
+        done();
+      });
+
+  });
+
 
   afterEach(() => {
     // We clear the cache so that we don't have any processing still running in the background

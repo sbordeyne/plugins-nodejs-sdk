@@ -120,7 +120,7 @@ export class PropertiesWrapper {
   };
 }
 
-export abstract class BasePlugin {
+export abstract class BasePlugin<CacheValue = any> {
   multiThread: boolean = false;
 
   // Default cache is now 10 min to give some breathing to the Gateway
@@ -129,7 +129,7 @@ export abstract class BasePlugin {
   // or we should implement a minimum threshold pattern)
   INSTANCE_CONTEXT_CACHE_EXPIRATION: number = 600000;
 
-  pluginCache: any;
+  pluginCache: cache.CacheClass<string, Promise<CacheValue>>;
 
   gatewayHost: string;
   gatewayPort: number;
@@ -190,7 +190,13 @@ export abstract class BasePlugin {
 
     if (this.enableThrottling) {
       this.app.use((req, res, next) => {
-        if (toobusy()) {
+        if (toobusy() &&
+        !(
+            req.path === '/v1/init' ||
+            req.path === '/v1/status' ||
+            req.path === '/v1/shutdown' ||
+            req.path === '/v1/log_level'
+          )) {
           res.status(429).send('I\'m busy right now, sorry.');
         } else {
           next();
@@ -213,9 +219,15 @@ export abstract class BasePlugin {
     this.pluginCache = cache;
     this.pluginCache.clear();
 
+    if (!process.env.PLUGIN_WORKER_ID) {
+      throw new Error("Missing worker id in the environment!");
+    }
+    if (!process.env.PLUGIN_AUTHENTICATION_TOKEN) {
+      throw new Error("Missing auth token in the environment!");
+    }
     this.credentials = {
-      authentication_token: '',
-      worker_id: ''
+      authentication_token: process.env.PLUGIN_AUTHENTICATION_TOKEN,
+      worker_id: process.env.PLUGIN_WORKER_ID
     };
 
     this.initInitRoute();
@@ -386,6 +398,10 @@ export abstract class BasePlugin {
   start() {
   }
 
+  protected httpIsReady() {
+    return this.credentials && this.credentials.worker_id && this.credentials.authentication_token;
+  }
+
   // This method can be overridden by any subclass
   protected onLogLevelUpdateHandler(req: express.Request,
     res: express.Response) {
@@ -434,62 +450,13 @@ export abstract class BasePlugin {
   protected onStatusRequest(req: express.Request, res: express.Response) {
     //Route used by the plugin manager to check if the plugin is UP and running
     this.logger.silly('GET /v1/status');
-    if (this.credentials.worker_id && this.credentials.authentication_token) {
+    if (this.httpIsReady()) {
       res.status(200).end();
     } else {
       this.logger.error(
         `Plugin is not inialized yet, we don't have any worker_id & authentification_token`
       );
       res.status(503).end();
-    }
-  }
-
-  // This method can be overridden by any subclass
-  protected onInitRequestHandler(req: express.Request, res: express.Response) {
-    if (req.body.authentication_token && req.body.worker_id) {
-      const creds: Credentials = {
-        authentication_token: req.body.authentication_token,
-        worker_id: req.body.worker_id
-      };
-
-      // If MultiThread, we send a message to the cluster master,
-      // the onInitRequest() will be called once the master will propagate the update to each worker
-      if (this.multiThread) {
-        const msg: SocketMsg = {
-          value: JSON.stringify(creds),
-          cmd: MsgCmd.CREDENTIAL_UPDATE_FROM_WORKER
-        };
-
-        this.logger.debug(
-          `Sending CREDENTIAL_UPDATE_FROM_WORKER from worker ${
-            process.pid
-          } to master with value: ${msg.value}`
-        );
-
-        if (typeof process.send === 'function') {
-          process.send(msg);
-        }
-
-        // We have to assume that everything went fine in the propagation...
-        res.status(200).end();
-
-        // Else, we handle the onInitRequest in this process
-      } else {
-        this.logger.debug('POST /v1/init ', JSON.stringify(creds));
-
-        if (creds && creds.authentication_token && creds.worker_id) {
-          this.onInitRequest(creds);
-          res.status(200).end();
-        } else {
-          this.logger.error(`Error while Init: "creds are undefined"`);
-          res.status(500).end();
-        }
-      }
-    } else {
-      this.logger.error(
-        `Received /v1/init call without authentification_token or worker_id`
-      );
-      res.status(400).end();
     }
   }
 
@@ -557,7 +524,8 @@ export abstract class BasePlugin {
       '/v1/init',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          this.onInitRequestHandler(req, res);
+          // not useful anymore, keep it during the migration phase
+          res.status(200).end();
         }
       )
     );

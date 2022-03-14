@@ -6,6 +6,13 @@ import * as sinon from 'sinon';
 import {PropertiesWrapper} from '../mediarithmics';
 import {generateEncodedClickUrl} from '../mediarithmics/plugins/ad-renderer/utils/index';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch DisplayAd API', () => {
   let requestPromiseProx: sinon.SinonStub = sinon
     .stub()
@@ -168,13 +175,7 @@ describe('Ad Contents API test', function () {
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
 
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
-        const requestBody = JSON.parse(`{
+    const requestBody = JSON.parse(`{
           "call_id":"auc:goo:58346725000689de0a16ac4f120ecc41-0",
           "context":"LIVE",
           "creative_id":"2757",
@@ -192,16 +193,14 @@ describe('Ad Contents API test', function () {
           "restrictions":{"animation_max_duration":25}
       }`);
 
-        request(runner.plugin.app)
-          .post('/v1/ad_contents')
-          .send(requestBody)
-          .end(function (err, res) {
-            expect(res.status).to.equal(200);
-            expect(res.text).to.be.eq(requestBody.call_id);
+    request(runner.plugin.app)
+      .post('/v1/ad_contents')
+      .send(requestBody)
+      .end(function (err, res) {
+        expect(res.status).to.equal(200);
+        expect(res.text).to.be.eq(requestBody.call_id);
 
-            done();
-          });
-
+        done();
       });
 
   });
@@ -214,55 +213,58 @@ describe('Ad Contents API test', function () {
 });
 
 describe('Instance Context check', () => {
-  it('Check that the instanceContext is rebuilt at each call for PREVIEW', function (done) {
 
-    const ICStub = sinon.stub();
+  // Fake AdRenderer with dummy processing
+  class MyFakeAdRenderer extends core.AdRendererBasePlugin<core.AdRendererBaseInstanceContext> {
 
-    // Fake AdRenderer with dummy processing
-    class MyFakeAdRenderer extends core.AdRendererBasePlugin<core.AdRendererBaseInstanceContext> {
+    protected async instanceContextBuilder(creativeId: String) {
 
-      protected async instanceContextBuilder(creativeId: String) {
+      // We check if the method was called once or twice
+      ICStub();
 
-        // We check if the method was called once or twice
-        ICStub();
-
-        const IC: core.AdRendererBaseInstanceContext = {
-          properties: new PropertiesWrapper([]),
-          displayAd: {
-            type: 'DISPLAY_AD',
-            id: '7168',
-            organisation_id: '1126',
-            name: 'Toto',
-            technical_name: undefined,
-            archived: false,
-            editor_version_id: '5',
-            editor_version_value: '1.0.0',
-            editor_group_id: 'com.mediarithmics.creative.display',
-            editor_artifact_id: 'default-editor',
-            editor_plugin_id: '5',
-            renderer_version_id: '1054',
-            renderer_version_value: '1.0.0',
-            renderer_group_id: 'com.trololo.creative.display',
-            renderer_artifact_id: 'multi-advertisers-display-ad-renderer',
-            renderer_plugin_id: '1041',
-            creation_date: 1492785056278,
-            subtype: 'BANNER',
-            format: '300x250'
-          }
-        };
-        return IC;
-      }
-
-      protected async onAdContents(
-        request: core.AdRendererRequest,
-        instanceContext: core.AdRendererBaseInstanceContext
-      ) {
-        const response: core.AdRendererPluginResponse = {
-          html: request.call_id
-        };
-        return Promise.resolve(response);
-      }
+      const IC: core.AdRendererBaseInstanceContext = {
+        properties: new PropertiesWrapper([]),
+        displayAd: {
+          type: 'DISPLAY_AD',
+          id: '7168',
+          organisation_id: '1126',
+          name: 'Toto',
+          technical_name: undefined,
+          archived: false,
+          editor_version_id: '5',
+          editor_version_value: '1.0.0',
+          editor_group_id: 'com.mediarithmics.creative.display',
+          editor_artifact_id: 'default-editor',
+          editor_plugin_id: '5',
+          renderer_version_id: '1054',
+          renderer_version_value: '1.0.0',
+          renderer_group_id: 'com.trololo.creative.display',
+          renderer_artifact_id: 'multi-advertisers-display-ad-renderer',
+          renderer_plugin_id: '1041',
+          creation_date: 1492785056278,
+          subtype: 'BANNER',
+          format: '300x250'
+        }
+      };
+      return IC;
     }
+
+    protected async onAdContents(
+      request: core.AdRendererRequest,
+      instanceContext: core.AdRendererBaseInstanceContext
+    ) {
+      const response: core.AdRendererPluginResponse = {
+        html: request.call_id
+      };
+      return Promise.resolve(response);
+    }
+  }
+
+  const ICStub = sinon.stub();
+  const plugin = new MyFakeAdRenderer(false);
+  const runner = new core.TestingPluginRunner(plugin);
+
+  it('Check that the instanceContext is rebuilt at each call for PREVIEW', function (done) {
 
     // Fake "Preview" AdCall
 
@@ -305,45 +307,40 @@ describe('Instance Context check', () => {
       restrictions: {animation_max_duration: 25}
     };
 
-    const plugin = new MyFakeAdRenderer(false);
-    const runner = new core.TestingPluginRunner(plugin);
-
-    // Plugin init
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-
         // Plugin log level to debug
         request(runner.plugin.app)
           .put('/v1/log_level')
           .send({level: 'silly'})
-          .end((err, res) => {
-            expect(res.status).to.equal(200);
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
 
-            // First AdCall
+        // First AdCall
+        request(runner.plugin.app)
+          .post('/v1/ad_contents')
+          .send(adRequest)
+          .end((err, res) => {
+            expect(res.status).to.eq(200);
+
+            // Second AdCall
             request(runner.plugin.app)
               .post('/v1/ad_contents')
               .send(adRequest)
               .end((err, res) => {
                 expect(res.status).to.eq(200);
 
-                // Second AdCall
-                request(runner.plugin.app)
-                  .post('/v1/ad_contents')
-                  .send(adRequest)
-                  .end((err, res) => {
-                    expect(res.status).to.eq(200);
+                // As it's a PREVIEW AdCall, we should have loaded the InstanceContext twice
+                expect(ICStub.callCount).to.eq(2);
 
-                    // As it's a PREVIEW AdCall, we should have loaded the InstanceContext twice
-                    expect(ICStub.callCount).to.eq(2);
-
-                    done();
-                  });
+                done();
               });
           });
       });
+
+    afterEach(() => {
+      // We clear the cache so that we don't have any processing still running in the background
+      runner.plugin.pluginCache.clear();
+      ICStub.reset();
+    });
   });
 });
 

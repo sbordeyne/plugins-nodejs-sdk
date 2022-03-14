@@ -13,7 +13,7 @@ export class AdRendererBaseInstanceContext {
   displayAd: DisplayAd;
 }
 
-export abstract class AdRendererBasePlugin<T extends AdRendererBaseInstanceContext> extends BasePlugin {
+export abstract class AdRendererBasePlugin<T extends AdRendererBaseInstanceContext> extends BasePlugin<T> {
 
   displayContextHeader = 'x-mics-display-context';
 
@@ -101,12 +101,36 @@ export abstract class AdRendererBasePlugin<T extends AdRendererBaseInstanceConte
     instanceContext: T
   ): Promise<AdRendererPluginResponse>;
 
+  protected async getInstanceContext(creativeId: string, forceReload: boolean): Promise<T> {
+    if (!this.pluginCache.get(creativeId) || forceReload){
+      this.pluginCache.put(
+        creativeId,
+        this.instanceContextBuilder(creativeId, forceReload).catch((err) => {
+          this.logger.error(`Error while caching instance context: ${err.message}`)
+          this.pluginCache.del(creativeId)
+          throw err;
+        }),
+        this.getInstanceContextCacheExpiration()
+      )
+    }
+    return this.pluginCache.get(creativeId)
+  }
+
   private initAdContentsRoute(): void {
     this.app.post(
       '/v1/ad_contents',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/ad_contents : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -132,19 +156,9 @@ export abstract class AdRendererBasePlugin<T extends AdRendererBaseInstanceConte
             // We flush the Plugin Gateway cache during previews
             const forceReload = (adRendererRequest.context === 'PREVIEW' || adRendererRequest.context === 'STAGE');
 
-            if (
-              !this.pluginCache.get(adRendererRequest.creative_id) ||
+            const instanceContext: T = await this.getInstanceContext(
+              adRendererRequest.creative_id,
               forceReload
-            ) {
-              this.pluginCache.put(
-                adRendererRequest.creative_id,
-                this.instanceContextBuilder(adRendererRequest.creative_id, forceReload),
-                this.getInstanceContextCacheExpiration()
-              );
-            }
-
-            const instanceContext: T = await this.pluginCache.get(
-              adRendererRequest.creative_id
             );
 
             const adRendererResponse = await this.onAdContents(

@@ -17,7 +17,7 @@ export interface CheckEmailsPluginResponse {
   result: boolean;
 }
 
-export abstract class EmailRouterPlugin extends BasePlugin {
+export abstract class EmailRouterPlugin extends BasePlugin<EmailRouterBaseInstanceContext> {
   instanceContext: Promise<EmailRouterBaseInstanceContext>;
 
   constructor(enableThrottling = false) {
@@ -68,15 +68,19 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     emailRouterId: string
   ): Promise<EmailRouterBaseInstanceContext> {
     if (!this.pluginCache.get(emailRouterId)) {
-      this.pluginCache.put(
-        emailRouterId,
-        this.instanceContextBuilder(emailRouterId),
-        this.getInstanceContextCacheExpiration()
-      );
+        this.pluginCache.put(
+          emailRouterId,
+          this.instanceContextBuilder(emailRouterId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(emailRouterId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
     }
-
-    return await this.pluginCache.get(emailRouterId);
+    return this.pluginCache.get(emailRouterId);
   }
+
 
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailCheck(
@@ -89,7 +93,16 @@ export abstract class EmailRouterPlugin extends BasePlugin {
       '/v1/email_routing',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/email_routing : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -131,7 +144,16 @@ export abstract class EmailRouterPlugin extends BasePlugin {
     this.app.post(
       '/v1/email_router_check',
       (req: express.Request, res: express.Response) => {
-        if (!req.body || _.isEmpty(req.body)) {
+        if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/email_router_check : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
           const msg = {
             error: 'Missing request body'
           };
@@ -151,16 +173,7 @@ export abstract class EmailRouterPlugin extends BasePlugin {
             throw new Error('No Email Check listener registered!');
           }
 
-          if (!this.pluginCache.get(emailCheckRequest.email_router_id)) {
-            this.pluginCache.put(
-              emailCheckRequest.email_router_id,
-              this.instanceContextBuilder(emailCheckRequest.email_router_id),
-              this.getInstanceContextCacheExpiration()
-            );
-          }
-
-          this.pluginCache
-            .get(emailCheckRequest.email_router_id)
+          this.getInstanceContext(emailCheckRequest.email_router_id)
             .then((instanceContext: EmailRouterBaseInstanceContext) => {
               return this.onEmailCheck(emailCheckRequest, instanceContext).then(
                 response => {

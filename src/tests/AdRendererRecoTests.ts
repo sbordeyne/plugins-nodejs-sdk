@@ -4,6 +4,13 @@ import {core, extra} from '../';
 import * as sinon from 'sinon';
 import {PropertiesWrapper} from '../mediarithmics/index';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch recommendation API', () => {
   class MyDummyHandlebarsAdRenderer extends core.AdRendererRecoTemplatePlugin {
     engineBuilder = new extra.HandlebarsEngine();

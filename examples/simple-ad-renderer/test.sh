@@ -9,12 +9,14 @@ gateway_pid=$!
 
 sleep 1
 
+export PLUGIN_AUTHENTICATION_TOKEN='123'
+export PLUGIN_WORKER_ID='123'
+
 node build/index.js &
 plugin_pid=$!
 
 sleep 1
 
-curl -X POST -H "Content-Type: application/json" -d '{"authentication_token":"123", "worker_id":"123"}' http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/init
 curl -X PUT -H "Content-Type: application/json" -d '{"level":"debug"}' http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/log_level
 curl -v -X POST http://${PLUGIN_HOST}:${PLUGIN_PORT}/v1/ad_contents  -d '
     {

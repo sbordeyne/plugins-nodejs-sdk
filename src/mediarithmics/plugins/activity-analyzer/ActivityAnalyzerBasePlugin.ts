@@ -12,7 +12,7 @@ export interface ActivityAnalyzerBaseInstanceContext {
   activityAnalyzer: ActivityAnalyzer;
 }
 
-export abstract class ActivityAnalyzerPlugin extends BasePlugin {
+export abstract class ActivityAnalyzerPlugin extends BasePlugin<ActivityAnalyzerBaseInstanceContext> {
 
   constructor(enableThrottling = false) {
     super(enableThrottling);
@@ -85,6 +85,23 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
 
   }
 
+  protected async getInstanceContext(
+    activityAnalyzerId: string
+  ): Promise<ActivityAnalyzerBaseInstanceContext> {
+    if (!this.pluginCache.get(activityAnalyzerId)) {
+        this.pluginCache.put(
+          activityAnalyzerId,
+          this.instanceContextBuilder(activityAnalyzerId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(activityAnalyzerId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
+    }
+    return this.pluginCache.get(activityAnalyzerId);
+  }
+
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onActivityAnalysis(
     request: ActivityAnalyzerRequest,
@@ -96,7 +113,16 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
       '/v1/activity_analysis',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/activity_analysis : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -118,21 +144,7 @@ export abstract class ActivityAnalyzerPlugin extends BasePlugin {
               return res.status(500).json({error: errMsg});
             }
 
-            if (
-              !this.pluginCache.get(
-                activityAnalyzerRequest.activity_analyzer_id
-              )
-            ) {
-              this.pluginCache.put(
-                activityAnalyzerRequest.activity_analyzer_id,
-                this.instanceContextBuilder(
-                  activityAnalyzerRequest.activity_analyzer_id
-                ),
-                this.getInstanceContextCacheExpiration()
-              );
-            }
-
-            const instanceContext: ActivityAnalyzerBaseInstanceContext = await this.pluginCache.get(
+            const instanceContext: ActivityAnalyzerBaseInstanceContext = await this.getInstanceContext(
               activityAnalyzerRequest.activity_analyzer_id
             );
 

@@ -155,6 +155,25 @@ The Plugin examples provided with the SDK are all tested and you can read their 
 
 Testing Plugins is highly recommended.
 
+## Migration from 0.8.x to 0.9.x
+
+The init workflow changed, from a `POST /v1/init` call to tokens given in the environment. The **tests** need to be updated:
+
+The previous
+```js
+request(runner.plugin.app)
+  .post('/v1/init')
+  .send({...})
+  .end((err, res) => { ...
+```
+
+is not needed anymore, use the following instead, at the top of your **test** file (replace the values):
+
+```js
+process.env.PLUGIN_WORKER_ID = "<previously used worker id>"
+process.env.PLUGIN_AUTHENTICATION_TOKEN = "<previously used auth token>"
+```
+
 ## Migration from 0.6.0 to 0.7.0+
 
 We introduced a non retrocompatible change between 0.6.0 and 0.7.0 SDK version to fix a bug. 

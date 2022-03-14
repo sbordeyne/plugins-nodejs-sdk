@@ -3,6 +3,43 @@
 # xxxxx - YYYY-MM-DD
 - Enable to return retry statusName (429 Status Code) for the onUserSegmentUpdate method for the Audience Feed Connector Plugin
 
+# 0.9.1 - 2022-01-14
+
+- Fix packaging issue (size)
+
+# 0.9.0 - 2022-01-14
+
+- Added email renderer example.
+- Simplify the init workflow as credentials are now pushed via the environment.
+  This is a breaking change for tests, see the README file.
+
+# 0.8.4 - 2021-04-13
+
+- CustomActionBasePlugin fetch CustomAction and properties for InstanceContext.
+
+# 0.8.3 - 2021-04-08
+
+- Plugins that enable throttling should treat technical routes normally when they're busy.
+
+# 0.8.2 - 2021-03-25
+
+- Improve InstanceContext caching, don't cache failed promise.
+
+# 0.8.1 - 2021-01-25
+
+- Fix CustomActionBasePlugin, `instanceContextBuilder` does not fetch plugin properties as it needs
+  a mics API token. Now to retrieve the CustomAction plugin and properties a token is needed, see
+  functions `fetchCustomAction` and `fetchCustomActionProperties`.
+
+# 0.8.0 - 2020-12-08
+
+- Change CustomActionRequest for a custom action (instance_id to custom_action_id)
+
+# 0.7.13 - 2020-12-01
+
+- Add support for Custom Action plugins
+- Refuse to process calls before the initialization
+
 # 0.7.12 - 2020-10-27
 - Fix : properly pass data and stats object in the onUserSegmentUpdate response
 

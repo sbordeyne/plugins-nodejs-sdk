@@ -4,6 +4,13 @@ import {core} from '../';
 import * as request from 'supertest';
 import * as sinon from 'sinon';
 
+const PLUGIN_AUTHENTICATION_TOKEN = 'Manny';
+const PLUGIN_WORKER_ID = 'Calavera';
+
+// set by the plugin runner in production
+process.env.PLUGIN_AUTHENTICATION_TOKEN = PLUGIN_AUTHENTICATION_TOKEN;
+process.env.PLUGIN_WORKER_ID = PLUGIN_WORKER_ID;
+
 describe('Fetch recommender API', () => {
   class MyFakeRecommenderPlugin extends core.RecommenderPlugin {
     protected onRecommendationRequest(
@@ -122,14 +129,6 @@ describe('Recommender API test', function () {
       .returns(fakeRecommenderProperties);
 
     runner = new core.TestingPluginRunner(plugin, rpMockup);
-
-    // We init the plugin
-    request(runner.plugin.app)
-      .post('/v1/init')
-      .send({authentication_token: 'Manny', worker_id: 'Calavera'})
-      .end((err, res) => {
-        expect(res.status).to.equal(200);
-      });
 
     const requestBody = {
       recommender_id: '5',

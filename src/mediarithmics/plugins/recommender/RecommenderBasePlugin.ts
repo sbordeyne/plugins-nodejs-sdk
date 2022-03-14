@@ -16,7 +16,7 @@ export interface RecommenderBaseInstanceContext {
 export interface RecommenderPluginResponse extends RecommendationsWrapper {
 }
 
-export abstract class RecommenderPlugin extends BasePlugin {
+export abstract class RecommenderPlugin extends BasePlugin<RecommenderBaseInstanceContext> {
   instanceContext: Promise<RecommenderBaseInstanceContext>;
 
   constructor() {
@@ -84,6 +84,23 @@ export abstract class RecommenderPlugin extends BasePlugin {
     return context;
   }
 
+  protected async getInstanceContext(
+    recommenderId: string
+  ): Promise<RecommenderBaseInstanceContext> {
+    if (!this.pluginCache.get(recommenderId)) {
+        this.pluginCache.put(
+          recommenderId,
+          this.instanceContextBuilder(recommenderId).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(recommenderId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
+    }
+    return this.pluginCache.get(recommenderId);
+  }
+
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onRecommendationRequest(
     request: RecommenderRequest,
@@ -95,7 +112,16 @@ export abstract class RecommenderPlugin extends BasePlugin {
       '/v1/recommendations',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/recommendations : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -117,21 +143,7 @@ export abstract class RecommenderPlugin extends BasePlugin {
               return res.status(500).json({error: errMsg});
             }
 
-            if (
-              !this.pluginCache.get(
-                recommenderRequest.recommender_id
-              )
-            ) {
-              this.pluginCache.put(
-                recommenderRequest.recommender_id,
-                this.instanceContextBuilder(
-                  recommenderRequest.recommender_id
-                ),
-                this.getInstanceContextCacheExpiration()
-              );
-            }
-
-            const instanceContext: RecommenderBaseInstanceContext = await this.pluginCache.get(
+            const instanceContext: RecommenderBaseInstanceContext = await this.getInstanceContext(
               recommenderRequest.recommender_id
             );
 

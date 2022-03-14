@@ -11,7 +11,7 @@ export interface EmailRendererBaseInstanceContext {
   properties: PropertiesWrapper;
 }
 
-export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceContext = EmailRendererBaseInstanceContext> extends BasePlugin {
+export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceContext = EmailRendererBaseInstanceContext> extends BasePlugin<T> {
   instanceContext: Promise<T>;
 
   constructor(enableThrottling = false) {
@@ -75,6 +75,24 @@ export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceCon
     return context;
   }
 
+  protected async getInstanceContext(
+    creativeId: string,
+    forceReload = false
+  ): Promise<T> {
+    if (!this.pluginCache.get(creativeId) || forceReload) {
+        this.pluginCache.put(
+          creativeId,
+          this.instanceContextBuilder(creativeId, forceReload).catch((err) => {
+            this.logger.error(`Error while caching instance context: ${err.message}`)
+            this.pluginCache.del(creativeId);
+            throw err;
+          }),
+          this.getInstanceContextCacheExpiration(),
+        );
+    }
+    return this.pluginCache.get(creativeId);
+  }
+
   // To be overriden by the Plugin to get a custom behavior
   protected abstract onEmailContents(
     request: EmailRenderRequest,
@@ -86,7 +104,16 @@ export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceCon
       '/v1/email_contents',
       this.asyncMiddleware(
         async (req: express.Request, res: express.Response) => {
-          if (!req.body || _.isEmpty(req.body)) {
+          if (!this.httpIsReady()) {
+            const msg = {
+              error: 'Plugin not initialized'
+            };
+            this.logger.error(
+              'POST /v1/email_contents : %s',
+              JSON.stringify(msg)
+            );
+            return res.status(500).json(msg);
+          } else if (!req.body || _.isEmpty(req.body)) {
             const msg = {
               error: 'Missing request body'
             };
@@ -111,19 +138,9 @@ export abstract class EmailRendererPlugin<T extends EmailRendererBaseInstanceCon
             // We flush the Plugin Gateway cache during previews
             const forceReload = (emailRenderRequest.context === 'PREVIEW' || emailRenderRequest.context === 'STAGE');
 
-            if (!this.pluginCache.get(emailRenderRequest.creative_id) || forceReload) {
-              this.pluginCache.put(
-                emailRenderRequest.creative_id,
-                this.instanceContextBuilder(
-                  emailRenderRequest.creative_id,
-                  forceReload
-                ),
-                this.getInstanceContextCacheExpiration()
-              );
-            }
-
-            const instanceContext = await this.pluginCache.get(
-              emailRenderRequest.creative_id
+            const instanceContext = await this.getInstanceContext(
+              emailRenderRequest.creative_id,
+              forceReload
             );
 
             const response = await this.onEmailContents(
