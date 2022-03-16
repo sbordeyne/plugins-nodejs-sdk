@@ -152,7 +152,8 @@ describe('Data File helper Tests', function () {
   class MyFakePlugin extends core.BasePlugin {
   }
 
-  const fakeDataFile = new Buffer('Hello');
+  const fakeDataFile = Buffer.from('Hello');
+
 
   const rpMockup = sinon.stub().returns(Promise.resolve(fakeDataFile));
 
