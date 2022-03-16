@@ -1,6 +1,7 @@
 # Changelog
 
-# xxxxx - YYYY-MM-DD
+# 0.9.2 - 2022-03-16
+
 - Enable to return retry statusName (429 Status Code) for the onUserSegmentUpdate method for the Audience Feed Connector Plugin
 - Add a StatsClient using StatsD.
 
