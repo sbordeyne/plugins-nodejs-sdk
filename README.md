@@ -1,7 +1,6 @@
-
 #### Note about 0.6.0
 
-*Warning:* We introduced a breaking change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.7.0.` version of the SDK. This change is fixing a bug that was, in the end, ignoring all the Email hash related processing (User matching, user deduplication, etc.) on mediarithmics platform.
+_Warning:_ We introduced a breaking change about a Typescript Interface definition associated with the `ActivityAnalyzer` support in the `0.7.0.` version of the SDK. This change is fixing a bug that was, in the end, ignoring all the Email hash related processing (User matching, user deduplication, etc.) on mediarithmics platform.
 
 If you are using the Typescript associated types for an `Activity Analyzer`, we recommend you to upgrade to `v0.7.0+` ASAP. The `v0.6.0` was deprecated on NPM repository.
 
@@ -10,6 +9,7 @@ If you are using the Typescript associated types for an `Activity Analyzer`, we 
 This is the mediarithmics SDK for building plugins in Typescript or raw Node.js easily. As this package includes Typescript interfaces, we recommend that you use it with Typescript to ease your development.
 
 It covers (as of v0.6.0):
+
 - AdRenderer (incl. Templating systems + recommendations)
 - Activity Analyzer
 - Email Renderer
@@ -25,6 +25,7 @@ This module is installed via npm:
 ```
 npm install --save @mediarithmics/plugins-nodejs-sdk
 ```
+
 ## Concepts
 
 ### Overall mechanism
@@ -51,6 +52,7 @@ A mediarithmics plugin is called by the mediarithmics platform wih a 'Request' t
 The plugin SDK contains a typescript interface describing the format of the request for each supported plugin.
 
 A request can be:
+
 - An User activity to process
 - An Ad creative to render (e.g. generate HTML/JS)
 - An email to render (e.g. generate HTML/raw text)
@@ -64,8 +66,9 @@ A plugin instance can have a configuration that will change the way it will proc
 
 A default "Instance Context" is automatically provided by the SDK for each plugin type but you can also provide your own "Instance Context Builder" that will be called periodically to rebuild the cache.
 
-If you need to have a custom *Instance Context* format because you pre-calculate or charge in memory some values (ex: if you need to compile a Template / load in memory a statistic model / etc.), you can:
-1. Override the default *Instance Context Builder* function of the Plugin class
+If you need to have a custom _Instance Context_ format because you pre-calculate or charge in memory some values (ex: if you need to compile a Template / load in memory a statistic model / etc.), you can:
+
+1. Override the default _Instance Context Builder_ function of the Plugin class
 2. If you are using Typescript, you can extends the Base Interface of the Instance Context of your plugin that is provided so that you can add your custom fields
 
 Note: The plugin instance configuration can be done through the mediarithmics console UI or directly by API.
@@ -73,6 +76,7 @@ Note: The plugin instance configuration can be done through the mediarithmics co
 ### Runners
 
 The SDK provides 2 different runners:
+
 - `ProductionPluginRunner(plugin: BasePlugin)`: you have to use this runner in your main JS file. This runner is creating a web server to host your plugin so that it can be called by the mediarithmics platform.
 - `TestingPluginRunner(plugin: BasePlugin, transport?: RequestPromiseMockup)`: this is a Runner used to write tests for your plugins. You can provide a mockup for RequestPromise as a parameter to help you writing your tests.
 
@@ -92,8 +96,9 @@ After the instantiation of ProductionPluginRunner, you'll need to call `.start(p
 You have to import the 'core' module of the SDK in your code to access to the Abstract classes and Typescript interfaces. If you need some external integration, as the "Handlebar" templating system for example, you can also import the 'extra' package.
 
 #### Example import
-``` js
-import { core } from "@mediarithmics/plugins-nodejs-sdk";
+
+```js
+import { core } from '@mediarithmics/plugins-nodejs-sdk';
 ```
 
 ### Abstract class implementation
@@ -102,7 +107,7 @@ When implementing a plugin class, you need to give him the main 'processing' fun
 
 #### AdRenderer example
 
-``` js
+```js
 export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
   core.AdRendererBaseInstanceContext
 > {
@@ -117,7 +122,7 @@ export class MySimpleAdRenderer extends core.AdRendererBasePlugin<
 
 #### Activity Analyzer example
 
-``` js
+```js
 export class MyActivityAnalyzerPlugin extends core.ActivityAnalyzerPlugin {
   protected onActivityAnalysis(
     request: core.ActivityAnalyzerRequest,
@@ -134,14 +139,15 @@ Once you have implemented your own Plugin class, you have to instantiate it and 
 
 #### Activity Analyzer example
 
-``` js
+```js
 const plugin = new MyActivityAnalyzerPlugin();
 const runner = new core.ProductionPluginRunner(plugin);
 runner.start();
 ```
+
 #### AdRenderer example
 
-``` js
+```js
 const plugin = new MySimpleAdRenderer();
 const runner = new core.ProductionPluginRunner(plugin);
 runner.start();
@@ -160,6 +166,7 @@ Testing Plugins is highly recommended.
 The init workflow changed, from a `POST /v1/init` call to tokens given in the environment. The **tests** need to be updated:
 
 The previous
+
 ```js
 request(runner.plugin.app)
   .post('/v1/init')
@@ -170,20 +177,20 @@ request(runner.plugin.app)
 is not needed anymore, use the following instead, at the top of your **test** file (replace the values):
 
 ```js
-process.env.PLUGIN_WORKER_ID = "<previously used worker id>"
-process.env.PLUGIN_AUTHENTICATION_TOKEN = "<previously used auth token>"
+process.env.PLUGIN_WORKER_ID = '<previously used worker id>';
+process.env.PLUGIN_AUTHENTICATION_TOKEN = '<previously used auth token>';
 ```
 
 ## Migration from 0.6.0 to 0.7.0+
 
-We introduced a non retrocompatible change between 0.6.0 and 0.7.0 SDK version to fix a bug. 
+We introduced a non retrocompatible change between 0.6.0 and 0.7.0 SDK version to fix a bug.
 
 The `UserActivity.$email_hash` interface (`EmailHash`) was updated from:
 
 ```js
 export interface EmailHash {
-    hash: string;
-    email?: string;
+	hash: string;
+	email?: string;
 }
 ```
 
@@ -191,48 +198,54 @@ to
 
 ```js
 export interface EmailHash {
-    $hash: string;
-    $email?: string;
+	$hash: string;
+	$email?: string;
 }
 ```
 
 Hence, the fields name were updated; if you were referencing them in your code, you have to refactor it by prepending a `$`.
 
 ## Migration from 0.5.x to 0.6.x
-* `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
+
+- `click_urls` property of `AdRendererRequest` is replaced with `click_urls_info`.
+
 ```js
 AdRendererBasePlugin.getEncodedClickUrl(redirectUrls: string[])
 ```
-is now 
+
+is now
+
 ```js
 AdRendererBasePlugin.getEncodedClickUrl(clickUrlInfos: ClickUrlInfo[])
 ```
+
 To push a url in the redirect chain and build an encoded url, for example
+
 ```js
-  if (instanceContext.creative_click_url) {
-      adRenderRequest.click_urls.push(instanceContext.creative_click_url);
-   }
-   
-  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls);
+if (instanceContext.creative_click_url) {
+	adRenderRequest.click_urls.push(instanceContext.creative_click_url);
+}
+
+clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls);
 ```
 
 should become
 
 ```js
- if (instanceContext.creative_click_url) {
-    adRenderRequest.click_urls_info.push({
-    	url: instanceContext.creative_click_url,
-    	redirect_count: 0
-    });
- }
-  clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls_info);
+if (instanceContext.creative_click_url) {
+	adRenderRequest.click_urls_info.push({
+		url: instanceContext.creative_click_url,
+		redirect_count: 0,
+	});
+}
+clickUrl = this.getEncodedClickUrl(adRenderRequest.click_urls_info);
 ```
 
 ## Migration from 0.4.x to 0.5.x
 
 The 0.5.x release of the Plugin SDK is mainly aiming at simplifying the use of the "Templating" API.
 
-* `engineBuilder` property of `EmailRendererTemplate` and `AdRendererTemplatePlugin` is now declared `abstract` in the SDK and should no longer be instanciated in the Plugin Impl. `constructor` but directly in the class itself.
+- `engineBuilder` property of `EmailRendererTemplate` and `AdRendererTemplatePlugin` is now declared `abstract` in the SDK and should no longer be instanciated in the Plugin Impl. `constructor` but directly in the class itself.
 
 ```js
   constructor(enableThrottling = false) {
@@ -251,32 +264,31 @@ should become
   }
 ```
 
-* the `EmailRendererTemplate.fetchTemplateContent()` and `AdRendererTemplatePlugin.fetchTemplateContent()` methods have been deleted. They should be replaced by: `BasePlugin.fetchDataFile()` method which is equivalent.
+- the `EmailRendererTemplate.fetchTemplateContent()` and `AdRendererTemplatePlugin.fetchTemplateContent()` methods have been deleted. They should be replaced by: `BasePlugin.fetchDataFile()` method which is equivalent.
 
-* the `AdRendererTemplatePlugin.fetchTemplateContentProperties()` method have been deleted because it was using the AdLayout mediarithmics API which is being deprecated in favor of DataFile API. If you were using it, you should migrate your template files to a DataFile Plugin property instead of an AdLayout one. `AdRendererBasePlugin.fetchDisplayAdProperties()` will then give you all the details about how to fetch the template content with `BasePlugin.fetchDataFile()`.
+- the `AdRendererTemplatePlugin.fetchTemplateContentProperties()` method have been deleted because it was using the AdLayout mediarithmics API which is being deprecated in favor of DataFile API. If you were using it, you should migrate your template files to a DataFile Plugin property instead of an AdLayout one. `AdRendererBasePlugin.fetchDisplayAdProperties()` will then give you all the details about how to fetch the template content with `BasePlugin.fetchDataFile()`.
 
-* `AdRendererTemplatePlugin.instanceContextBuilder()` method is no longer taking a `template?: string` parameter. The template compilation should now be done in the Plugin Impl. and no longer in the SDK. The returned `AdRendererTemplateInstanceContext` interface have been updated and is no longer containing the `template` and `render_template` properties as well as the SDK is no longer managing this part.
+- `AdRendererTemplatePlugin.instanceContextBuilder()` method is no longer taking a `template?: string` parameter. The template compilation should now be done in the Plugin Impl. and no longer in the SDK. The returned `AdRendererTemplateInstanceContext` interface have been updated and is no longer containing the `template` and `render_template` properties as well as the SDK is no longer managing this part.
 
-* `instanceContextBuilder()` method of `AdRenderer` & `EmailRenderer` classes now take a `forceReload` parameter. This parameter should be set at `true` for `PREVIEW`/`STAGE` context so that Users can see in real time the output of their changes on the instance properties.
+- `instanceContextBuilder()` method of `AdRenderer` & `EmailRenderer` classes now take a `forceReload` parameter. This parameter should be set at `true` for `PREVIEW`/`STAGE` context so that Users can see in real time the output of their changes on the instance properties.
 
-* `AdRendererBasePlugin.fetchDisplayAd`/`AdRendererBasePlugin.fetchDisplayAdProperties` are also taking a `forceReload` boolean parameter. When set to `true`, it will ask to the platform to bypass all caches and give the last known values for the creative / its properties. This should only be used for `PREVIEW`/`STAGE` context (e.g. when `forceReload` parameter passed to the `instanceContextBuilder()` is set at `true`).
+- `AdRendererBasePlugin.fetchDisplayAd`/`AdRendererBasePlugin.fetchDisplayAdProperties` are also taking a `forceReload` boolean parameter. When set to `true`, it will ask to the platform to bypass all caches and give the last known values for the creative / its properties. This should only be used for `PREVIEW`/`STAGE` context (e.g. when `forceReload` parameter passed to the `instanceContextBuilder()` is set at `true`).
 
 ## Migration from 0.3.x to 0.4.x
 
-* the type `Value` has been removed and replaced by a serie of specialized types. Following this change, `PluginProperty` has been transformed to a discriminated union (see the eponym section at https://www.typescriptlang.org/docs/handbook/advanced-types.html ).
+- the type `Value` has been removed and replaced by a serie of specialized types. Following this change, `PluginProperty` has been transformed to a discriminated union (see the eponym section at https://www.typescriptlang.org/docs/handbook/advanced-types.html ).
 
-* in `EmailRendererBaseInstanceContext`, `EmailRouterBaseInstanceContext`, `ActivityAnalyzerBaseInstanceContext`, `BidOptimizerBaseInstanceContext`and `AdRendererBaseInstanceContext` the fields `creativeProperties`, `routerProperties`, `activityAnalyzerProperties`, `bidOptimizerProperties` and `displayAdProperties` have been rename `properties` which is now typed as a `PropertiesWrapper`.
+- in `EmailRendererBaseInstanceContext`, `EmailRouterBaseInstanceContext`, `ActivityAnalyzerBaseInstanceContext`, `BidOptimizerBaseInstanceContext`and `AdRendererBaseInstanceContext` the fields `creativeProperties`, `routerProperties`, `activityAnalyzerProperties`, `bidOptimizerProperties` and `displayAdProperties` have been rename `properties` which is now typed as a `PropertiesWrapper`.
 
-* `PropertiesWrapper` is a class with a constructor that takes as parameter an `Array<PluginProperty>`. The `PropertiesWrapper` normalize the array to give an access to these properties by their `technical_name` in O(1).
+- `PropertiesWrapper` is a class with a constructor that takes as parameter an `Array<PluginProperty>`. The `PropertiesWrapper` normalize the array to give an access to these properties by their `technical_name` in O(1).
 
-* `BidOptimizerPluginResponse` has been replaced by `BidDecision`
+- `BidOptimizerPluginResponse` has been replaced by `BidDecision`
 
-* `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
+- `core.ResponseData` and `core.ResponseListOfData` have been respectively renamed `core.DataResponse` and `core.DataListResponse`
 
-* `core.RecommandationsWrapper` have been renamed to `core.RecommendationsWrapper`
+- `core.RecommandationsWrapper` have been renamed to `core.RecommendationsWrapper`
 
-* `core.UserActivityEvent` is now a `type`. If you were using it as a Class (ex: by extending it), you should now use `core.GenericUserActivityEvent` instead.
-
+- `core.UserActivityEvent` is now a `type`. If you were using it as a Class (ex: by extending it), you should now use `core.GenericUserActivityEvent` instead.
 
 ## Migration from 0.2.x to 0.3.x
 
@@ -291,8 +303,9 @@ In v0.2.x, the Plugin SDK only provided `AdRendererRecoTemplatePlugin` for build
 This base class was forcing developers to handle recommendations while for some use case, you only need the 'Templating' without having to handle the recommendation part.
 
 In v0.3.0, there are now 2 classes to build an AdRenderer:
+
 1. AdRendererTemplatePlugin: if you want to do an AdRenderer without any recommendations but with a Templating engine, this is what you want
-2. AdRendererRecoTemplatePlugin: if you want to use recommendations in your AdRenderer while also doing templating, this is what you need 
+2. AdRendererRecoTemplatePlugin: if you want to use recommendations in your AdRenderer while also doing templating, this is what you need
 
 ### getCreative & getCreativeProperties helper
 
@@ -305,6 +318,7 @@ The AdRenderer base class now only have `getDisplayAd(id)` and `getDisplayAdProp
 Previously, the Handlebars extension was providing an `HandleBarRootContext` interface (in `extra`) which was being used for all AdRenderers using Handlebars, whether they were using "Recommendations" or simply doing "basic" templating.
 
 In 0.3.0+, there are 3 Handlebars contexts:
+
 - `URLHandlebarsRootContext`: to be used when replacing macros in URLs
 - `HandlebarsRootContext`: to be used when replacing macros in 'simple' templates without recommendations (e.g. when building a Plugin on top of AdRendererTemplatePlugin)
 - `RecommendationsHandlebarsRootContext`: to be used when replacing macros in a template used with "Rrcommendations (e.g. when building a Plugin on top of AdRendererRecoTemplatePlugin)
@@ -320,6 +334,52 @@ All macros are now in UPPER CASE. Some macros (request, creative, etc.) have to 
 Prior to the v0.3.0, there was only one Handlebars engine provided in the extra package.
 
 With the 0.3.0+, there are now 2 Handlebars engine:
+
 - HandlebarsEngine: to be used when building an AdRenderer without recommendations
 - RecommendationsHandlebarsEngine: to be used when building a 'recommendation' Ad Renderer
 
+### StatsClient helper
+
+You can add a StatsClient to your plugins, by importing helpers. Declare a new StatsClient in your plugin's constructor.
+
+```js
+protected statsClient: helpers.StatsClient;
+
+ constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    this.statsClient = helpers.StatsClient.init({
+      logger: this.logger,
+    });
+
+  }
+```
+
+Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically. When initiating the StatsD client, 2 options can be passed:
+
+- optional
+  - timerInMs (interval to send stats to datadog in ms (default = 10 minutes))
+  - logger
+
+```js
+this.statsClient = helpers.StatsClient.init({
+	logger: this.logger,
+});
+```
+
+Using StatsD, the StatsClient, can aggregate and send your stats to services such as Datadog. Increment your stats be calling addOrUpdateMetrics method.
+
+```js
+this.statsClient.addOrUpdateMetrics({
+	metrics: {
+		processed_users: { type: MetricsType.GAUGE, value: 4, tags: { datamart_id: '4521' } },
+		users_with_mobile_id_count: { type: MetricsType.GAUGE, value: 1, tags: { datamart_id: '4521' } },
+	},
+});
+this.statsClient.addOrUpdateMetrics({
+	metrics: {
+		processed_users: { type: MetricsType.GAUGE, value: 10, tags: { datamart_id: '4521' } },
+	},
+});
+this.statsClient.addOrUpdateMetrics({ metrics: { apiCallsError: { type: MetricsType.GAUGE, value: 10, tags: { statusCode: '500' } } } });
+```
