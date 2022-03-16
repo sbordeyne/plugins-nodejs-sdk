@@ -340,19 +340,29 @@ With the 0.3.0+, there are now 2 Handlebars engine:
 
 ### StatsClient helper
 
-You can add a StatsClient to your plugins, by importing helpers. Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically. When initiating the StatsD client, 4 options can be passed:
+You can add a StatsClient to your plugins, by importing helpers. Declare a new StatsClient in your plugin's constructor.
 
-- mandatory
-  - pluginType
-  - id: the plugin main id (feed_id, channel_id, custom_action_id, or ad_renderer_id)
+```js
+protected statsClient: helpers.StatsClient;
+
+ constructor(enableThrottling = false) {
+    super(enableThrottling);
+
+    this.statsClient = helpers.StatsClient.init({
+      logger: this.logger,
+    });
+
+  }
+```
+
+Global tags with relevant datas such as artifact_id, build_id or version_id will be added automatically. When initiating the StatsD client, 2 options can be passed:
+
 - optional
   - timerInMs (interval to send stats to datadog in ms (default = 10 minutes))
   - logger
 
 ```js
 this.statsClient = helpers.StatsClient.init({
-	pluginType: PluginType.AUDIENCE_FEED,
-	id: '1234',
 	logger: this.logger,
 });
 ```

@@ -1,4 +1,4 @@
-import { MetricsType, PluginType, StatsClient } from './StatsClient';
+import { MetricsType, StatsClient } from './StatsClient';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import * as winston from 'winston';
@@ -15,8 +15,6 @@ describe('statsClient', () => {
 
 	beforeEach(() => {
 		statsClient = StatsClient.init({
-			pluginType: PluginType.AUDIENCE_FEED,
-			id: '1234',
 			timerInMs: 50,
 			logger,
 		});
