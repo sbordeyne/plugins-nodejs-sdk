@@ -1,5 +1,9 @@
 # Changelog
 
+# 0.9.3 - 2022-03-22
+
+- Move test helper dependencies
+
 # 0.9.2 - 2022-03-16
 
 - Enable to return retry statusName (429 Status Code) for the onUserSegmentUpdate method for the Audience Feed Connector Plugin
