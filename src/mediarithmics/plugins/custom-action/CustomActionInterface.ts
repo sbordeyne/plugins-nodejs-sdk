@@ -1,6 +1,9 @@
 export interface CustomActionRequest {
   user_point_id: string;
   custom_action_id: string;
+  datamart_id: string;
+  node_id: string;
+  scenario_id: string;
 }
 
 export interface CustomActionPluginResponse {
